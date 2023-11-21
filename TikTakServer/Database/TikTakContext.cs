@@ -5,7 +5,7 @@ namespace TikTakServer.Database
 {
     public class TikTakContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserDao> Users { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<UserTagInteraction> UserTagsInteractions { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -18,7 +18,7 @@ namespace TikTakServer.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<UserDao>()
                 .HasMany(e => e.Likes)
                 .WithOne(x => x.User)
                 .HasForeignKey(c => c.UserId)
