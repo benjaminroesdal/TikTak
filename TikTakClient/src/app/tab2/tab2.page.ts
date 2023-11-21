@@ -40,10 +40,10 @@ export class Tab2Page implements AfterViewInit {
     // For example:
     console.log('we in here');
     this.videoSources = this.videoSources.concat([
-      'https://localhost:7001/BlobStorage/GetBlobManifest?id=8fe579fb-c191-453b-a61d-73b472e3e124',
-      'https://localhost:7001/BlobStorage/GetBlobManifest?id=0ef6f12e-8f30-4980-97c2-b7c9ac391a63',
-      'https://localhost:7001/BlobStorage/GetBlobManifest?id=933c546f-8401-44f4-8be9-ac56d8c20df4',
-      'https://localhost:7001/BlobStorage/GetBlobManifest?id=831b5d59-cb28-4c03-82e4-3782edb110ed',
+      'https://tiktakstorage.blob.core.windows.net/tiktaks/0ef6f12e-8f30-4980-97c2-b7c9ac391a63.M3U8',
+      'https://tiktakstorage.blob.core.windows.net/tiktaks/831b5d59-cb28-4c03-82e4-3782edb110ed.M3U8',
+      'https://tiktakstorage.blob.core.windows.net/tiktaks/8fe579fb-c191-453b-a61d-73b472e3e124.M3U8',
+      'https://tiktakstorage.blob.core.windows.net/tiktaks/933c546f-8401-44f4-8be9-ac56d8c20df4.M3U8',
       // ... more initial sources
     ]);
   }
@@ -53,6 +53,7 @@ export class Tab2Page implements AfterViewInit {
     let videoEl = this.videoElements[count] as HTMLVideoElement;
     let videoLast = this.videoElements[count - 1] as HTMLVideoElement;
     videoEl.play();
+    videoLast.currentTime = 0;
     videoLast.pause();
     console.log('changed', count);
   }

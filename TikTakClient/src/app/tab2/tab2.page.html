@@ -6,7 +6,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="false">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Tab 2</ion-title>
@@ -16,7 +16,7 @@
 
   <swiper-container [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)">
       <swiper-slide class="video-container" *ngFor="let video of videoSources">
-          <video class="videoName" id="{{ video }}" [muted]="false" preload="none"></video>
+          <video playsinline class="videoName" id="{{ video }}" [muted]="false" preload="none"></video>
       </swiper-slide>
   </swiper-container>
 </ion-content>
