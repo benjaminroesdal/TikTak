@@ -31,11 +31,18 @@ namespace TikTakServer.Controllers
             return Ok();
         }
 
-        [HttpPost("GetBlobManifest")]
-        public async Task<IActionResult> DownloadManifest([FromBody] string blobName)
+        [HttpGet("GetBlobManifest")]
+        public async Task<IActionResult> DownloadManifest([FromQuery] string id)
         {
-            var manifest = await _blobStorageService.DownloadManifest();
-            return File(manifest, "application/vnd.apple.mpegurl", blobName + ".M3U8");
+            var manifest = await _blobStorageService.DownloadManifest(id);
+            return File(manifest, "application/vnd.apple.mpegurl", "manifest" + ".M3U8");
+        }
+
+        [HttpGet("GetFyp")]
+        public async Task<IActionResult> GetFyp()
+        {
+            var storageIds = await _blobStorageService.GetFyp();
+            return Ok(storageIds);
         }
     }
 }

@@ -12,10 +12,16 @@ namespace TikTakServer.Repositories
             _context = context;
         }
 
-        public async Task<Video> GetVideo()
+        public async Task<Video> GetVideo(string id)
         {
-            var videos = _context.Videos.ToList();
-            return videos.FirstOrDefault();
+            var video = _context.Videos.Where(e => e.BlobStorageId == id);
+            return video.FirstOrDefault();
+        }
+
+        public async Task<List<string>> GetFyp()
+        {
+            var videoIds = _context.Videos.Select(e => e.BlobStorageId).ToList();
+            return videoIds;
         }
 
         public Task CreateVideo(Video video)

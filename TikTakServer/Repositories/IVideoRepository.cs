@@ -6,6 +6,7 @@ namespace TikTakServer.Repositories
     {
         Task CreateVideo(Video video);
         Task RemoveVideoByStorageId(string id);
-        Task<Video> GetVideo();
+        Task<Video> GetVideo(string id);
+        Task<List<string>> GetFyp();
     }
 }

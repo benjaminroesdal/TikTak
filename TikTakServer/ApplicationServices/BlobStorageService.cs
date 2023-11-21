@@ -30,12 +30,18 @@ namespace TikTakServer.ApplicationServices
             throw new NotImplementedException();
         }
 
-        public async Task<MemoryStream> DownloadManifest()
+        public async Task<MemoryStream> DownloadManifest(string id)
         {
-            var storageId = await videoRepository.GetVideo();
+            var storageId = await videoRepository.GetVideo(id);
             var manifest = await blobStorageFacade.GetBlob(storageId.BlobStorageId + ".M3U8", containerName);
             var stream = new MemoryStream(manifest.ToArray());
             return stream;
+        }
+
+        public async Task<List<string>> GetFyp()
+        {
+            var storageIds = await videoRepository.GetFyp();
+            return storageIds;
         }
 
         public async Task RemoveBlobs(string blobId)
