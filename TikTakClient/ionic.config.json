@@ -1,0 +1,7 @@
+{
+  "name": "TikTakClient",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

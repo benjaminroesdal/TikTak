@@ -1,0 +1,6 @@
+@TikTakServer_HostAddress = http://localhost:5213
+
+GET {{TikTakServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
