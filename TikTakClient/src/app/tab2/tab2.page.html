@@ -13,5 +13,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+
+  <swiper-container [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)">
+      <swiper-slide class="video-container" *ngFor="let video of videoSources">
+          <video class="videoName" id="{{ video }}" [muted]="false" preload="none"></video>
+      </swiper-slide>
+  </swiper-container>
 </ion-content>

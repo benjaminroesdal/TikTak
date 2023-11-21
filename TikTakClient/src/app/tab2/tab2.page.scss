@@ -1,0 +1,26 @@
+.video-container {
+    position: relative;
+    width: 100%; /* Full width on mobile */
+    max-width: 500px; /* Maximum width on larger screens */
+    margin: 0 auto; /* Center the container */
+    overflow: hidden; /* Hide any overflow */
+}
+
+.video-container video {
+    width: 100%; /* Video takes full width of the container */
+    height: auto; /* Height is set to auto to maintain aspect ratio */
+    object-fit: contain; /* Ensures the entire video is visible, may introduce black bars */
+}
+
+
+swiper-container {
+    width: 100%;
+    height: 100%;
+}
+
+swiper-slide{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

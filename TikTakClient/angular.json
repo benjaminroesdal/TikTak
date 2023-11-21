@@ -32,7 +32,9 @@
               }
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss"],
-            "scripts": []
+            "scripts": [
+              "node_modules/hls.js/dist/hls.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -136,7 +138,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": "b60b1172-f7a5-452f-97a1-7d32d748d065"
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {
