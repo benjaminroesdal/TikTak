@@ -17,13 +17,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NReco.VideoConverter" Version="1.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Facades\" />
-    <Folder Include="ApplicationServices\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
