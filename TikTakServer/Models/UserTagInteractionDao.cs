@@ -9,7 +9,7 @@ namespace TikTakServer.Models
         public int TagId { get; set; }
         public int InteractionCount { get; set; }
         public UserDao User { get; set; }
-        public Tag Tag { get; set; }
+        public TagDao Tag { get; set; }
 
         public UserTagInteractionDao()
         {
@@ -20,6 +20,7 @@ namespace TikTakServer.Models
         {
             UserId = userInteraction.UserId;
             TagId = userInteraction.VideoId;
+            InteractionCount = 0;
         }
     }
 
