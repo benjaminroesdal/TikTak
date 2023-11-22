@@ -14,10 +14,6 @@ namespace TikTakServer.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public Task<IActionResult> Login([FromBody] User user)
-        {
-            return Task.FromResult<IActionResult>(Ok());
-        }
+
     }
 }

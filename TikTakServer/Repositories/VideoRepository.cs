@@ -12,7 +12,7 @@ namespace TikTakServer.Repositories
             _context = context;
         }
 
-        public async Task<Video> GetVideo(string id)
+        public async Task<VideoDao> GetVideo(string id)
         {
             var video = _context.Videos.Where(e => e.BlobStorageId == id);
             return video.FirstOrDefault();
@@ -24,7 +24,7 @@ namespace TikTakServer.Repositories
             return videoIds;
         }
 
-        public Task CreateVideo(Video video)
+        public Task CreateVideo(VideoDao video)
         {
             var result = _context.Add(video);
             _context.SaveChanges();

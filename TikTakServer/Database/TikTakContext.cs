@@ -6,10 +6,10 @@ namespace TikTakServer.Database
     public class TikTakContext : DbContext
     {
         public DbSet<UserDao> Users { get; set; }
-        public DbSet<Like> Likes { get; set; }
-        public DbSet<UserTagInteraction> UserTagsInteractions { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Video> Videos { get; set; }
+        public DbSet<LikeDao> Likes { get; set; }
+        public DbSet<UserTagInteractionDao> UserTagsInteractions { get; set; }
+        public DbSet<TagDao> Tags { get; set; }
+        public DbSet<VideoDao> Videos { get; set; }
 
         public TikTakContext(DbContextOptions<TikTakContext> options) : base(options)
         {
@@ -24,7 +24,7 @@ namespace TikTakServer.Database
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Video>()
+            modelBuilder.Entity<VideoDao>()
                 .HasMany(e => e.Likes)
                 .WithOne(x => x.Video)
                 .HasForeignKey(c => c.UserId)
