@@ -9,7 +9,7 @@ namespace TikTakServer.Models
         public string PasswordSalt { get; set; }
         public DateTime DateOfBirth { get; set; }
         public virtual ICollection<Video> Videos {get; set;}
-        public virtual ICollection<UserTagInteraction> UserTagInteractions {get; set;}
+        public virtual ICollection<UserTagInteractionDao> UserTagInteractions {get; set;}
         public virtual ICollection<Like> Likes { get; set; }
     }
 }

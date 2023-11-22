@@ -7,7 +7,7 @@ namespace TikTakServer.Database
     {
         public DbSet<UserDao> Users { get; set; }
         public DbSet<Like> Likes { get; set; }
-        public DbSet<UserTagInteraction> UserTagsInteractions { get; set; }
+        public DbSet<UserTagInteractionDao> UserTagsInteractions { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Video> Videos { get; set; }
 
