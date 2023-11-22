@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {
@@ -11,6 +12,12 @@ namespace TikTakServer.Controllers
         public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
+        }
+
+        [HttpGet]
+        public Task<IActionResult> Login([FromBody] User user)
+        {
+            return Task.FromResult<IActionResult>(Ok());
         }
     }
 }
