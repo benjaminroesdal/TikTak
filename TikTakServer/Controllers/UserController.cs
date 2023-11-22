@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {
@@ -14,6 +15,9 @@ namespace TikTakServer.Controllers
         }
 
         [HttpGet]
-        public Task<IActionResult> Login([FromBody] )
+        public Task<IActionResult> Login([FromBody] User user)
+        {
+            return Task.FromResult<IActionResult>(Ok());
+        }
     }
 }
