@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TikTakServer.Database;
+using TikTakServer.Managers;
 using TikTakServer.Models;
 using TikTakServer.Models.Business;
 
@@ -8,6 +9,7 @@ namespace TikTakServer.Repositories
     public class VideoRepository : IVideoRepository
     {
         private readonly TikTakContext _context;
+        private readonly IRecommendationManager _recommendationManager;
 
         public VideoRepository(TikTakContext context)
         {
@@ -20,9 +22,16 @@ namespace TikTakServer.Repositories
             return video.FirstOrDefault();
         }
 
-        public async Task<List<string>> GetFyp()
+        public async Task<List<string>> GetFyp(int userId)
         {
             var videoIds = _context.Videos.Select(e => e.BlobStorageId).ToList();
+            var userPreferencedTags = _recommendationManager.GetRandomTagsBasedOnUserPreference(userId);
+            var rndmVideoIds = new List<string>();
+            foreach (var tag in userPreferencedTags)
+            {
+                rndmVideoIds.Add(_context.Videos.Where(x => x.Tags == userPreferencedTags).Select(x => x.BlobStorageId).ToString());
+            }
+            
             return videoIds;
         }
 

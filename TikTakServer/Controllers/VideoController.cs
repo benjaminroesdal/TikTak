@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Database;
+using TikTakServer.Facades;
 using TikTakServer.Models;
 using TikTakServer.Models.Business;
 
@@ -11,11 +12,11 @@ namespace TikTakServer.Controllers
     [Route("[controller]")]
     public class VideoController : Controller
     {
-        private readonly IRecommendationService _recommendationService;
+        private readonly IUserFacade _userFacade;
 
-        public VideoController(TikTakContext context, IRecommendationService recommendationService)
+        public VideoController(TikTakContext context, IUserFacade userFacade)
         {
-            _recommendationService = recommendationService;
+            _userFacade = userFacade;
         }
 
         [HttpPost]
@@ -25,7 +26,7 @@ namespace TikTakServer.Controllers
             if (tagInteraction.UserId == 0 || tagInteraction.VideoId == 0)
                 return BadRequest("VideoId or UserId not specified");
 
-            await _recommendationService.CountUserTagInteraction(tagInteraction);
+            await _userFacade.CountUserTagInteraction(tagInteraction);
 
             return Ok();
         }
@@ -40,7 +41,7 @@ namespace TikTakServer.Controllers
             if (like.LikeDate == DateTime.MinValue)
                 return BadRequest("Couldnt register like. Date time was default");
 
-            await _recommendationService.RegisterVideoLike(like);
+            await _userFacade.RegisterVideoLike(like);
 
             return Ok();
         }
