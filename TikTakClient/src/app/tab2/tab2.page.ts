@@ -42,6 +42,21 @@ export class Tab2Page implements AfterViewInit {
 
   ngAfterViewInit() {
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
+  
+    // Adding a slight delay to ensure HLS setup is complete
+    setTimeout(() => {
+      this.playFirstVideo();
+    }, 500); // Adjust the delay as necessary
+  }
+  
+
+  private playFirstVideo() {
+    if (this.videoElements && this.videoElements.length > 0) {
+      const firstVideoElement = this.videoElements[0] as HTMLVideoElement;
+      if (firstVideoElement) {
+        firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
+      }
+    }
   }
 
 
