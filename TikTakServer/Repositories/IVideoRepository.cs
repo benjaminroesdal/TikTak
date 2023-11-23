@@ -1,4 +1,5 @@
 ﻿using TikTakServer.Models;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Repositories
 {
@@ -8,5 +9,7 @@ namespace TikTakServer.Repositories
         Task RemoveVideoByStorageId(string id);
         Task<VideoDao> GetVideo(string id);
         Task<List<string>> GetFyp();
+        Task CountUserVideoInteraction(UserTagInteraction interaction);
+        Task RegisterVideoLike(Like like);
     }
 }
