@@ -21,6 +21,8 @@ builder.Services.AddScoped<IBlobStorageRepository, BlobStorageRepository>();
 builder.Services.AddScoped<IBlobStorageFacade, BlobStorageFacade>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<GoogleAuthService>();
 
 var app = builder.Build();
 
@@ -35,6 +37,7 @@ app.UseCors(e => e.AllowAnyOrigin());
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 
 app.MapControllers();
 

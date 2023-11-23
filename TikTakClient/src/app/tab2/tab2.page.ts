@@ -1,6 +1,8 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import Hls from 'hls.js';
 import { Swiper } from 'swiper/types';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'app-tab2',
@@ -13,10 +15,26 @@ export class Tab2Page implements AfterViewInit {
   @ViewChild('swiper') 
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
+  user: any;
 
   slideOpts = {
     direction: 'vertical'
   };
+
+  constructor(private route: ActivatedRoute, private router: Router) {
+    this.route.queryParams.subscribe(params => {
+      let data = this.router.getCurrentNavigation()!.extras.state;
+      if (data!['user']) {
+          this.user = data!['user'];
+      }
+    });
+  }
+
+  signOut() {
+    GoogleAuth.signOut().then(() => {
+      this.router.navigate(['tabs/tab1']);
+    });
+  }
 
   ngOnInit(): void {
     this.loadInitialVideos();
