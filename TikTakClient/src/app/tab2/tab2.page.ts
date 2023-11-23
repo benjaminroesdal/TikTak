@@ -3,6 +3,9 @@ import Hls from 'hls.js';
 import { Swiper } from 'swiper/types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { BlobStorageService } from '../services/blob-storage.service';
+import { forkJoin } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tab2',
@@ -21,7 +24,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService) {
     this.route.queryParams.subscribe(params => {
       let data = this.router.getCurrentNavigation()!.extras.state;
       if (data!['user']) {
@@ -68,18 +71,29 @@ export class Tab2Page implements AfterViewInit {
   }
 
   private loadInitialVideos() {
-    // Fetch initial video sources (blobIds) from the backend
-    // Add them to the videoSources array
-    // For example:
-    console.log('we in here');
-    this.videoSources = this.videoSources.concat([
-      'https://tiktakstorage.blob.core.windows.net/tiktaks/0ef6f12e-8f30-4980-97c2-b7c9ac391a63.M3U8',
-      'https://tiktakstorage.blob.core.windows.net/tiktaks/831b5d59-cb28-4c03-82e4-3782edb110ed.M3U8',
-      'https://tiktakstorage.blob.core.windows.net/tiktaks/8fe579fb-c191-453b-a61d-73b472e3e124.M3U8',
-      'https://tiktakstorage.blob.core.windows.net/tiktaks/933c546f-8401-44f4-8be9-ac56d8c20df4.M3U8',
-      // ... more initial sources
-    ]);
+    console.log('Fetching initial videos');
+  
+    this.blobStorageService.getFyp().pipe(
+      mergeMap((ids: any) => {  // Use 'any' or a more specific type if known
+        
+        // Assert that ids is string[]
+        const stringIds = ids as string[];
+        // Map each ID to an Observable of the blob manifest URL
+        const blobUrlObservables = stringIds.map(id => this.blobStorageService.getBlobManifest(id));
+        // Use forkJoin to wait for all Observables to complete
+        return forkJoin(blobUrlObservables);
+      })
+    ).subscribe(blobUrls => {
+      // All blob URLs are now available here
+      // Process blobUrls as needed
+      this.videoSources = this.videoSources.concat(blobUrls.map(blobUrl => URL.createObjectURL(blobUrl)));
+      console.log(this.videoSources)
+    },
+    error => {
+      console.error('Error occurred:', error);
+    });
   }
+  
 
   onSlideChange(swiperEvent: any) {
     let count = swiperEvent.detail[0].activeIndex;
