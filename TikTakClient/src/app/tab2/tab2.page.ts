@@ -3,6 +3,7 @@ import Hls from 'hls.js';
 import { Swiper } from 'swiper/types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import {AuthService} from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-tab2',
@@ -21,7 +22,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
     this.route.queryParams.subscribe(params => {
       let data = this.router.getCurrentNavigation()!.extras.state;
       if (data!['user']) {
@@ -30,10 +31,11 @@ export class Tab2Page implements AfterViewInit {
     });
   }
 
-  signOut() {
+  async signOut() {
     GoogleAuth.signOut().then(() => {
       this.router.navigate(['tabs/tab1']);
     });
+    await this.authService.Logout();
   }
 
   ngOnInit(): void {

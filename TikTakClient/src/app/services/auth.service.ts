@@ -14,21 +14,29 @@ export class AuthService {
     await this.http.post<UserModel>('https://localhost:7001/CreateUser', user)
     .subscribe(e => {
       console.log(e.accessToken);
-      console.log(e);
       this.storageService.set('AccessToken', e.accessToken);
+      this.storageService.get('AccessToken').then(x => {
+        console.log(x);
+      });
     });
   }
 
+  async Logout() : Promise<void> {
+    await this.storageService.clear();
+  }
+
   async isTokenExpired(): Promise<boolean> {
-    const token = await this.storageService.get('AccessToken');
-    console.log(token);
-    if (!token) return true;
-
-    const decoded: any = jwt_decode.jwtDecode(token);
-    if (!decoded.exp) return true;
-
-    const now = Math.floor(Date.now() / 1000);
-    return decoded.exp < now;
+    return this.storageService.get('AccessToken').then(e => {
+      console.log(e);
+      if (!e) return true;
+  
+      const decoded: any = jwt_decode.jwtDecode(e);
+      console.log(decoded);
+      if (!decoded.exp) return true;
+  
+      const now = Math.floor(Date.now() / 1000);
+      return decoded.exp < now;
+    });
   }
 }
 

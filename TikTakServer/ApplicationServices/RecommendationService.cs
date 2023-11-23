@@ -3,7 +3,7 @@ using TikTakServer.Repositories;
 
 namespace TikTakServer.ApplicationServices
 {
-    public class RecommendationService:IRecommendationService
+    public class RecommendationService : IRecommendationService
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IRecommendationRepository _recommendationRepository;

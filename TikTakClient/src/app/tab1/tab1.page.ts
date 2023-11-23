@@ -40,7 +40,7 @@ export class Tab1Page {
 
   async checkLoggedIn() {
     const loggedOut = await this.authService.isTokenExpired();
-    console.log(loggedOut);
+    console.log(loggedOut) + "DEN ER IKKE EXPIRED";
     if(loggedOut == false){
       GoogleAuth.refresh().then((data) => {
         console.log(data + 'Hello');

@@ -22,7 +22,6 @@ namespace TikTakServer.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest userRequest)
         {
