@@ -6,25 +6,25 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BlobStorageService {
-  private baseUrl = 'http://yourapi.com/blobstorage';
+  private baseUrl = 'https://localhost:7001/BlobStorage';
 
   constructor(private http: HttpClient) { }
 
-  uploadBlob(file: File): Observable<any> {
+  uploadBlob(file: File) {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
     return this.http.post(`${this.baseUrl}/PostBlob`, formData);
   }
 
-  removeBlob(blobName: string): Observable<any> {
+  removeBlob(blobName: string) {
     return this.http.post(`${this.baseUrl}/RemoveBlob`, { blobName });
   }
 
-  getBlobManifest(id: string): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/GetBlobManifest?id=${id}`, { responseType: 'blob' });
+  getBlobManifest(id: string) {
+    return this.http.get(`${this.baseUrl}/GetBlobManifest?Id=${id}`);
   }
 
-  getFyp(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/GetFyp`);
+  getFyp(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/GetFyp`);
   }
 }
