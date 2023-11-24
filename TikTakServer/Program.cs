@@ -1,10 +1,16 @@
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Database;
 using TikTakServer.Facades;
+using TikTakServer.Handlers;
 using TikTakServer.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TikTakServer.Models;
+using TikTakServer.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +27,33 @@ builder.Services.AddScoped<IBlobStorageRepository, BlobStorageRepository>();
 builder.Services.AddScoped<IBlobStorageFacade, BlobStorageFacade>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<GoogleAuthService>();
+builder.Services.AddScoped<JwtHandler>();
+builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<UserRequestAndClaims>();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["SecretKey"])),
+
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Issuer"],
+
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Audience"],
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,11 +63,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(e => e.AllowAnyOrigin());
+app.UseCors(e => e.AllowAnyOrigin().AllowAnyHeader());
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<JwtMiddleware>();
 app.MapControllers();
 
 app.Run();

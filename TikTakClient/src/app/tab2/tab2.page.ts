@@ -1,6 +1,9 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import Hls from 'hls.js';
 import { Swiper } from 'swiper/types';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import {AuthService} from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-tab2',
@@ -13,10 +16,27 @@ export class Tab2Page implements AfterViewInit {
   @ViewChild('swiper') 
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
+  user: any;
 
   slideOpts = {
     direction: 'vertical'
   };
+
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
+    this.route.queryParams.subscribe(params => {
+      let data = this.router.getCurrentNavigation()!.extras.state;
+      if (data!['user']) {
+          this.user = data!['user'];
+      }
+    });
+  }
+
+  async signOut() {
+    GoogleAuth.signOut().then(() => {
+      this.router.navigate(['tabs/tab1']);
+    });
+    await this.authService.Logout();
+  }
 
   ngOnInit(): void {
     this.loadInitialVideos();
@@ -24,6 +44,21 @@ export class Tab2Page implements AfterViewInit {
 
   ngAfterViewInit() {
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
+  
+    // Adding a slight delay to ensure HLS setup is complete
+    setTimeout(() => {
+      this.playFirstVideo();
+    }, 500); // Adjust the delay as necessary
+  }
+  
+
+  private playFirstVideo() {
+    if (this.videoElements && this.videoElements.length > 0) {
+      const firstVideoElement = this.videoElements[0] as HTMLVideoElement;
+      if (firstVideoElement) {
+        firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
+      }
+    }
   }
 
 
