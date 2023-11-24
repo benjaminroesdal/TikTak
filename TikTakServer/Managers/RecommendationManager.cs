@@ -7,7 +7,7 @@ namespace TikTakServer.Managers
     {
         private readonly IUserRepository _userRepository;
         private static int videoCount = 3;
-        private static double countryWeight = 0.8;
+        private static double CountryWeight = 0.8;
 
         public RecommendationManager(IUserRepository userRepository)
         {
@@ -15,16 +15,27 @@ namespace TikTakServer.Managers
         }
         public List<string> GetRandomTagsBasedOnUserPreference(int userId)
         {
-
             List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions(userId);
+            int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
+            double countryWeight = TotalWeightofPreferences * CountryWeight;
+
 
             List<string> videoTagResults = new List<string>();
             Random rnd = new Random();
-            int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
-            double country = TotalWeightofPreferences / countryWeight;
+
+
             
             for (int I = 0; I < videoCount; I++)
             {
+
+                int countryRnd = rnd.Next(TotalWeightofPreferences);
+                if (countryRnd <= countryWeight)
+                {
+                    videoTagResults.Add("Denmark");
+                    I++;
+                    break;
+                }
+
                 int rndmNumber = rnd.Next(TotalWeightofPreferences);
                 int sumOfInteractions = 0;
                 foreach (var interaction in preferences)
