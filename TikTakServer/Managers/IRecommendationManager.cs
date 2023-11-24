@@ -4,6 +4,7 @@ namespace TikTakServer.Managers
 {
     public interface IRecommendationManager
     {
-        List<TagDao> GetRandomTagsBasedOnUserPreference(int userid);
+        List<string> GetRandomTagsBasedOnUserPreference(int userid);
+
     }
 }

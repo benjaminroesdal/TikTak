@@ -7,52 +7,39 @@ namespace TikTakServer.Managers
     {
         private readonly IUserRepository _userRepository;
         private static int videoCount = 3;
+        private static double countryWeight = 0.8;
 
         public RecommendationManager(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
-        public List<TagDao> GetRandomTagsBasedOnUserPreference(int userId)
+        public List<string> GetRandomTagsBasedOnUserPreference(int userId)
         {
 
             List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions(userId);
-            //var userPreferences = new UserPreferences { TagScores = new Dictionary<TagDao, double>() };
 
-            //foreach (var tag in preferences)
-            //    userPreferences.TagScores.Add(tag.Tag, tag.InteractionCount);
-
-            List<TagDao> videoTagResults = new List<TagDao>();
+            List<string> videoTagResults = new List<string>();
             Random rnd = new Random();
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
-
+            double country = TotalWeightofPreferences / countryWeight;
             
             for (int I = 0; I < videoCount; I++)
             {
                 int rndmNumber = rnd.Next(TotalWeightofPreferences);
-                //Used to traverse down the list of tags that the user has interacted the most with
                 int sumOfInteractions = 0;
                 foreach (var interaction in preferences)
                 {
                     sumOfInteractions += interaction.InteractionCount;
                     if (rndmNumber < sumOfInteractions)
                     {
-                        videoTagResults.Add(interaction.Tag);
+                        videoTagResults.Add(interaction.Tag.Name);
                         break;
                     }
                 }
             }
             return videoTagResults;
         }
+
+        
     }
-
-    //public class UserPreferences
-    //{
-    //    public Dictionary<TagDao, double> TagScores { get; set; }
-    //}
-
-    //public class Recommendation
-    //{
-    //    public TagDao RecommendedTag { get; set; }
-    //    public double Score { get; set; }
-    //}
 }

@@ -7,6 +7,7 @@ using TikTakServer.Models;
 using TikTakServer.Handlers;
 using System.IO;
 using System;
+using TikTakServer.Managers;
 
 namespace TikTakServer.ApplicationServices
 {
@@ -15,14 +16,16 @@ namespace TikTakServer.ApplicationServices
         private readonly BlobServiceClient blobServiceClient;
         private readonly IBlobStorageFacade blobStorageFacade;
         private readonly IVideoRepository videoRepository;
+        private readonly IRecommendationFacade recommendationFacade;
         private const string containerName = "tiktaks";
 
-        public BlobStorageService(BlobServiceClient blobServiceClient, IBlobStorageFacade blobStorageFacade, IVideoRepository videoRepository)
+        public BlobStorageService(BlobServiceClient blobServiceClient, IBlobStorageFacade blobStorageFacade, IVideoRepository videoRepository, IRecommendationFacade recommendationManager)
         {
 
             this.blobServiceClient = blobServiceClient;
             this.blobStorageFacade = blobStorageFacade;
             this.videoRepository = videoRepository;
+            this.recommendationFacade = recommendationManager;
         }
 
         public Task DownloadBlob(string blobName)
@@ -40,7 +43,7 @@ namespace TikTakServer.ApplicationServices
 
         public async Task<List<string>> GetFyp(int userid)
         {
-            var storageIds = await videoRepository.GetFyp(userid);
+            var storageIds = await recommendationFacade.GetFyp(userid);
             return storageIds;
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using TikTakServer.Database;
 using TikTakServer.Managers;
 using TikTakServer.Models;
@@ -9,7 +10,6 @@ namespace TikTakServer.Repositories
     public class VideoRepository : IVideoRepository
     {
         private readonly TikTakContext _context;
-        private readonly IRecommendationManager _recommendationManager;
 
         public VideoRepository(TikTakContext context)
         {
@@ -22,17 +22,15 @@ namespace TikTakServer.Repositories
             return video.FirstOrDefault();
         }
 
-        public async Task<List<string>> GetFyp(int userId)
+        public async Task<List<string>> GetFyp(List<string> videoIds)
         {
-            var videoIds = _context.Videos.Select(e => e.BlobStorageId).ToList();
-            var userPreferencedTags = _recommendationManager.GetRandomTagsBasedOnUserPreference(userId);
-            var rndmVideoIds = new List<string>();
-            foreach (var tag in userPreferencedTags)
+            var fypIds = new List<string>();
+            foreach (var id in videoIds)
             {
-                rndmVideoIds.Add(_context.Videos.Where(x => x.Tags == userPreferencedTags).Select(x => x.BlobStorageId).ToString());
+                fypIds.Add(_context.Videos.Where(x => x.BlobStorageId == id).Select(x => x.BlobStorageId).FirstOrDefault());
             }
-            
-            return videoIds;
+
+            return fypIds;
         }
 
         public Task CreateVideo(VideoDao video)
@@ -69,6 +67,20 @@ namespace TikTakServer.Repositories
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetTagCount(string name)
+        {
+            return _context.Tags.Where(e => e.Name == name).Count();
+        }
+
+        public async Task<string> GetRandomVideoBlobId(string name)
+        {
+            var tagCount = await GetTagCount(name);
+            Random rnd = new Random();
+            var rd = rnd.Next(0, tagCount);
+            var blobId = _context.Videos.Where(x => x.Tags.Any(e => e.Name == name)).Select(y => y.BlobStorageId).ElementAt(rd);
+            return blobId;
         }
 
         private async Task IncrementTagInteraction(List<TagDao> interactions)
