@@ -49,7 +49,6 @@ export class Tab2Page implements AfterViewInit {
     await this.loadInitialVideos();
     this.cdr.detectChanges(); // Manually trigger change detection
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
-    console.log(this.videoElements);
 }
 
 ngAfterViewInit() {
@@ -69,13 +68,10 @@ ngAfterViewInit() {
     }
   }
 
-
   setupHlsPlayer(video: string) {
-    console.log('we in here ' +video)
     const videoElement = document.getElementById(video) as HTMLVideoElement;
     let som = document.getElementsByClassName('videoName') as HTMLCollection;
     this.videoElements = som;
-    console.log(videoElement)
     this.initHlsPlayer(videoElement, video);
     
   }
@@ -96,9 +92,7 @@ ngAfterViewInit() {
         });
     });
 }
-
   
-
   onSlideChange(swiperEvent: any) {
     console.log(swiperEvent)
     let count = swiperEvent.detail[0].activeIndex;
