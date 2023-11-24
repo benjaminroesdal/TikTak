@@ -21,10 +21,10 @@ export class BlobStorageService {
   }
 
   getBlobManifest(id: string) {
-    return this.http.get(`${this.baseUrl}/GetBlobManifest?id=${id}`, { responseType: 'blob' });
+    return this.http.get(`${this.baseUrl}/GetBlobManifest?Id=${id}`);
   }
 
-  getFyp() {
-    return this.http.get(`${this.baseUrl}/GetFyp`);
+  getFyp(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/GetFyp`);
   }
 }

@@ -41,7 +41,6 @@ namespace TikTakServer.Controllers
         }
 
         [HttpGet("GetFyp")]
-        [Authorize]
         public async Task<IActionResult> GetFyp()
         {
             var storageIds = await _blobStorageService.GetFyp();

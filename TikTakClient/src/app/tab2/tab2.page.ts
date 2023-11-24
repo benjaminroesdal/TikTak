@@ -4,9 +4,10 @@ import { Swiper } from 'swiper/types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import {AuthService} from 'src/app/services/auth.service';
+
 
 @Component({
   selector: 'app-tab2',
@@ -25,8 +26,9 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
-    private authService: AuthService) {
+  private baseUrl = 'https://localhost:7001/BlobStorage';
+  
+  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService, private authService:AuthService) {
     this.route.queryParams.subscribe(params => {
       let data = this.router.getCurrentNavigation()!.extras.state;
       if (data!['user']) {
@@ -42,17 +44,19 @@ export class Tab2Page implements AfterViewInit {
     await this.authService.Logout();
   }
 
-  ngOnInit(): void {
-    this.loadInitialVideos();
+  async ngOnInit() {
+    await this.loadInitialVideos();
   }
 
   ngAfterViewInit() {
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
+    console.log(" YOOY" + this.videoSources)
+    console.log(this.videoElements)
   
     // Adding a slight delay to ensure HLS setup is complete
     setTimeout(() => {
       this.playFirstVideo();
-    }, 500); // Adjust the delay as necessary
+    }, 700); // Adjust the delay as necessary
   }
   
 
@@ -67,38 +71,37 @@ export class Tab2Page implements AfterViewInit {
 
 
   setupHlsPlayer(video: string): void {
+    console.log('we in here ')
     const videoElement = document.getElementById(video) as HTMLVideoElement;
     let som = document.getElementsByClassName('videoName') as HTMLCollection;
     this.videoElements = som;
+    console.log(videoElement)
     this.initHlsPlayer(videoElement, video);
   }
 
-  private loadInitialVideos() {
+  private async loadInitialVideos() {
     console.log('Fetching initial videos');
-  
+
     this.blobStorageService.getFyp().pipe(
-      mergeMap((ids: any) => {  // Use 'any' or a more specific type if known
-        
-        // Assert that ids is string[]
-        const stringIds = ids as string[];
-        // Map each ID to an Observable of the blob manifest URL
-        const blobUrlObservables = stringIds.map(id => this.blobStorageService.getBlobManifest(id));
-        // Use forkJoin to wait for all Observables to complete
-        return forkJoin(blobUrlObservables);
-      })
-    ).subscribe(blobUrls => {
-      // All blob URLs are now available here
-      // Process blobUrls as needed
-      this.videoSources = this.videoSources.concat(blobUrls.map(blobUrl => URL.createObjectURL(blobUrl)));
-      console.log(this.videoSources)
+        mergeMap((ids: string[]) => {
+            // Map each ID to a URL string
+            return ids.map(id => `${this.baseUrl}/GetBlobManifest?Id=${id}`);
+        })
+    ).subscribe((urls: any) => {
+        // Add the array of URLs to videoSources
+        console.log(urls)
+        this.videoSources.push(urls)
     },
     error => {
-      console.error('Error occurred:', error);
+        console.error('Error occurred:', error);
     });
-  }
+    console.log(this.videoSources);
+}
+
   
 
   onSlideChange(swiperEvent: any) {
+    console.log(swiperEvent)
     let count = swiperEvent.detail[0].activeIndex;
     let videoEl = this.videoElements[count] as HTMLVideoElement;
     let videoLast = this.videoElements[count - 1] as HTMLVideoElement;
