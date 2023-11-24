@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TikTakServer.Database;
 
@@ -11,9 +12,11 @@ using TikTakServer.Database;
 namespace TikTakServer.Migrations
 {
     [DbContext(typeof(TikTakContext))]
-    partial class TikTakContextModelSnapshot : ModelSnapshot
+    [Migration("20231123134156_UserAuthImplementation")]
+    partial class UserAuthImplementation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,7 +158,7 @@ namespace TikTakServer.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Tokens");
+                    b.ToTable("UserTokenDao");
                 });
 
             modelBuilder.Entity("TikTakServer.Models.VideoDao", b =>

@@ -25,7 +25,7 @@ namespace TikTakServer.Controllers
             if (tagInteraction.UserId == 0 || tagInteraction.VideoId == 0)
                 return BadRequest("VideoId or UserId not specified");
 
-            await _recommendationService.CountUserTagInteraction(tagInteraction);
+            //await _recommendationService.CountUserTagInteraction(tagInteraction);
 
             return Ok();
         }
@@ -40,7 +40,7 @@ namespace TikTakServer.Controllers
             if (like.LikeDate == DateTime.MinValue)
                 return BadRequest("Couldnt register like. Date time was default");
 
-            await _recommendationService.RegisterVideoLike(like);
+            //await _recommendationService.RegisterVideoLike(like);
 
             return Ok();
         }

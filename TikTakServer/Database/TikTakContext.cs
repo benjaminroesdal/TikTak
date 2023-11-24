@@ -10,6 +10,7 @@ namespace TikTakServer.Database
         public DbSet<UserTagInteractionDao> UserTagsInteractions { get; set; }
         public DbSet<TagDao> Tags { get; set; }
         public DbSet<VideoDao> Videos { get; set; }
+        public DbSet<UserTokenDao> Tokens { get; set; }
 
         public TikTakContext(DbContextOptions<TikTakContext> options) : base(options)
         {
@@ -29,6 +30,11 @@ namespace TikTakServer.Database
                 .WithOne(x => x.Video)
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<UserDao>()
+                .HasOne(u => u.Token)
+                .WithOne(t => t.User)
+                .HasForeignKey<UserTokenDao>(t => t.UserId);
         }
     }
 }

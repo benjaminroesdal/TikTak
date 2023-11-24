@@ -1,4 +1,5 @@
-﻿using TikTakServer.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using TikTakServer.Database;
 using TikTakServer.Models;
 
 namespace TikTakServer.Repositories
