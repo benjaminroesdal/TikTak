@@ -23,8 +23,20 @@ namespace TikTakServer.Repositories
 
         public async Task<UserDao> GetUser(string email)
         {
-            var userDao = _context.Users.First(e => e.Email == email);
-            return userDao;
+            return _context.Users.First(e => e.Email == email);
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            var see = await _context.Users.AnyAsync(e => e.Email == email);
+            return see;
+        }
+
+        public async Task CreateTokensOnUser(string email, string refreshToken)
+        {
+            var user = _context.Users.Include(x => x.Token).First(e => e.Email == email);
+            user.Token.RefreshToken = refreshToken;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<UserDao> ValidateRefreshToken(string refreshToken)

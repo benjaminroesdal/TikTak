@@ -22,20 +22,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
-    this.route.queryParams.subscribe(params => {
-      let data = this.router.getCurrentNavigation()!.extras.state;
-      if (data!['user']) {
-          this.user = data!['user'];
-      }
-    });
-  }
-
-  async signOut() {
-    GoogleAuth.signOut().then(() => {
-      this.router.navigate(['tabs/tab1']);
-    });
-    await this.authService.Logout();
+  constructor(private route: ActivatedRoute, private router: Router) {
   }
 
   ngOnInit(): void {

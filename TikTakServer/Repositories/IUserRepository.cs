@@ -9,5 +9,7 @@ namespace TikTakServer.Repositories
         Task<UserDao> ValidateRefreshToken(string refreshToken);
         Task InvalidateRefreshToken(string refreshToken);
         Task<UserDao> GetUser(string email);
+        Task CreateTokensOnUser(string email, string refreshToken);
+        Task<bool> UserExists(string email);
     }
 }

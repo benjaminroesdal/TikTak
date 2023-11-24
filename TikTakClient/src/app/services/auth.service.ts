@@ -11,7 +11,7 @@ export class AuthService {
   constructor(private http: HttpClient, private storageService: StorageService) { }
 
   public async CreateAccount(user: User) {
-    await this.http.post<UserModel>('https://localhost:7001/CreateUser', user)
+    await this.http.post<UserModel>('https://localhost:7001/Login', user)
     .subscribe(e => {
       console.log(e.accessToken);
       this.storageService.set('AccessToken', e.accessToken);

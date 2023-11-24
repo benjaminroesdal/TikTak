@@ -22,10 +22,10 @@ namespace TikTakServer.Controllers
             return Ok();
         }
 
-        [HttpPost("CreateUser")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest userRequest)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] CreateUserRequest userRequest)
         {
-            var result = await _authService.CreateUser(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl);
+            var result = await _authService.Login(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl);
             return Ok(result);
         }
 

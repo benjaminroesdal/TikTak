@@ -1,0 +1,91 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px; // Max width for mobile aspect ratio
+    margin: 10% auto; // Center the box with automatic margin
+    padding: 20px;
+    border: 1px solid #ddd; // Optional: add a border to visualize the box
+    border-radius: 10px; // Optional: round the corners of the box
+    background: #fff; // Optional: set a background color for the box
+  
+    .login-option {
+      width: 100%; // Full width of the container
+      margin: 8px 0;
+      font-weight: normal;
+      --border-radius: 4px;
+      --background: #f0f0f0;
+      --color: #000;
+    }
+  }
+  
+  .terms-text {
+    position: fixed; /* Fixed positioning relative to the viewport */
+    bottom: 0; /* Align to the bottom of the viewport */
+    left: 0; /* Align to the left of the viewport */
+    width: 100%; /* Ensure it spans the full width */
+    background-color: #fff; /* Optional: set a background color */
+    padding: 10px; /* Add some padding */
+    text-align: center;
+    font-size: small;
+    color: var(--ion-color-medium);
+  }
+  
+  .signup-button {
+    margin-top: 24px;
+    color: var(--ion-color-primary);
+    --border-radius: 0;
+  }
+  
+  // This ensures the content is vertically centered on larger screens
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .google-login {
+    position: relative;
+    text-align: center;
+    --background: #ffffff; // Use Google's color scheme
+    --border-radius: 4px;
+    --color: #000;
+    --box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .google-logo {
+    position: absolute;
+    left: 10px; // Adjust for margin from the edge
+    height: 20px; // Adjust to your preference
+    width: 20px; // Adjust to your preference
+  }
+  
+  .button-text {
+    display: block;
+    width: 100%;
+  }
+
+  .header-container {
+    text-align: center;
+    margin-bottom: 20px; /* Adjust this value as needed to create space between the title and the login options */
+  }
+  
+  .title {
+    font-size: 24px; /* Adjust this value as needed for the size of the title */
+    font-weight: bold;
+    margin: 0; /* This removes the default margin from the h1 element */
+  }
+
+  .privacy-policy-link {
+    color: var(--ion-color-primary); /* Use the primary color for the link */
+    text-decoration: none; /* Optional: removes the underline from links */
+  }
+  
+  .privacy-policy-link:hover {
+    text-decoration: underline; /* Adds underline on hover for better user interaction */
+  }

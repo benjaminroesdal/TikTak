@@ -32,15 +32,10 @@ namespace TikTakServer.ApplicationServices
             return new User(user, accessToken);
         }
 
-        public async Task<User> CreateUser(string googleAccessToken, string name, string imgUrl)
+        private async Task<User> CreateUser(GoogleInfoModel infoModel,string name, string imgUrl)
         {
-            var googleUser = await googleAuth.VerifyTokenAsync(googleAccessToken);
-            if (googleUser == null)
-            {
-                throw new Exception("Could not match google user");
-            }
             var refreshToken = jwtHandler.CreateRefreshToken();
-            var newUser = CreateNewUser(googleUser, name, imgUrl, refreshToken);
+            var newUser = CreateNewUser(infoModel, name, imgUrl, refreshToken);
             var user = await userRepository.CreateUser(newUser);
             var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
             return new User(user, accessToken);
@@ -49,12 +44,16 @@ namespace TikTakServer.ApplicationServices
         public async Task<User> Login(string googleAccessToken, string name, string imgUrl)
         {
             var googleUser = await googleAuth.VerifyTokenAsync(googleAccessToken);
-            var user = await userRepository.GetUser(googleUser.Email);
-            if (user != null)
+            var userExists = await userRepository.UserExists(googleUser.Email);
+            if (!userExists)
             {
-                var refreshToken = jwtHandler.CreateRefreshToken();
+                return await CreateUser(googleUser, name, imgUrl);
             }
-            return new User(user, "");
+            var user = await userRepository.GetUser(googleUser.Email);
+            var refreshToken = jwtHandler.CreateRefreshToken();
+            var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
+            await userRepository.CreateTokensOnUser(user.Email, refreshToken);
+            return new User(user, accessToken);
         }
 
 
