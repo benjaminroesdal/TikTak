@@ -15,7 +15,6 @@ namespace TikTakServer.Repositories
         }
 
         public async Task<UserDao> CreateUser(UserDao user)
-        public List<UserTagInteractionDao> GetUserTagInteractions(int userId)
         {
             var userDao = await _context.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -46,6 +45,10 @@ namespace TikTakServer.Repositories
             var user = await _context.Users.Where(e => e.Token.RefreshToken == refreshToken).FirstOrDefaultAsync();
             _context.Tokens.Remove(user.Token);
             await _context.SaveChangesAsync();
+        }
+
+        public List<UserTagInteractionDao> GetUserTagInteractions(int userId)
+        {
             var userInteractions = _context.UserTagsInteractions.Where(i => i.UserId == userId).OrderBy(x => x.InteractionCount).ToList();
             return userInteractions;
         }
