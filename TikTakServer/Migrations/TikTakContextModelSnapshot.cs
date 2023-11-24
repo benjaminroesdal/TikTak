@@ -22,7 +22,7 @@ namespace TikTakServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TagVideo", b =>
+            modelBuilder.Entity("TagDaoVideoDao", b =>
                 {
                     b.Property<int>("TagsId")
                         .HasColumnType("int");
@@ -34,10 +34,10 @@ namespace TikTakServer.Migrations
 
                     b.HasIndex("VideosId");
 
-                    b.ToTable("TagVideo");
+                    b.ToTable("TagDaoVideoDao");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Like", b =>
+            modelBuilder.Entity("TikTakServer.Models.LikeDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace TikTakServer.Migrations
                     b.ToTable("Likes");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Tag", b =>
+            modelBuilder.Entity("TikTakServer.Models.TagDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace TikTakServer.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.User", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,11 +89,15 @@ namespace TikTakServer.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -102,7 +106,7 @@ namespace TikTakServer.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.UserTagInteraction", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserTagInteractionDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,7 +132,33 @@ namespace TikTakServer.Migrations
                     b.ToTable("UserTagsInteractions");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Video", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserTokenDao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Tokens");
+                });
+
+            modelBuilder.Entity("TikTakServer.Models.VideoDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -153,30 +183,30 @@ namespace TikTakServer.Migrations
                     b.ToTable("Videos");
                 });
 
-            modelBuilder.Entity("TagVideo", b =>
+            modelBuilder.Entity("TagDaoVideoDao", b =>
                 {
-                    b.HasOne("TikTakServer.Models.Tag", null)
+                    b.HasOne("TikTakServer.Models.TagDao", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TikTakServer.Models.Video", null)
+                    b.HasOne("TikTakServer.Models.VideoDao", null)
                         .WithMany()
                         .HasForeignKey("VideosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Like", b =>
+            modelBuilder.Entity("TikTakServer.Models.LikeDao", b =>
                 {
-                    b.HasOne("TikTakServer.Models.User", "User")
+                    b.HasOne("TikTakServer.Models.UserDao", "User")
                         .WithMany("Likes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TikTakServer.Models.Video", "Video")
+                    b.HasOne("TikTakServer.Models.VideoDao", "Video")
                         .WithMany("Likes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -187,15 +217,15 @@ namespace TikTakServer.Migrations
                     b.Navigation("Video");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.UserTagInteraction", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserTagInteractionDao", b =>
                 {
-                    b.HasOne("TikTakServer.Models.Tag", "Tag")
+                    b.HasOne("TikTakServer.Models.TagDao", "Tag")
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TikTakServer.Models.User", "User")
+                    b.HasOne("TikTakServer.Models.UserDao", "User")
                         .WithMany("UserTagInteractions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -206,9 +236,20 @@ namespace TikTakServer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Video", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserTokenDao", b =>
                 {
-                    b.HasOne("TikTakServer.Models.User", "User")
+                    b.HasOne("TikTakServer.Models.UserDao", "User")
+                        .WithOne("Token")
+                        .HasForeignKey("TikTakServer.Models.UserTokenDao", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TikTakServer.Models.VideoDao", b =>
+                {
+                    b.HasOne("TikTakServer.Models.UserDao", "User")
                         .WithMany("Videos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -217,16 +258,19 @@ namespace TikTakServer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.User", b =>
+            modelBuilder.Entity("TikTakServer.Models.UserDao", b =>
                 {
                     b.Navigation("Likes");
+
+                    b.Navigation("Token")
+                        .IsRequired();
 
                     b.Navigation("UserTagInteractions");
 
                     b.Navigation("Videos");
                 });
 
-            modelBuilder.Entity("TikTakServer.Models.Video", b =>
+            modelBuilder.Entity("TikTakServer.Models.VideoDao", b =>
                 {
                     b.Navigation("Likes");
                 });
