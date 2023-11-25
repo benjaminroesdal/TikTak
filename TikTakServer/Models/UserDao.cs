@@ -12,7 +12,7 @@ namespace TikTakServer.Models
         public virtual ICollection<VideoDao> Videos {get; set;}
         public virtual ICollection<UserTagInteractionDao> UserTagInteractions {get; set;}
         public virtual ICollection<LikeDao> Likes { get; set; }
-        public virtual UserTokenDao Token { get; set; }
+        public virtual ICollection<UserTokenDao> Tokens { get; set; }
 
         public UserDao()
         {

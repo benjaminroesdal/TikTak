@@ -7,6 +7,7 @@ namespace TikTakServer.ApplicationServices
     {
         private readonly HttpClient _httpClient;
         private readonly string _clientId;
+        private readonly string _androidClientId;
         private readonly string _googleTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo";
 
 
@@ -14,6 +15,7 @@ namespace TikTakServer.ApplicationServices
         {
             _httpClient = httpClient;
             _clientId = configuration["ClientId"];
+            _androidClientId = configuration["AndroidClientId"];
         }
 
         public async Task<GoogleInfoModel> VerifyTokenAsync(string accessToken)
@@ -24,7 +26,7 @@ namespace TikTakServer.ApplicationServices
             var jsonContent = await response.Content.ReadAsStringAsync();
             var googleInfo = JsonConvert.DeserializeObject<GoogleInfoModel>(jsonContent);
 
-            if (googleInfo.Audience != _clientId)
+            if (googleInfo.Audience != _clientId && googleInfo.Audience != _androidClientId)
             {
                 throw new UnauthorizedAccessException("Token was not issued for this application");
             }

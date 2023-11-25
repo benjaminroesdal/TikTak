@@ -35,7 +35,7 @@ namespace TikTakServer.ApplicationServices
         private async Task<User> CreateUser(GoogleInfoModel infoModel,string name, string imgUrl)
         {
             var refreshToken = jwtHandler.CreateRefreshToken();
-            var newUser = CreateNewUser(infoModel, name, imgUrl, refreshToken);
+            var newUser = CreateUserDao(infoModel, name, imgUrl, refreshToken);
             var user = await userRepository.CreateUser(newUser);
             var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
             return new User(user, accessToken, refreshToken);
@@ -57,7 +57,7 @@ namespace TikTakServer.ApplicationServices
         }
 
 
-        private UserDao CreateNewUser(GoogleInfoModel infoModel, string name, string imgUrl, string refreshToken)
+        private UserDao CreateUserDao(GoogleInfoModel infoModel, string name, string imgUrl, string refreshToken)
         {
             return new UserDao()
             {
@@ -65,10 +65,13 @@ namespace TikTakServer.ApplicationServices
                 Email = infoModel.Email,
                 ImageUrl = imgUrl,
                 DateOfBirth = DateTime.Now.AddYears(-14),
-                Token = new UserTokenDao()
+                Tokens = new List<UserTokenDao>()
                 {
-                    RefreshToken = refreshToken,
-                    RefreshTokenExpiry = DateTime.Now.AddDays(200)
+                    new UserTokenDao()
+                    {
+                        RefreshToken = refreshToken,
+                        RefreshTokenExpiry = DateTime.Now.AddDays(200)
+                    }
                 }
             };
         }

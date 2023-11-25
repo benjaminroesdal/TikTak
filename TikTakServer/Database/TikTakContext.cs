@@ -32,9 +32,9 @@ namespace TikTakServer.Database
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserDao>()
-                .HasOne(u => u.Token)
+                .HasMany(u => u.Tokens)
                 .WithOne(t => t.User)
-                .HasForeignKey<UserTokenDao>(t => t.UserId);
+                .HasForeignKey(t => t.UserId);
         }
     }
 }

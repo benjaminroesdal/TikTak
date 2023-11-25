@@ -9,9 +9,9 @@
 <ion-content>
   <div class="profile-container">
     <ion-avatar class="profile-image">
-      <img src="path_to_profile_image.jpg"/> <!-- Replace with the path to the user's profile image -->
+      <img src="{{imgUrl}}"/> <!-- Replace with the path to the user's profile image -->
     </ion-avatar>
-    <ion-label class="user-name">User Name</ion-label> <!-- Replace with the user's actual name -->
+    <ion-label class="user-name">{{name}}</ion-label> <!-- Replace with the user's actual name -->
     <ion-button color="danger" expand="block" class="logout-button" (click)="logout()">
       Logout
     </ion-button>
