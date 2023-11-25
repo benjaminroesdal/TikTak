@@ -24,12 +24,12 @@ namespace TikTakServer.ApplicationServices
         public async Task<User> RefreshAccessToken(string refreshToken)
         {
             var user = await userRepository.ValidateRefreshToken(refreshToken);
-            if (user == null || _requestAndClaims.UserId != user.Id.ToString())
+            if (user == null && _requestAndClaims.UserId != user.Id.ToString())
             {
                 throw new Exception("Token could not be matched with a user, try again.");
             }
             var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
-            return new User(user, accessToken);
+            return new User(user, accessToken, refreshToken);
         }
 
         private async Task<User> CreateUser(GoogleInfoModel infoModel,string name, string imgUrl)
@@ -38,7 +38,7 @@ namespace TikTakServer.ApplicationServices
             var newUser = CreateNewUser(infoModel, name, imgUrl, refreshToken);
             var user = await userRepository.CreateUser(newUser);
             var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
-            return new User(user, accessToken);
+            return new User(user, accessToken, refreshToken);
         }
 
         public async Task<User> Login(string googleAccessToken, string name, string imgUrl)
@@ -53,7 +53,7 @@ namespace TikTakServer.ApplicationServices
             var refreshToken = jwtHandler.CreateRefreshToken();
             var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl);
             await userRepository.CreateTokensOnUser(user.Email, refreshToken);
-            return new User(user, accessToken);
+            return new User(user, accessToken, refreshToken);
         }
 
 

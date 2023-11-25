@@ -30,7 +30,7 @@ namespace TikTakServer.Controllers
         }
 
         [HttpPost("RefreshAccessToken")]
-        public async Task<IActionResult> RefreshAccessToken(string refreshToken)
+        public async Task<IActionResult> RefreshAccessToken([FromBody]string refreshToken)
         {
             var result = await _authService.RefreshAccessToken(refreshToken);
             return Ok(result);
