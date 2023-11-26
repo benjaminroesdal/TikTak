@@ -25,13 +25,29 @@ namespace TikTakServer.Repositories
 
         public async Task<UserDao> GetUser(string email)
         {
-            var userDao = _context.Users.First(e => e.Email == email);
-            return userDao;
+            return _context.Users.First(e => e.Email == email);
+        }
+
+        public async Task<bool> UserExists(string email)
+        {
+            var see = await _context.Users.AnyAsync(e => e.Email == email);
+            return see;
+        }
+
+        public async Task CreateTokensOnUser(string email, string refreshToken)
+        {
+            var user = _context.Users.Include(x => x.Tokens).First(e => e.Email == email);
+            user.Tokens.Add(new UserTokenDao() { RefreshToken = refreshToken, RefreshTokenExpiry = DateTime.Now.AddDays(200), UserId = user.Id});
+            await _context.SaveChangesAsync();
         }
 
         public async Task<UserDao> ValidateRefreshToken(string refreshToken)
         {
             var token = _context.Tokens.Where(e => e.RefreshToken == refreshToken).FirstOrDefault();
+            if (token == null)
+            {
+                throw new UnauthorizedAccessException("The provided refresh token is not valid");
+            }
             if (token.RefreshTokenExpiry < DateTime.Now)
             {
                 token.RefreshTokenExpiry = DateTime.MinValue;
@@ -39,13 +55,13 @@ namespace TikTakServer.Repositories
                 await _context.SaveChangesAsync();
                 throw new UnauthorizedAccessException("The provided refresh token has expired, please log in again.");
             }
-            return await _context.Users.Where(e => e.Token.RefreshToken == refreshToken).FirstOrDefaultAsync();
+            return await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
         }
 
         public async Task InvalidateRefreshToken(string refreshToken)
         {
-            var user = await _context.Users.Where(e => e.Token.RefreshToken == refreshToken).FirstOrDefaultAsync();
-            _context.Tokens.Remove(user.Token);
+            var user = await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
+            _context.Tokens.Remove(user.Tokens.First(x => x.RefreshToken == refreshToken));
             await _context.SaveChangesAsync();
         }
 

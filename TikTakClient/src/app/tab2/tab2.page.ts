@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import Hls from 'hls.js';
 import { Swiper } from 'swiper/types';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,7 +28,8 @@ export class Tab2Page implements AfterViewInit {
 
   private baseUrl = 'https://localhost:7001/BlobStorage';
   
-  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService, private authService:AuthService) {
+  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
+     private authService:AuthService,private cdr: ChangeDetectorRef) {
     this.route.queryParams.subscribe(params => {
       let data = this.router.getCurrentNavigation()!.extras.state;
       if (data!['user']) {
@@ -46,18 +47,16 @@ export class Tab2Page implements AfterViewInit {
 
   async ngOnInit() {
     await this.loadInitialVideos();
-  }
-
-  ngAfterViewInit() {
+    this.cdr.detectChanges(); // Manually trigger change detection
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
-    console.log(" YOOY" + this.videoSources)
-    console.log(this.videoElements)
-  
-    // Adding a slight delay to ensure HLS setup is complete
-    setTimeout(() => {
-      this.playFirstVideo();
-    }, 700); // Adjust the delay as necessary
-  }
+}
+
+ngAfterViewInit() {
+   // Adding a slight delay to ensure HLS setup is complete
+   setTimeout(() => {
+    this.playFirstVideo();
+  }, 700); // Adjust the delay as necessary
+}
   
 
   private playFirstVideo() {
@@ -69,37 +68,31 @@ export class Tab2Page implements AfterViewInit {
     }
   }
 
-
-  setupHlsPlayer(video: string): void {
-    console.log('we in here ')
+  setupHlsPlayer(video: string) {
     const videoElement = document.getElementById(video) as HTMLVideoElement;
     let som = document.getElementsByClassName('videoName') as HTMLCollection;
     this.videoElements = som;
-    console.log(videoElement)
     this.initHlsPlayer(videoElement, video);
+    
   }
 
-  private async loadInitialVideos() {
+  private async loadInitialVideos(): Promise<void> {
     console.log('Fetching initial videos');
-
-    this.blobStorageService.getFyp().pipe(
-        mergeMap((ids: string[]) => {
-            // Map each ID to a URL string
-            return ids.map(id => `${this.baseUrl}/GetBlobManifest?Id=${id}`);
-        })
-    ).subscribe((urls: any) => {
-        // Add the array of URLs to videoSources
-        console.log(urls)
-        this.videoSources.push(urls)
-    },
-    error => {
-        console.error('Error occurred:', error);
+    return new Promise((resolve, reject) => {
+        this.blobStorageService.getFyp().pipe(
+            mergeMap((ids: string[]) => {
+                return ids.map(id => `${this.baseUrl}/GetBlobManifest?Id=${id}`);
+            })
+        ).subscribe((urls: string) => {
+            this.videoSources.push(urls)
+            resolve();
+        }, error => {
+            console.error('Error occurred:', error);
+            reject(error);
+        });
     });
-    console.log(this.videoSources);
 }
-
   
-
   onSlideChange(swiperEvent: any) {
     console.log(swiperEvent)
     let count = swiperEvent.detail[0].activeIndex;

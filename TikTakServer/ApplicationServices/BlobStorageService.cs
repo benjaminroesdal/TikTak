@@ -71,7 +71,7 @@ namespace TikTakServer.ApplicationServices
                 await blobStorageFacade.UploadBlob(blobGuid + $"{i}.ts", containerName, hlsObj.Path + $"\\{blobGuid}{i}.ts");
             }
             await handler.ClearTempFiles(hlsObj.Guid, hlsObj.Path);
-            videoRepository.CreateVideo(new VideoDao()
+            await videoRepository.CreateVideo(new VideoDao()
             {
                 BlobStorageId = blobGuid,
                 UploadDate = DateTime.Now,

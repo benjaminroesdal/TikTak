@@ -1,17 +1,20 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-button (click)="checkLoggedIn()">Login with Google</ion-button> 
+<ion-content class="ion-padding">
+  <div class="header-container">
+    <h1 class="title">Log in to TikTak</h1>
+  </div>
+  <div class="login-container">
+    <ion-button (click)="checkLoggedIn()" expand="block" fill="clear" class="login-option google-login" color="google">
+      <img src="../../assets/google-logo.png" class="google-logo" />
+      <span class="button-text">Continue with Google</span>
+    </ion-button>
+  </div>
+  
+  <p class="terms-text">
+    By continuing, you agree to TikTak's 
+    <a href="/privacy-policy" class="privacy-policy-link">Terms of Service</a>
+    and confirm that you have read TikTak's <a href="/privacy-policy" class="privacy-policy-link">Privacy Policy</a>.
+  </p>
 </ion-content>

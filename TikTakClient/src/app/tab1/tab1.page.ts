@@ -28,7 +28,9 @@ export class Tab1Page {
     }
 
   async doLogin() {
+    console.log("THISSS");
     let user = await GoogleAuth.signIn();
+    console.log(user);
     const newUser: User = {
       GoogleAccessToken: user.authentication.accessToken,
       FulLName: user.name,

@@ -152,8 +152,7 @@ namespace TikTakServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tokens");
                 });
@@ -239,8 +238,8 @@ namespace TikTakServer.Migrations
             modelBuilder.Entity("TikTakServer.Models.UserTokenDao", b =>
                 {
                     b.HasOne("TikTakServer.Models.UserDao", "User")
-                        .WithOne("Token")
-                        .HasForeignKey("TikTakServer.Models.UserTokenDao", "UserId")
+                        .WithMany("Tokens")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -262,8 +261,7 @@ namespace TikTakServer.Migrations
                 {
                     b.Navigation("Likes");
 
-                    b.Navigation("Token")
-                        .IsRequired();
+                    b.Navigation("Tokens");
 
                     b.Navigation("UserTagInteractions");
 

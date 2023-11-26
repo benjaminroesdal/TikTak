@@ -15,14 +15,27 @@ export class IsAuthorizedGuard implements CanActivate {
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.storageService.init().then(f => {
-      return this.authService.isTokenExpired().then(x => {
-        if(x){
-          return false;
-        }
-        else{
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    return this.storageService.init().then(() => {
+      return this.authService.isTokenExpired().then(isExpired => {
+        if (!isExpired) {
           return true;
+        } else {
+          return this.storageService.get('RefreshToken').then(refreshToken => {
+            if (!refreshToken) {
+              this.router.navigate(['tabs/tab1']); // Redirect to login or a relevant page
+              return false;
+            } else {
+              // Here, we wait for the refresh token process to complete
+              return this.authService.RefreshAccessToken().then(() => {
+                return true;
+              }).catch(() => {
+                this.router.navigate(['tabs/tab1']); // Redirect on failure
+                return false;
+              });
+            }
+          });
         }
       });
     });
