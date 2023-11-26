@@ -27,6 +27,8 @@ export class Tab2Page implements AfterViewInit {
   };
 
   private baseUrl = 'https://reliably-generous-grub.ngrok-free.app/BlobStorage';
+  // Add a state variable to track if new videos are ready to be played
+  newVideosReadyToPlay = false;
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {
@@ -60,36 +62,36 @@ export class Tab2Page implements AfterViewInit {
             firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
         }
     }
-}
+  }
 
   setupHlsPlayer(videoSrc: string, index: number) {
     const videoElementId = 'video_' + index;
     const videoElement = document.getElementById(videoElementId) as HTMLVideoElement;
     this.initHlsPlayer(videoElement, videoSrc);
   }
-  
 
-  private async loadVideos(): Promise<void> {
+  async loadVideos(): Promise<void> {
     console.log('Fetching initial videos');
+    this.newVideosReadyToPlay = false; // Reset the flag before loading new videos
     return new Promise((resolve, reject) => {
         this.blobStorageService.getFyp().pipe(
             mergeMap((ids: string[]) => {
                 return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
             })
-        ).subscribe((urls: string) => {
-            this.videoSources.push(urls);
+        ).subscribe((urls: any) => {
+            this.videoSources.push(urls)
             this.videoSources.forEach((video, index) => this.setupHlsPlayer(video, index));
             console.log(this.videoSources)
+            this.newVideosReadyToPlay = true; // Set the flag after new videos are set up
             resolve();
             this.cdr.detectChanges(); // Trigger change detection after updating content
-
         }, error => {
             console.error('Error occurred:', error);
             reject(error);
         });
     });
   }
-  
+
   onSlideChange(swiperEvent: any) {
     console.log(swiperEvent);
     const currentIndex = swiperEvent.detail[0].activeIndex;
@@ -100,11 +102,6 @@ export class Tab2Page implements AfterViewInit {
     const nextVideoElement = document.getElementById('video_' + nextIndex) as HTMLVideoElement;
     const isLastVideo = currentIndex === this.videoSources.length - 1;
 
-    // Play the current video if it's ready
-    if (currentVideoElement && currentVideoElement.readyState >= 4) {
-        currentVideoElement.play();
-    }
-
     // Pause the previous and next videos to handle both forward and backward navigation
     if (previousVideoElement && previousIndex !== currentIndex) {
         previousVideoElement.currentTime = 0;
@@ -114,15 +111,25 @@ export class Tab2Page implements AfterViewInit {
         nextVideoElement.currentTime = 0;
         nextVideoElement.pause();
     }
+
     // Load more videos if the last video is reached
     if (isLastVideo) {
-    this.loadVideos().then(() => {
-        // Update Swiper and play the current video after loading new videos
-        currentVideoElement.play();
-        console.log("Loaded more videos and updated Swiper.");
-    }).catch(error => console.error("Error loading more videos:", error));
-}
-}
+        this.loadVideos().then(() => {
+            console.log("Loaded more videos and updated Swiper.");
+            const swiperEl = this._swiperRef?.nativeElement;
+            swiperEl.swiper.update();
+            setTimeout(() => {
+            currentVideoElement.play();
+            }, 500);
+        }).catch(error => console.error("Error loading more videos:", error));
+    }
+
+    // Only play the video if new videos are ready
+    if (this.newVideosReadyToPlay && currentVideoElement && currentVideoElement.readyState >= 4) {
+        currentVideoElement.play().catch(err => console.error('Error playing video:', err));
+    }
+  }
+
   private initHlsPlayer(video: HTMLVideoElement, source: string): void {
     if (Hls.isSupported()) {
       const hls = new Hls();
