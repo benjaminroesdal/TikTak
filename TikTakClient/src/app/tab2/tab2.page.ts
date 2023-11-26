@@ -26,7 +26,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://localhost:7001/BlobStorage';
+  private baseUrl = 'https://reliably-generous-grub.ngrok-free.app/BlobStorage';
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {
@@ -49,14 +49,14 @@ export class Tab2Page implements AfterViewInit {
     await this.loadInitialVideos();
     this.cdr.detectChanges(); // Manually trigger change detection
     this.videoSources.forEach(video => this.setupHlsPlayer(video));
-}
+  }
 
-ngAfterViewInit() {
-   // Adding a slight delay to ensure HLS setup is complete
-   setTimeout(() => {
-    this.playFirstVideo();
-  }, 700); // Adjust the delay as necessary
-}
+  ngAfterViewInit() {
+    // Adding a slight delay to ensure HLS setup is complete
+    setTimeout(() => {
+      this.playFirstVideo();
+    }, 700); // Adjust the delay as necessary
+  }
   
 
   private playFirstVideo() {
@@ -81,7 +81,7 @@ ngAfterViewInit() {
     return new Promise((resolve, reject) => {
         this.blobStorageService.getFyp().pipe(
             mergeMap((ids: string[]) => {
-                return ids.map(id => `${this.baseUrl}/GetBlobManifest?Id=${id}`);
+                return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
             })
         ).subscribe((urls: string) => {
             this.videoSources.push(urls)

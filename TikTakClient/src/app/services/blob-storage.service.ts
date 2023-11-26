@@ -1,14 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlobStorageService {
-  private baseUrl = 'https://localhost:7001/BlobStorage';
+  private baseUrl = 'https://reliably-generous-grub.ngrok-free.app/BlobStorage';
 
   constructor(private http: HttpClient) { }
+
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'ngrok-skip-browser-warning': '69420'
+    });
+  }
 
   uploadBlob(file: File) {
     const formData: FormData = new FormData();
@@ -21,7 +27,9 @@ export class BlobStorageService {
   }
 
   getBlobManifest(id: string) {
-    return this.http.get(`${this.baseUrl}/GetBlobManifest?Id=${id}`);
+    const headers = this.getHeaders();
+    console.log(headers)
+    return this.http.get(`${this.baseUrl}/GetBlobManifest?Id=${id}`, { headers });
   }
 
   getFyp(): Observable<string[]> {
