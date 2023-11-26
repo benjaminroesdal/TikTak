@@ -26,7 +26,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://b05d-87-52-111-106.ngrok-free.app/BlobStorage';
+  private baseUrl = 'https://localhost:7001/BlobStorage';
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {

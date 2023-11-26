@@ -19,7 +19,7 @@ export class AuthService {
   };
 
   public async CreateAccount(user: User) {
-    await this.http.post<UserModel>('https://b05d-87-52-111-106.ngrok-free.app/Login', user)
+    await this.http.post<UserModel>('https://localhost:7001/Login', user)
     .subscribe(e => {
       console.log("HALLOW");
       console.log(e.refreshToken);
@@ -42,7 +42,7 @@ export class AuthService {
       console.log(this.tokenRefreshInProgress.value);
       this.tokenRefreshInProgress.next(true);
       console.log(e);
-      return this.http.post<UserModel>('https://b05d-87-52-111-106.ngrok-free.app/RefreshAccessToken', JSON.stringify(e), this.httpOptions)
+      return this.http.post<UserModel>('https://localhost:7001/RefreshAccessToken', JSON.stringify(e), this.httpOptions)
         .subscribe(x => {
           console.log("KOMMER VI HERIND?");
           this.storageService.set('AccessToken', x.accessToken).finally(() => {
