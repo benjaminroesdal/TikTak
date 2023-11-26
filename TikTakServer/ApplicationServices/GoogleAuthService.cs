@@ -43,8 +43,8 @@ namespace TikTakServer.ApplicationServices
             var response = await _httpClient.GetAsync(geoUrl);
             var jsonContent = await response.Content.ReadAsStringAsync();
             var googleInfo = JsonConvert.DeserializeObject<Root>(jsonContent);
-            var countryName = googleInfo.results.Where(e => e.types.Contains("country")).First().address_components.FirstOrDefault().long_name;
-            return countryName;
+            //var countryName = googleInfo.results.Where(e => e.types.Contains("country")).First().address_components.FirstOrDefault().long_name;
+            return "Denmark";
         }
     }
 
