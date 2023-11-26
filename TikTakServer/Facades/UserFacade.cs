@@ -1,16 +1,14 @@
 ﻿using TikTakServer.Models.Business;
 using TikTakServer.Repositories;
 
-namespace TikTakServer.ApplicationServices
+namespace TikTakServer.Facades
 {
-    public class RecommendationService : IRecommendationService
+    public class UserFacade:IUserFacade
     {
         private readonly IVideoRepository _videoRepository;
-        private readonly IRecommendationRepository _recommendationRepository;
-        public RecommendationService(IVideoRepository videoRepository, IRecommendationRepository recommendationRepository)
+        public UserFacade(IVideoRepository videoRepository, IUserRepository userRepository)
         {
             _videoRepository = videoRepository;
-            _recommendationRepository = recommendationRepository;
         }
 
         public Task CountUserTagInteraction(UserTagInteraction interaction)

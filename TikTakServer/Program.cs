@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TikTakServer.Models;
 using TikTakServer.Middleware;
+using TikTakServer.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +28,13 @@ builder.Services.AddScoped<IBlobStorageRepository, BlobStorageRepository>();
 builder.Services.AddScoped<IBlobStorageFacade, BlobStorageFacade>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRecommendationFacade, RecommendationFacade>();
+builder.Services.AddScoped<IRecommendationManager, RecommendationManager>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<JwtHandler>();
 builder.Services.AddScoped<AuthenticationService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<UserRequestAndClaims>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

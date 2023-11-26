@@ -44,8 +44,8 @@ namespace TikTakServer.Controllers
         [Authorize]
         public async Task<IActionResult> GetFyp()
         {
-            var storageIds = await _blobStorageService.GetFyp();
-            return Ok(storageIds);
+            var userInfoAndFypIds = await _blobStorageService.GetFyp();
+            return Ok(userInfoAndFypIds);
         }
     }
 }
