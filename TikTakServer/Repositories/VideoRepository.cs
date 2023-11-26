@@ -79,7 +79,7 @@ namespace TikTakServer.Repositories
             var tagCount = await GetTagCount(name);
             Random rnd = new Random();
             var rd = rnd.Next(0, tagCount);
-            var blobId = _context.Videos.Where(x => x.Tags.Any(e => e.Name == name)).Select(y => y.BlobStorageId).ElementAt(rd);
+            var blobId = _context.Videos.Include(video => video.Tags).Where(x => x.Tags.Any(e => e.Name == name)).Select(y => y.BlobStorageId).ElementAt(rd);
             return blobId;
         }
 

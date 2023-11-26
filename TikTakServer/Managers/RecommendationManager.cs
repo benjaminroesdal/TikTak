@@ -17,6 +17,15 @@ namespace TikTakServer.Managers
         public List<string> GetRandomTagsBasedOnUserPreference()
         {
             List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions();
+            if(preferences.Any(preference => preference.Tag == null))
+                throw new Exception("User had no tags accociated with them. No interactions found");
+            //foreach (var preference in preferences)
+            //{
+            //    if (preference.Tag == null)
+            //        throw new Exception("User had no tags accociated with them. No interactions found");
+            //}
+
+
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
             double countryWeight = TotalWeightofPreferences * CountryWeight;
 
@@ -24,18 +33,16 @@ namespace TikTakServer.Managers
             List<string> videoTagResults = new List<string>();
             Random rnd = new Random();
 
+            int countryRnd = rnd.Next(TotalWeightofPreferences);
+            if (countryRnd <= countryWeight)
+            {
+                videoTagResults.Add("Denmark");
+            }
 
-            
-            for (int I = 0; I < videoCount; I++)
+
+            for (int I = videoTagResults.Count; I < videoCount; I++)
             {
 
-                int countryRnd = rnd.Next(TotalWeightofPreferences);
-                if (countryRnd <= countryWeight)
-                {
-                    videoTagResults.Add("Denmark");
-                    I++;
-                    break;
-                }
 
                 int rndmNumber = rnd.Next(TotalWeightofPreferences);
                 int sumOfInteractions = 0;

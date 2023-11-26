@@ -51,7 +51,7 @@ namespace TikTakServer.Repositories
 
         public List<UserTagInteractionDao> GetUserTagInteractions()
         {
-            var userInteractions = _context.UserTagsInteractions.Where(i => i.UserId == int.Parse(_requestAndClaims.UserId)).OrderBy(x => x.InteractionCount).ToList();
+            var userInteractions = _context.UserTagsInteractions.Include(tag => tag.Tag).Where(i => i.UserId == int.Parse(_requestAndClaims.UserId)).OrderByDescending(x => x.InteractionCount).ToList();
             return userInteractions;
         }
     }
