@@ -6,6 +6,7 @@ namespace TikTakServer.Managers
     public class RecommendationManager : IRecommendationManager
     {
         private readonly IUserRepository _userRepository;
+
         private static int videoCount = 3;
         private static double CountryWeight = 0.8;
 
@@ -13,9 +14,9 @@ namespace TikTakServer.Managers
         {
             _userRepository = userRepository;
         }
-        public List<string> GetRandomTagsBasedOnUserPreference(int userId)
+        public List<string> GetRandomTagsBasedOnUserPreference()
         {
-            List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions(userId);
+            List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions();
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
             double countryWeight = TotalWeightofPreferences * CountryWeight;
 
@@ -50,7 +51,5 @@ namespace TikTakServer.Managers
             }
             return videoTagResults;
         }
-
-        
     }
 }

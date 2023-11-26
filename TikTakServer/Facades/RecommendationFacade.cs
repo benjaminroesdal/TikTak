@@ -16,9 +16,9 @@ namespace TikTakServer.Facades
             _videoRepository = videoRepository;
             _recommendationManager = recommendationManager;
         }
-        public async Task<List<string>> GetFyp(int userId)
+        public async Task<List<string>> GetFyp()
         {
-            var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference(userId);
+            var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference();
             var blobIds = new List<string>();
             for (int i = 0; i < userPrefTags.Count; i++)
             {

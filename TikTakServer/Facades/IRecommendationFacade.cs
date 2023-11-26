@@ -2,6 +2,6 @@
 {
     public interface IRecommendationFacade
     {
-        Task<List<string>> GetFyp(int userId);
+        Task<List<string>> GetFyp();
     }
 }
