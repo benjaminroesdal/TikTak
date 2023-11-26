@@ -11,6 +11,7 @@ using System.Text;
 using TikTakServer.Models;
 using TikTakServer.Middleware;
 using TikTakServer.Managers;
+using TikTakServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<JwtHandler>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserRequestAndClaims>();
+builder.Services.AddScoped<DatabaseSeeder>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -57,14 +59,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseCors(e => e.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseHttpsRedirection();
 
