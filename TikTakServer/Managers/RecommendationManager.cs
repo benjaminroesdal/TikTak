@@ -19,12 +19,6 @@ namespace TikTakServer.Managers
             List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions();
             if(preferences.Any(preference => preference.Tag == null))
                 throw new Exception("User had no tags accociated with them. No interactions found");
-            //foreach (var preference in preferences)
-            //{
-            //    if (preference.Tag == null)
-            //        throw new Exception("User had no tags accociated with them. No interactions found");
-            //}
-
 
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
             double countryWeight = TotalWeightofPreferences * CountryWeight;
@@ -38,7 +32,6 @@ namespace TikTakServer.Managers
             {
                 videoTagResults.Add("Denmark");
             }
-
 
             for (int I = videoTagResults.Count; I < videoCount; I++)
             {
