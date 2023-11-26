@@ -33,6 +33,7 @@ export class BlobStorageService {
   }
 
   getFyp(): Observable<string[]> {
+    //this recieves 3 videos to the fyp
     return this.http.get<string[]>(`${this.baseUrl}/GetFyp`);
   }
 }

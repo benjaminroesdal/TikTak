@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import Hls from 'hls.js';
-import { Swiper } from 'swiper/types';
+import Swiper from 'swiper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
@@ -15,11 +15,11 @@ import {AuthService} from 'src/app/services/auth.service';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements AfterViewInit {
+  @ViewChild('swiperRef', { static: false }) // Change to "false"
+  protected _swiperRef: ElementRef | undefined
   public videoSources: string[] = []; // Initialize as empty
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
-  @ViewChild('swiper') 
-  swiperRef: ElementRef | undefined;
-  swiper?: Swiper;
+  
   user: any;
 
   slideOpts = {
@@ -30,14 +30,22 @@ export class Tab2Page implements AfterViewInit {
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {
-    this.route.queryParams.subscribe(params => {
-      let data = this.router.getCurrentNavigation()!.extras.state;
-      if (data!['user']) {
-          this.user = data!['user'];
-      }
-    });
   }
 
+  async ngOnInit() {
+    await this.loadVideos(); // Load videos first
+    // Removed this.cdr.detectChanges() from here
+  }
+
+  ngAfterViewInit() {
+    // Delay the initialization of Swiper to ensure everything is loaded
+    setTimeout(() => {
+      const swiperEl = this._swiperRef?.nativeElement;
+      swiperEl.initialize();
+      this.playFirstVideo(); // Play the first video
+    }, 500); // You may adjust this delay as necessary
+  }
+  
   async signOut() {
     GoogleAuth.signOut().then(() => {
       this.router.navigate(['tabs/tab1']);
@@ -45,38 +53,23 @@ export class Tab2Page implements AfterViewInit {
     await this.authService.Logout();
   }
 
-  async ngOnInit() {
-    await this.loadInitialVideos();
-    this.cdr.detectChanges(); // Manually trigger change detection
-    this.videoSources.forEach(video => this.setupHlsPlayer(video));
-  }
+  private playFirstVideo() {
+    if (this.videoSources.length > 0) {
+        const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
+        if (firstVideoElement) {
+            firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
+        }
+    }
+}
 
-  ngAfterViewInit() {
-    // Adding a slight delay to ensure HLS setup is complete
-    setTimeout(() => {
-      this.playFirstVideo();
-    }, 700); // Adjust the delay as necessary
+  setupHlsPlayer(videoSrc: string, index: number) {
+    const videoElementId = 'video_' + index;
+    const videoElement = document.getElementById(videoElementId) as HTMLVideoElement;
+    this.initHlsPlayer(videoElement, videoSrc);
   }
   
 
-  private playFirstVideo() {
-    if (this.videoElements && this.videoElements.length > 0) {
-      const firstVideoElement = this.videoElements[0] as HTMLVideoElement;
-      if (firstVideoElement) {
-        firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
-      }
-    }
-  }
-
-  setupHlsPlayer(video: string) {
-    const videoElement = document.getElementById(video) as HTMLVideoElement;
-    let som = document.getElementsByClassName('videoName') as HTMLCollection;
-    this.videoElements = som;
-    this.initHlsPlayer(videoElement, video);
-    
-  }
-
-  private async loadInitialVideos(): Promise<void> {
+  private async loadVideos(): Promise<void> {
     console.log('Fetching initial videos');
     return new Promise((resolve, reject) => {
         this.blobStorageService.getFyp().pipe(
@@ -84,27 +77,52 @@ export class Tab2Page implements AfterViewInit {
                 return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
             })
         ).subscribe((urls: string) => {
-            this.videoSources.push(urls)
+            this.videoSources.push(urls);
+            this.videoSources.forEach((video, index) => this.setupHlsPlayer(video, index));
+            console.log(this.videoSources)
             resolve();
+            this.cdr.detectChanges(); // Trigger change detection after updating content
+
         }, error => {
             console.error('Error occurred:', error);
             reject(error);
         });
     });
-}
-  
-  onSlideChange(swiperEvent: any) {
-    console.log(swiperEvent)
-    let count = swiperEvent.detail[0].activeIndex;
-    let videoEl = this.videoElements[count] as HTMLVideoElement;
-    let videoLast = this.videoElements[count - 1] as HTMLVideoElement;
-    videoEl.play();
-    videoLast.currentTime = 0;
-    videoLast.pause();
-    console.log('changed', count);
   }
   
-  
+  onSlideChange(swiperEvent: any) {
+    console.log(swiperEvent);
+    const currentIndex = swiperEvent.detail[0].activeIndex;
+    const currentVideoElement = document.getElementById('video_' + currentIndex) as HTMLVideoElement;
+    const previousIndex = currentIndex > 0 ? currentIndex - 1 : this.videoSources.length - 1;
+    const nextIndex = currentIndex < this.videoSources.length - 1 ? currentIndex + 1 : 0;
+    const previousVideoElement = document.getElementById('video_' + previousIndex) as HTMLVideoElement;
+    const nextVideoElement = document.getElementById('video_' + nextIndex) as HTMLVideoElement;
+    const isLastVideo = currentIndex === this.videoSources.length - 1;
+
+    // Play the current video if it's ready
+    if (currentVideoElement && currentVideoElement.readyState >= 4) {
+        currentVideoElement.play();
+    }
+
+    // Pause the previous and next videos to handle both forward and backward navigation
+    if (previousVideoElement && previousIndex !== currentIndex) {
+        previousVideoElement.currentTime = 0;
+        previousVideoElement.pause();
+    }
+    if (nextVideoElement && nextIndex !== currentIndex) {
+        nextVideoElement.currentTime = 0;
+        nextVideoElement.pause();
+    }
+    // Load more videos if the last video is reached
+    if (isLastVideo) {
+    this.loadVideos().then(() => {
+        // Update Swiper and play the current video after loading new videos
+        currentVideoElement.play();
+        console.log("Loaded more videos and updated Swiper.");
+    }).catch(error => console.error("Error loading more videos:", error));
+}
+}
   private initHlsPlayer(video: HTMLVideoElement, source: string): void {
     if (Hls.isSupported()) {
       const hls = new Hls();

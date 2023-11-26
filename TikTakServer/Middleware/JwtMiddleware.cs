@@ -13,11 +13,11 @@ namespace TikTakServer.Middleware
 
         public async Task Invoke(HttpContext context, UserRequestAndClaims requestClaims)
         {
-            if (!context.User.Identity.IsAuthenticated)
+            if (context.User.Identity.IsAuthenticated)
             {
-                requestClaims.UserId = "1"/*context.User.FindFirst("user_id")?.Value*/;
-                requestClaims.ProfileImage = "PhotoUrl"/*context.User.FindFirst("profile_img")?.Value*/;
-                requestClaims.Email = "mbvest50@gmail.com"/*context.User.FindFirst("user_email")?.Value*/;
+                requestClaims.UserId = context.User.FindFirst("user_id")?.Value;
+                requestClaims.ProfileImage = context.User.FindFirst("profile_img")?.Value;
+                requestClaims.Email = context.User.FindFirst("user_email")?.Value;
             }
 
             await _next(context);
