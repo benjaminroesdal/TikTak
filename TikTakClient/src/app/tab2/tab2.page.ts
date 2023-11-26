@@ -1,12 +1,14 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import Hls from 'hls.js';
-import { Swiper } from 'swiper/types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
 import { Observable, forkJoin } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import {AuthService} from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Swiper } from 'swiper';
+import { register } from 'swiper/element/bundle';
+import { SwiperOptions } from 'swiper/types/swiper-options';
 
 
 @Component({
@@ -15,11 +17,10 @@ import {AuthService} from 'src/app/services/auth.service';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements AfterViewInit {
+  @ViewChild('swiperRef', { static: false }) // Change to "false"
+  protected _swiperRef: ElementRef | undefined
   public videoSources: string[] = []; // Initialize as empty
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
-  @ViewChild('swiper') 
-  swiperRef: ElementRef | undefined;
-  swiper?: Swiper;
   user: any;
 
   slideOpts = {
@@ -30,12 +31,6 @@ export class Tab2Page implements AfterViewInit {
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {
-    this.route.queryParams.subscribe(params => {
-      let data = this.router.getCurrentNavigation()!.extras.state;
-      if (data!['user']) {
-          this.user = data!['user'];
-      }
-    });
   }
 
   async signOut() {
@@ -48,12 +43,15 @@ export class Tab2Page implements AfterViewInit {
   async ngOnInit() {
     await this.loadInitialVideos();
     this.cdr.detectChanges(); // Manually trigger change detection
-    this.videoSources.forEach(video => this.setupHlsPlayer(video));
-}
+    this.videoSources.forEach(video => this.setupHlsPlayer(video));}
 
 ngAfterViewInit() {
+  
+
    // Adding a slight delay to ensure HLS setup is complete
    setTimeout(() => {
+    const swiperEl = this._swiperRef?.nativeElement;
+    swiperEl.initialize();
     this.playFirstVideo();
   }, 700); // Adjust the delay as necessary
 }

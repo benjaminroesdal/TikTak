@@ -14,7 +14,7 @@
   </ion-header>
 
 
-  <swiper-container [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)">
+  <swiper-container #swiperRef [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)" init="false">
       <swiper-slide class="video-container" *ngFor="let video of videoSources">
           <video playsinline class="videoName" id="{{ video }}" [muted]="false" preload="none"></video>
       </swiper-slide>
