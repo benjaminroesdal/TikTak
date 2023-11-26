@@ -4,6 +4,7 @@ import Swiper from 'swiper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
+import { VideoService } from '../services/video.service';
 import { Observable, forkJoin } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import {AuthService} from 'src/app/services/auth.service';
@@ -31,7 +32,7 @@ export class Tab2Page implements AfterViewInit {
   newVideosReadyToPlay = false;
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
-     private authService:AuthService,private cdr: ChangeDetectorRef) {
+     private authService:AuthService, private videoService: VideoService, private cdr: ChangeDetectorRef) {
   }
 
   async ngOnInit() {
@@ -53,6 +54,11 @@ export class Tab2Page implements AfterViewInit {
       this.router.navigate(['tabs/tab1']);
     });
     await this.authService.Logout();
+  }
+
+
+  likeVideo(i:any){
+    console.log(i)
   }
 
   private playFirstVideo() {

@@ -1,23 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="false">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-
   <swiper-container #swiperRef [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)" init="false" pagination-dynamic-bullets="true">
     <swiper-slide class="video-container" *ngFor="let video of videoSources; let i = index" >
       <video playsinline class="videoName" [id]="'video_' + i" [src]="video" [muted]="false" preload="none"></video>
+      <div class="video-overlay">
+        <!-- Heart-shaped button using Ionic icons -->
+        <ion-button fill="clear" (onClick)="likeVideo(i)">
+          <ion-icon name="heart" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
     </swiper-slide>
   </swiper-container>
-  
 </ion-content>
+

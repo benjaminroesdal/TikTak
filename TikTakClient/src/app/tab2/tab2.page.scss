@@ -12,6 +12,23 @@
     object-fit: contain; /* Ensures the entire video is visible, may introduce black bars */
 }
 
+.video-container {
+    position: relative;
+  }
+  
+  .video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    text-align: center;
+  }
+  
+  .video-overlay button {
+    /* Style your button */
+  }
 
 swiper-container {
     width: 100%;
