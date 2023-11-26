@@ -40,7 +40,7 @@ namespace TikTakServer.ApplicationServices
             return stream;
         }
 
-        public async Task<List<string>> GetFyp()
+        public async Task<UserInfoAndFypIds> GetFyp()
         {
             var storageIds = await recommendationFacade.GetFyp();
             return storageIds;

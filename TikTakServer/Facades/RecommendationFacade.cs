@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TikTakServer.Database;
 using TikTakServer.Managers;
+using TikTakServer.Models;
 using TikTakServer.Models.Business;
 using TikTakServer.Repositories;
 
@@ -11,12 +12,14 @@ namespace TikTakServer.Facades
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IRecommendationManager _recommendationManager;
-        public RecommendationFacade(TikTakContext context, IVideoRepository videoRepository, IRecommendationManager recommendationManager)
+        private readonly UserRequestAndClaims _userRequestAndClaims;
+        public RecommendationFacade(TikTakContext context, IVideoRepository videoRepository, IRecommendationManager recommendationManager, UserRequestAndClaims userRequestAndClaims)
         {
             _videoRepository = videoRepository;
             _recommendationManager = recommendationManager;
+            _userRequestAndClaims = userRequestAndClaims;
         }
-        public async Task<List<string>> GetFyp()
+        public async Task<UserRequestAndClaims> GetFyp()
         {
             var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference();
             var blobIds = new List<string>();
@@ -25,7 +28,10 @@ namespace TikTakServer.Facades
                 blobIds.Add(await _videoRepository.GetRandomVideoBlobId(userPrefTags[i]));
             }
 
-            return await _videoRepository.GetFyp(blobIds);
+            var fypIds = await _videoRepository.GetFyp(blobIds);
+            UserInfoAndFypIds infoToFrontend = new UserInfoAndFypIds(_userRequestAndClaims, fypIds);
+
+            return infoToFrontend;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace TikTakServer.Facades
+﻿using TikTakServer.Models;
+
+namespace TikTakServer.Facades
 {
     public interface IRecommendationFacade
     {
-        Task<List<string>> GetFyp();
+        Task<UserRequestAndClaims> GetFyp();
     }
 }
