@@ -19,7 +19,7 @@ namespace TikTakServer.Facades
             _recommendationManager = recommendationManager;
             _userRequestAndClaims = userRequestAndClaims;
         }
-        public async Task<UserRequestAndClaims> GetFyp()
+        public async Task<UserInfoAndFypIds> GetFyp()
         {
             var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference();
             var blobIds = new List<string>();

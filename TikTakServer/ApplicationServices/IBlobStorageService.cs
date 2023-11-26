@@ -1,4 +1,6 @@
-﻿namespace TikTakServer.ApplicationServices
+﻿using TikTakServer.Models;
+
+namespace TikTakServer.ApplicationServices
 {
     public interface IBlobStorageService
     {
@@ -6,6 +8,6 @@
         Task UploadBlob(IFormFile file);
         Task<MemoryStream> DownloadManifest(string id);
         Task DownloadBlob(string blobName);
-        Task<List<string>> GetFyp();
+        Task<UserInfoAndFypIds> GetFyp();
     }
 }
