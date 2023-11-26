@@ -1,7 +1,6 @@
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Database;
 using TikTakServer.Facades;

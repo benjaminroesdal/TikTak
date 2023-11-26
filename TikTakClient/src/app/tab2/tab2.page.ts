@@ -26,7 +26,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://localhost:7001/BlobStorage';
+  private baseUrl = 'https://carefully-current-alien.ngrok-free.app/BlobStorage';
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
      private authService:AuthService,private cdr: ChangeDetectorRef) {
@@ -81,7 +81,7 @@ ngAfterViewInit() {
     return new Promise((resolve, reject) => {
         this.blobStorageService.getFyp().pipe(
             mergeMap((ids: string[]) => {
-                return ids.map(id => `${this.baseUrl}/GetBlobManifest?Id=${id}`);
+                return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
             })
         ).subscribe((urls: string) => {
             this.videoSources.push(urls)
@@ -131,6 +131,7 @@ ngAfterViewInit() {
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = source;
+      video
       video.addEventListener('loadedmetadata', function () {
         video.pause();
       });

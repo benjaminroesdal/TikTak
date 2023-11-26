@@ -18,6 +18,7 @@ namespace TikTakServer.Middleware
                 requestClaims.UserId = context.User.FindFirst("user_id")?.Value;
                 requestClaims.ProfileImage = context.User.FindFirst("profile_img")?.Value;
                 requestClaims.Email = context.User.FindFirst("user_email")?.Value;
+                requestClaims.Country = context.User.FindFirst("user_country")?.Value;
             }
 
             await _next(context);

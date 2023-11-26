@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BlobStorageService {
-  private baseUrl = 'https://localhost:7001/BlobStorage';
+  private baseUrl = 'https://carefully-current-alien.ngrok-free.app/BlobStorage';
 
   constructor(private http: HttpClient) { }
 

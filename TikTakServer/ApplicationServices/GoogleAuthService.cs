@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Azure.Core;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace TikTakServer.ApplicationServices
@@ -33,6 +34,16 @@ namespace TikTakServer.ApplicationServices
 
             return googleInfo;
         }
+
+        public async Task<string> GetCountryOfLocation(double longi, double lati)
+        {
+            var geoUrl = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={lati},{longi}&key=AIzaSyCFzyvOxCneBvkJhTV1hj8R5UzpYMMpTHM";
+            var response = await _httpClient.GetAsync(geoUrl);
+            var jsonContent = await response.Content.ReadAsStringAsync();
+            var googleInfo = JsonConvert.DeserializeObject<Root>(jsonContent);
+            var countryName = googleInfo.results.Where(e => e.types.Contains("country")).First().address_components.FirstOrDefault().long_name;
+            return countryName;
+        }
     }
 
 
@@ -48,5 +59,25 @@ namespace TikTakServer.ApplicationServices
         public string EmailVerified { get; set; }
         [JsonProperty("aud")]
         public string Audience { get; set; }
+    }
+
+
+    public class Root
+    {
+        public List<Result> results { get; set; }
+        public string status { get; set; }
+    }
+
+    public class Result
+    {
+        public List<AddressComponent> address_components { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class AddressComponent
+    {
+        public string long_name { get; set; }
+        public string short_name { get; set; }
+        public List<string> types { get; set; }
     }
 }
