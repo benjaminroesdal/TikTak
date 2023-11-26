@@ -19,8 +19,9 @@ namespace TikTakServer.Controllers
         }
 
         [HttpPost("PostBlob")]
+        [Authorize]
         [RequestSizeLimit(100_000_000)]
-        public async Task<IActionResult> PostBlob(IFormFile file)
+        public async Task<IActionResult> PostBlob([FromForm] IFormFile file)
         {
             await _blobStorageService.UploadBlob(file);
             return Ok();

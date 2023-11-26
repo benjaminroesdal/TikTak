@@ -10,6 +10,8 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtModule } from "@auth0/angular-jwt";
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { register } from 'swiper/element/bundle';
+register();
 
 @NgModule({
   declarations: [AppComponent],

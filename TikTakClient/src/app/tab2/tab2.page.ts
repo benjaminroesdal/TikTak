@@ -1,13 +1,15 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import Hls from 'hls.js';
-import Swiper from 'swiper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
 import { VideoService } from '../services/video.service';
 import { Observable, forkJoin } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import {AuthService} from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Swiper } from 'swiper';
+import { register } from 'swiper/element/bundle';
+import { SwiperOptions } from 'swiper/types/swiper-options';
 
 
 @Component({
@@ -20,7 +22,6 @@ export class Tab2Page implements AfterViewInit {
   protected _swiperRef: ElementRef | undefined
   public videoSources: string[] = []; // Initialize as empty
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
-  
   user: any;
 
   slideOpts = {
@@ -162,6 +163,7 @@ export class Tab2Page implements AfterViewInit {
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = source;
+      video
       video.addEventListener('loadedmetadata', function () {
         video.pause();
       });

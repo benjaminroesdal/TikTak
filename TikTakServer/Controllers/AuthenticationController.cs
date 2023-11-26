@@ -25,7 +25,7 @@ namespace TikTakServer.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] CreateUserRequest userRequest)
         {
-            var result = await _authService.Login(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl);
+            var result = await _authService.Login(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl, userRequest.Longitude, userRequest.Latitude);
             return Ok(result);
         }
 
@@ -42,5 +42,7 @@ namespace TikTakServer.Controllers
         public string GoogleAccessToken { get; set; }
         public string FulLName { get; set; }
         public string ImageUrl { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

@@ -16,15 +16,17 @@ namespace TikTakServer.ApplicationServices
         private readonly IBlobStorageFacade blobStorageFacade;
         private readonly IVideoRepository videoRepository;
         private readonly IRecommendationFacade recommendationFacade;
+        private readonly UserRequestAndClaims _requestClaims;
         private const string containerName = "tiktaks";
 
-        public BlobStorageService(BlobServiceClient blobServiceClient, IBlobStorageFacade blobStorageFacade, IVideoRepository videoRepository, IRecommendationFacade recommendationManager)
+        public BlobStorageService(BlobServiceClient blobServiceClient, IBlobStorageFacade blobStorageFacade, IVideoRepository videoRepository, IRecommendationFacade recommendationManager, UserRequestAndClaims requestClaims)
         {
 
             this.blobServiceClient = blobServiceClient;
             this.blobStorageFacade = blobStorageFacade;
             this.videoRepository = videoRepository;
             this.recommendationFacade = recommendationManager;
+            _requestClaims = requestClaims;
         }
 
         public Task DownloadBlob(string blobName)
@@ -75,7 +77,7 @@ namespace TikTakServer.ApplicationServices
             {
                 BlobStorageId = blobGuid,
                 UploadDate = DateTime.Now,
-                UserId = 1
+                UserId = int.Parse(_requestClaims.UserId)
             });
         }
     }
