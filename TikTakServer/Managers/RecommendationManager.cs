@@ -42,19 +42,19 @@ namespace TikTakServer.Managers
 
             for (int I = videoTagResults.Count; I < videoCount; I++)
             {
-
-
                 int rndmNumber = rnd.Next(TotalWeightofPreferences);
                 int sumOfInteractions = 0;
-                foreach (var interaction in preferences)
+                for (int j = 0; j < preferences.Count; j++)
                 {
-                    sumOfInteractions += interaction.InteractionCount;
+
+                    sumOfInteractions += preferences[j].InteractionCount;
                     if (rndmNumber < sumOfInteractions)
                     {
-                        videoTagResults.Add(interaction.Tag.Name);
+                        videoTagResults.Add(preferences[j].Tag.Name);
                         break;
                     }
                 }
+                
             }
             return videoTagResults;
         }
