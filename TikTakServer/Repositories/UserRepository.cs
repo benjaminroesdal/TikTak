@@ -8,10 +8,12 @@ namespace TikTakServer.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        private readonly UserRequestAndClaims _requestAndClaims;
         private readonly TikTakContext _context;
-        public UserRepository(TikTakContext context)
+        public UserRepository(TikTakContext context, UserRequestAndClaims requestAndClaims)
         {
             _context = context;
+            _requestAndClaims = requestAndClaims;
         }
 
         public async Task<UserDao> CreateUser(UserDao user)
@@ -61,6 +63,12 @@ namespace TikTakServer.Repositories
             var user = await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
             _context.Tokens.Remove(user.Tokens.First(x => x.RefreshToken == refreshToken));
             await _context.SaveChangesAsync();
+        }
+
+        public List<UserTagInteractionDao> GetUserTagInteractions()
+        {
+            var userInteractions = _context.UserTagsInteractions.Include(tag => tag.Tag).Where(i => i.UserId == int.Parse(_requestAndClaims.UserId)).OrderByDescending(x => x.InteractionCount).ToList();
+            return userInteractions;
         }
     }
 }

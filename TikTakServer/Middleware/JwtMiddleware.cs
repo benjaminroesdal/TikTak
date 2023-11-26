@@ -13,7 +13,7 @@ namespace TikTakServer.Middleware
 
         public async Task Invoke(HttpContext context, UserRequestAndClaims requestClaims)
         {
-            if (context.User.Identity.IsAuthenticated)
+            if (!context.User.Identity.IsAuthenticated)
             {
                 requestClaims.UserId = context.User.FindFirst("user_id")?.Value;
                 requestClaims.ProfileImage = context.User.FindFirst("profile_img")?.Value;
