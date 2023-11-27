@@ -93,13 +93,19 @@ namespace TikTakServer.Repositories
 
         public async Task<int> GetTagCount(string name)
         {
-            return _context.Tags.Where(e => e.Name == name).Count();
+            return _context.Tags.Where(x => x.Name == name).SelectMany(e => e.Videos).Distinct().Count();
         }
 
         public async Task<string> GetRandomVideoBlobId(string name)
         {
-            var tagCount = await GetTagCount(name);
             Random rnd = new Random();
+            var tagCount = await GetTagCount(name);
+            if (tagCount == 0)
+            {
+                var videoCount = _context.Videos.Count();
+                return _context.Videos.Select(x => x.BlobStorageId).ElementAt(rnd.Next(0, videoCount));
+            }
+
             var rd = rnd.Next(0, tagCount);
             var blobId = _context.Videos.Include(video => video.Tags).Where(x => x.Tags.Any(e => e.Name == name)).Select(y => y.BlobStorageId).ElementAt(rd);
             return blobId;
