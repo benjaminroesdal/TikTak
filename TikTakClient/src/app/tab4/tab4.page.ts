@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Filesystem } from '@capacitor/filesystem';
-import { Toast } from '@capacitor/toast';
-import { Video } from '../tab2/tab2.page';
+import { ToastService } from '../services/toast.service';
 
 
 @Component({
@@ -20,7 +19,7 @@ export class Tab4Page implements OnInit {
   videoPlayer: any;
   maxTags: number = 5; // Set your desired maximum number of tags
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastService: ToastService) { }
 
 
 
@@ -67,21 +66,12 @@ export class Tab4Page implements OnInit {
         this.currentTag = ''; // Clear the input
       } else {
         // Optionally, provide user feedback that the max number of tags has been reached
-        this.showHelloToast("maximum number of tags reached.")
+        this.toastService.showToast("maximum number of tags reached.")
         console.error('Maximum number of tags reached.');
         // You can use an Ionic toast for better user experience
       }
     }
   }
-
-  async showHelloToast(textShow:string) {
-    await Toast.show({
-      text: textShow,
-      duration: "long",
-      position: "center"
-    });
-  };
-
 
   removeTag(tagToRemove: string) {
     this.tagsArray = this.tagsArray.filter(tag => tag !== tagToRemove);

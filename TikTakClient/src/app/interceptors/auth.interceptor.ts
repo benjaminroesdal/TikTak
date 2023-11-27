@@ -4,11 +4,12 @@ import { Observable, from, throwError } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { Storage } from '@ionic/storage-angular';
 import {AuthService} from 'src/app/services/auth.service';
+import { ToastService } from '../services/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private storage: Storage, private authService: AuthService) {}
+  constructor(private storage: Storage, private authService: AuthService, private toastService: ToastService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (req.url.includes('/RefreshAccessToken')) {
@@ -22,6 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
       switchMap(authReq => next.handle(authReq)),
       catchError((error) => {
         // handle the error
+        this.toastService.showToast("Error occurred when refreshing session.")
         return throwError(error);
       })
     );
