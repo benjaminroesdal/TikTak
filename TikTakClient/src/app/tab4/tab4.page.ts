@@ -29,7 +29,7 @@ export class Tab4Page implements OnInit {
         });
         this.formData.append('file', rawFile, 'file');
         console.log(this.formData.get('file'));
-        this.http.post('https://carefully-current-alien.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
+        this.http.post('https://c56d-93-176-82-58.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
           console.log(e);
         });
       }
@@ -38,7 +38,7 @@ export class Tab4Page implements OnInit {
           this.convertDataToBlob(e)
           console.log("DET HER ER FOR ANDROID");
           console.log(this.formData);
-          this.http.post('https://carefully-current-alien.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
+          this.http.post('https://c56d-93-176-82-58.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
             console.log(e);
           });
         })

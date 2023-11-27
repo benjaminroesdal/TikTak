@@ -4,6 +4,6 @@ namespace TikTakServer.Facades
 {
     public interface IRecommendationFacade
     {
-        Task<UserInfoAndFypIds> GetFyp();
+        Task<List<VideoAndOwnedUserInfo>> GetFyp();
     }
 }

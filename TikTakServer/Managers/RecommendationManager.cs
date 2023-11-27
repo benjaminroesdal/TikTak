@@ -6,13 +6,15 @@ namespace TikTakServer.Managers
     public class RecommendationManager : IRecommendationManager
     {
         private readonly IUserRepository _userRepository;
+        private readonly UserRequestAndClaims _userRequestAndClaims;
 
         private static int videoCount = 3;
         private static double CountryWeight = 0.8;
 
-        public RecommendationManager(IUserRepository userRepository)
+        public RecommendationManager(IUserRepository userRepository, UserRequestAndClaims userRequestAndClaims)
         {
             _userRepository = userRepository;
+            _userRequestAndClaims = userRequestAndClaims;
         }
         public List<string> GetRandomTagsBasedOnUserPreference()
         {
@@ -30,7 +32,7 @@ namespace TikTakServer.Managers
             int countryRnd = rnd.Next(TotalWeightofPreferences);
             if (countryRnd <= countryWeight)
             {
-                videoTagResults.Add("Denmark");
+                videoTagResults.Add(_userRequestAndClaims.Country);
             }
 
             for (int I = videoTagResults.Count; I < videoCount; I++)
@@ -47,7 +49,6 @@ namespace TikTakServer.Managers
                         break;
                     }
                 }
-                
             }
             return videoTagResults;
         }

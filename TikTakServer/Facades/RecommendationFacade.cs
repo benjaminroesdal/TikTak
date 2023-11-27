@@ -13,13 +13,15 @@ namespace TikTakServer.Facades
         private readonly IVideoRepository _videoRepository;
         private readonly IRecommendationManager _recommendationManager;
         private readonly UserRequestAndClaims _userRequestAndClaims;
-        public RecommendationFacade(TikTakContext context, IVideoRepository videoRepository, IRecommendationManager recommendationManager, UserRequestAndClaims userRequestAndClaims)
+        private readonly IUserRepository _userRepository;
+        public RecommendationFacade(TikTakContext context, IVideoRepository videoRepository, IRecommendationManager recommendationManager, IUserRepository userRepository, UserRequestAndClaims userRequestAndClaims)
         {
             _videoRepository = videoRepository;
             _recommendationManager = recommendationManager;
             _userRequestAndClaims = userRequestAndClaims;
+            _userRepository = userRepository;
         }
-        public async Task<UserInfoAndFypIds> GetFyp()
+        public async Task<List<VideoAndOwnedUserInfo>> GetFyp()
         {
             var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference();
             var blobIds = new List<string>();
@@ -27,9 +29,16 @@ namespace TikTakServer.Facades
             {
                 blobIds.Add(await _videoRepository.GetRandomVideoBlobId(userPrefTags[i]));
             }
-
             var fypIds = await _videoRepository.GetFyp(blobIds);
-            UserInfoAndFypIds infoToFrontend = new UserInfoAndFypIds(_userRequestAndClaims, fypIds);
+            var infoToFrontend = new List<VideoAndOwnedUserInfo>();
+
+            for (int i = 0; i < fypIds.Count; i++)
+            {
+                var vidOwner = await _userRepository.GetUserByVideoBlobId(fypIds[i]);
+                infoToFrontend.Add(new VideoAndOwnedUserInfo(vidOwner, fypIds[i]));
+            }
+
+
 
             return infoToFrontend;
         }

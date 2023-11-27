@@ -28,6 +28,11 @@ namespace TikTakServer.Repositories
             return _context.Users.First(e => e.Email == email);
         }
 
+        public async Task<UserDao> GetUserByVideoBlobId(string blobId)
+        {
+            return _context.Users.Include(x => x.Videos).Where(i => i.Videos.Where(e => e.BlobStorageId == blobId).Any()).First();
+        }
+
         public async Task<bool> UserExists(string email)
         {
             var see = await _context.Users.AnyAsync(e => e.Email == email);

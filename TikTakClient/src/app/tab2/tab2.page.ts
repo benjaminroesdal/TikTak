@@ -28,7 +28,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://reliably-generous-grub.ngrok-free.app/BlobStorage';
+  private baseUrl = 'https://c56d-93-176-82-58.ngrok-free.app/BlobStorage';
   // Add a state variable to track if new videos are ready to be played
   newVideosReadyToPlay = false;
   

@@ -26,7 +26,7 @@ namespace TikTakServer
             {
                 tags = new List<TagDao>
                 {
-                    new TagDao() {  Name = "Dog" },
+                    new TagDao() { Name = "Dog" },
                     new TagDao() { Name = "Cat" },
                     new TagDao() { Name = "Cars" },
                     new TagDao() { Name = "Dance" },
@@ -34,7 +34,7 @@ namespace TikTakServer
                     new TagDao() { Name = "Mountain" },
                     new TagDao() { Name = "Elephant" },
                     new TagDao() { Name = "Outdoor" },
-                    new TagDao() {  Name = "Caps" },
+                    new TagDao() { Name = "Caps" },
                     new TagDao() { Name = "Sleep" },
                     new TagDao() { Name = "DIY" },
                     new TagDao() { Name = "Routine" },

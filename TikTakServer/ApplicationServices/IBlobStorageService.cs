@@ -8,6 +8,6 @@ namespace TikTakServer.ApplicationServices
         Task UploadBlob(IFormFile file);
         Task<MemoryStream> DownloadManifest(string id);
         Task DownloadBlob(string blobName);
-        Task<UserInfoAndFypIds> GetFyp();
+        Task<List<VideoAndOwnedUserInfo>> GetFyp();
     }
 }
