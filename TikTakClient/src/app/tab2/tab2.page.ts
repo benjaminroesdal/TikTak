@@ -20,7 +20,8 @@ import { SwiperOptions } from 'swiper/types/swiper-options';
 export class Tab2Page implements AfterViewInit {
   @ViewChild('swiperRef', { static: false }) // Change to "false"
   protected _swiperRef: ElementRef | undefined
-  public videoSources: string[] = []; // Initialize as empty
+  public videoSources: Video[] = [];
+ // Initialize as empty
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
   user: any;
 
@@ -28,7 +29,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage';
+  private baseUrl = ' https://reliably-generous-grub.ngrok-free.app/BlobStorage';
   // Add a state variable to track if new videos are ready to be played
   newVideosReadyToPlay = false;
   
@@ -64,10 +65,22 @@ export class Tab2Page implements AfterViewInit {
 
   private playFirstVideo() {
     if (this.videoSources.length > 0) {
-        const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
-        if (firstVideoElement) {
-            firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
-        }
+      const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
+      if (firstVideoElement) {
+        console.log('First video element found:', firstVideoElement);
+        console.log('Video source:', firstVideoElement.src);
+        console.log('Video readyState:', firstVideoElement.readyState);
+  
+        firstVideoElement.play().then(() => {
+          console.log('First video is playing.');
+        }).catch(err => {
+          console.error('Error playing first video:', err);
+        });
+      } else {
+        console.error('First video element not found.');
+      }
+    } else {
+      console.log('No video sources available.');
     }
   }
 
@@ -79,28 +92,33 @@ export class Tab2Page implements AfterViewInit {
 
   async loadVideos(): Promise<void> {
     console.log('Fetching initial videos');
-    this.newVideosReadyToPlay = false; // Reset the flag before loading new videos
+    this.newVideosReadyToPlay = false;
     return new Promise((resolve, reject) => {
-        this.blobStorageService.getFyp().pipe(
-            mergeMap((ids: string[]) => {
-                return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
-            })
-        ).subscribe((urls: any) => {
-            this.videoSources.push(urls)
-            this.videoSources.forEach((video, index) => this.setupHlsPlayer(video, index));
-            console.log(this.videoSources)
-            this.newVideosReadyToPlay = true; // Set the flag after new videos are set up
-            resolve();
-            this.cdr.detectChanges(); // Trigger change detection after updating content
-        }, error => {
-            console.error('Error occurred:', error);
-            reject(error);
-        });
+      this.blobStorageService.getFyp().subscribe(
+        (response: any[]) => {
+          if (!Array.isArray(response)) {
+            throw new Error('Response is not an array');
+          }
+          const videos = response.map(video => ({
+            ...video,
+            manifestUrl: `https://tiktakstorage.blob.core.windows.net/tiktaks/${video.blobVideoStorageId}.M3U8`
+          }));
+  
+          this.videoSources = [...this.videoSources, ...videos];
+          this.videoSources.forEach((video, index) => this.setupHlsPlayer(video.manifestUrl, index));
+          this.newVideosReadyToPlay = true;
+          this.cdr.detectChanges();
+          resolve();
+        },
+        error => {
+          console.error('Error occurred:', error);
+          reject(error);
+        }
+      );
     });
   }
-
+  
   onSlideChange(swiperEvent: any) {
-    console.log(swiperEvent);
     const currentIndex = swiperEvent.detail[0].activeIndex;
     const currentVideoElement = document.getElementById('video_' + currentIndex) as HTMLVideoElement;
     const previousIndex = currentIndex > 0 ? currentIndex - 1 : this.videoSources.length - 1;
@@ -138,13 +156,14 @@ export class Tab2Page implements AfterViewInit {
   }
 
   private initHlsPlayer(video: HTMLVideoElement, source: string): void {
+    console.log("init" + source)
+    console.log("init" + video)
+
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(source);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.pause();
-      });
+      
       hls.on(Hls.Events.ERROR, function (event, data) {
         if (data.fatal) {
           switch (data.type) {
@@ -152,7 +171,7 @@ export class Tab2Page implements AfterViewInit {
               // handle network error
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              // handle media error
+              console.log("error")
               break;
             default:
               // handle other error types
@@ -163,17 +182,18 @@ export class Tab2Page implements AfterViewInit {
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = source;
-      video
       video.addEventListener('loadedmetadata', function () {
-        video.pause();
+        video.play();
       });
     }
   }
+  
+  
 }
-
 export interface Video {
-  id: string;
-  title: string;
-  manifestUrl: string; // HLS manifest URL
-  thumbnail: string;
+  userId: number;
+  profileImage: string;
+  email: string;
+  blobVideoStorageId: string;
+  manifestUrl: string;
 }

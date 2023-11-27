@@ -28,7 +28,7 @@ export class Tab4Page implements OnInit {
     this.tagsArray.forEach((tag, index) => {
       this.formData.append(`Tags[${index}].Name`, tag);
     });
-    this.http.post('https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
+    this.http.post(' https://reliably-generous-grub.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
       console.log(e);
     });
   }
