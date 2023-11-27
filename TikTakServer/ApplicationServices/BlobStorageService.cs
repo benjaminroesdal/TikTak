@@ -78,7 +78,7 @@ namespace TikTakServer.ApplicationServices
             {
                 BlobStorageId = blobGuid,
                 UploadDate = DateTime.Now,
-                UserId = int.Parse("6"),
+                UserId = this._requestClaims.UserId,
                 Tags = tags
             });
         }
