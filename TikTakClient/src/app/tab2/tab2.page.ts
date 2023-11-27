@@ -4,12 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
 import { VideoService } from '../services/video.service';
-import { Observable, forkJoin } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
-import { Swiper } from 'swiper';
-import { register } from 'swiper/element/bundle';
-import { SwiperOptions } from 'swiper/types/swiper-options';
+import { ToastService } from '../services/toast.service';
 
 
 @Component({
@@ -22,18 +19,18 @@ export class Tab2Page implements AfterViewInit {
   protected _swiperRef: ElementRef | undefined
   public videoSources: string[] = []; // Initialize as empty
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
+  public userName!: string;
   user: any;
 
   slideOpts = {
     direction: 'vertical'
   };
 
-  private baseUrl = 'https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage';
   // Add a state variable to track if new videos are ready to be played
   newVideosReadyToPlay = false;
   
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
-     private authService:AuthService, private videoService: VideoService, private cdr: ChangeDetectorRef) {
+     private authService:AuthService, private videoService: VideoService, private cdr: ChangeDetectorRef, private toastService: ToastService) {
   }
 
   async ngOnInit() {
@@ -74,40 +71,45 @@ export class Tab2Page implements AfterViewInit {
   setupHlsPlayer(videoSrc: string, index: number) {
     const videoElementId = 'video_' + index;
     const videoElement = document.getElementById(videoElementId) as HTMLVideoElement;
+    console.log(videoElement);
     this.initHlsPlayer(videoElement, videoSrc);
   }
 
+  public videosArray: any[] = []; // To store the video objects
+
+
   async loadVideos(): Promise<void> {
-    console.log('Fetching initial videos');
-    this.newVideosReadyToPlay = false; // Reset the flag before loading new videos
+    this.newVideosReadyToPlay = false;
     return new Promise((resolve, reject) => {
-        this.blobStorageService.getFyp().pipe(
-            mergeMap((ids: string[]) => {
-                return ids.map(id => `https://tiktakstorage.blob.core.windows.net/tiktaks/${id}.M3U8`);
-            })
-        ).subscribe((urls: any) => {
-            this.videoSources.push(urls)
-            this.videoSources.forEach((video, index) => this.setupHlsPlayer(video, index));
-            console.log(this.videoSources)
-            this.newVideosReadyToPlay = true; // Set the flag after new videos are set up
-            resolve();
-            this.cdr.detectChanges(); // Trigger change detection after updating content
-        }, error => {
-            console.error('Error occurred:', error);
-            reject(error);
-        });
+      this.blobStorageService.getFyp().subscribe((videos: any[]) => {
+        this.videosArray.push(...videos);
+        setTimeout(() => {
+          this.videosArray.forEach(item1 => {
+            const matchingItem = videos.find(item2 => item2.id === item1.id);
+            if (matchingItem) {
+              item1.manifestUrl = "https://localhost:7001/BlobStorage/GetBlobManifest?id=" + matchingItem.blobVideoStorageId;
+            }
+          });
+          console.log(this.videosArray)
+          this.videosArray.forEach((video, index) => this.setupHlsPlayer("https://localhost:7001/BlobStorage/GetBlobManifest?id=" + video.blobVideoStorageId, index));
+          this.newVideosReadyToPlay = true;
+          resolve();
+          this.cdr.detectChanges();
+        }, 500);
+      }, error => {
+        this.toastService.showToast("Loading videos failed, please try again.");
+      });
     });
   }
 
   onSlideChange(swiperEvent: any) {
-    console.log(swiperEvent);
     const currentIndex = swiperEvent.detail[0].activeIndex;
     const currentVideoElement = document.getElementById('video_' + currentIndex) as HTMLVideoElement;
-    const previousIndex = currentIndex > 0 ? currentIndex - 1 : this.videoSources.length - 1;
-    const nextIndex = currentIndex < this.videoSources.length - 1 ? currentIndex + 1 : 0;
+    const previousIndex = currentIndex > 0 ? currentIndex - 1 : this.videosArray.length - 1;
+    const nextIndex = currentIndex < this.videosArray.length - 1 ? currentIndex + 1 : 0;
     const previousVideoElement = document.getElementById('video_' + previousIndex) as HTMLVideoElement;
     const nextVideoElement = document.getElementById('video_' + nextIndex) as HTMLVideoElement;
-    const isLastVideo = currentIndex === this.videoSources.length - 1;
+    const isLastVideo = currentIndex === this.videosArray.length - 1;
 
     // Pause the previous and next videos to handle both forward and backward navigation
     if (previousVideoElement && previousIndex !== currentIndex) {
@@ -119,25 +121,30 @@ export class Tab2Page implements AfterViewInit {
         nextVideoElement.pause();
     }
 
+    console.log(swiperEvent);
     // Load more videos if the last video is reached
     if (isLastVideo) {
         this.loadVideos().then(() => {
-            console.log("Loaded more videos and updated Swiper.");
             const swiperEl = this._swiperRef?.nativeElement;
             swiperEl.swiper.update();
             setTimeout(() => {
             currentVideoElement.play();
             }, 500);
-        }).catch(error => console.error("Error loading more videos:", error));
+        }).catch(() => {
+          this.toastService.showToast("Loading videos failed, please try again.");
+        });
     }
 
     // Only play the video if new videos are ready
     if (this.newVideosReadyToPlay && currentVideoElement && currentVideoElement.readyState >= 4) {
-        currentVideoElement.play().catch(err => console.error('Error playing video:', err));
+        currentVideoElement.play().catch(() => {
+          this.toastService.showToast("Loading video failed, please try again.");
+        });
     }
   }
 
   private initHlsPlayer(video: HTMLVideoElement, source: string): void {
+    console.log(source);
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(source);
@@ -163,7 +170,6 @@ export class Tab2Page implements AfterViewInit {
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = source;
-      video
       video.addEventListener('loadedmetadata', function () {
         video.pause();
       });
@@ -172,8 +178,9 @@ export class Tab2Page implements AfterViewInit {
 }
 
 export interface Video {
-  id: string;
-  title: string;
-  manifestUrl: string; // HLS manifest URL
-  thumbnail: string;
+  UserId: string;
+  ProfileImage: string;
+  Email: string; // HLS manifest URL
+  BlobVideoStorageId: string;
+  ManifestUrl: string;
 }

@@ -3,6 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {StorageService} from 'src/app/services/storage.service';
 import * as jwt_decode from 'jwt-decode';
 import { BehaviorSubject, Observable, from, map } from 'rxjs';
+import { ToastService } from './toast.service';
+import { environment } from '../../environments/environment';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +13,10 @@ import { BehaviorSubject, Observable, from, map } from 'rxjs';
 export class AuthService {
 
   public tokenRefreshInProgress: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  constructor(private http: HttpClient, private storageService: StorageService) { }
+  private apiBaseUrl = environment.firebase.apiBaseUrl;
+  constructor(private http: HttpClient, private storageService: StorageService, private toastService: ToastService, private router: Router) { }
+  private isLoggedIn = new BehaviorSubject<boolean>(false);
+  public isLoggedIn$ = this.isLoggedIn.asObservable();
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -18,54 +24,67 @@ export class AuthService {
     })
   };
 
+  initializeAuth(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.isTokenExpired().then(e => {
+        this.isLoggedIn.next(true);
+      })
+      resolve(true);
+    });
+  }
+
   public async CreateAccount(user: User) {
-    await this.http.post<UserModel>('https://ee5d-93-176-82-57.ngrok-free.app/Login', user)
+    await this.http.post<UserModel>(`${this.apiBaseUrl}/Login`, user)
     .subscribe(e => {
-      console.log("HALLOW");
-      console.log(e.refreshToken);
-      this.storageService.set('AccessToken', e.accessToken);
-      this.storageService.set('RefreshToken', e.refreshToken);
-      this.storageService.get('AccessToken').then(x => {
-        console.log(x);
+      this.storageService.set('AccessToken', e.accessToken).then(() => {
+        this.router.navigate(['tabs/tab2']); // Redirect to home or another page
       });
+      this.router.navigate(['tabs/tab2']); // Redirect to home or another page
+      this.storageService.set('RefreshToken', e.refreshToken);
     });
   }
 
   async Logout() : Promise<void> {
+    this.isLoggedIn.next(false);
     await this.storageService.clear();
   }
 
   async RefreshAccessToken() : Promise<void>{
-    console.log("Hej");
     await this.storageService.get('RefreshToken').then(e => {
-      console.log("med");
-      console.log(this.tokenRefreshInProgress.value);
       this.tokenRefreshInProgress.next(true);
-      console.log(e);
-      return this.http.post<UserModel>('https://ee5d-93-176-82-57.ngrok-free.app/RefreshAccessToken', JSON.stringify(e), this.httpOptions)
+      return this.http.post<UserModel>(`${this.apiBaseUrl}/RefreshAccessToken`, JSON.stringify(e), this.httpOptions)
         .subscribe(x => {
-          console.log("KOMMER VI HERIND?");
           this.storageService.set('AccessToken', x.accessToken).finally(() => {
-            console.log("KOMMER VI HERIND?");
             this.tokenRefreshInProgress.next(false);
-            console.log("dig");
-            console.log(this.tokenRefreshInProgress.value);
-            console.log(this.tokenRefreshInProgress)
+            this.isLoggedIn.next(true);
+          }).catch(() => {
+            this.toastService.showToast("Error trying to refresh session");
+            this.isLoggedIn.next(false);
           });
-        });
+        },
+        error => {
+          this.toastService.showToast("Error trying to refresh session");
+          this.isLoggedIn.next(false);
+        }
+        );
     });
   }
 
   async isTokenExpired(): Promise<boolean> {
     return this.storageService.get('AccessToken').then(e => {
-      console.log(e);
-      if (!e) return true;
-  
+      if (!e){ 
+        this.isLoggedIn.next(false);
+        return true
+      };
+
       const decoded: any = jwt_decode.jwtDecode(e);
-      console.log(decoded);
-      if (!decoded.exp) return true;
+      if (!decoded.exp) {
+        this.isLoggedIn.next(false);
+        return true
+      };
   
       const now = Math.floor(Date.now() / 1000);
+      this.isLoggedIn.next(true);
       return decoded.exp < now;
     });
   }

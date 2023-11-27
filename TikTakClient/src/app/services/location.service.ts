@@ -10,7 +10,6 @@ export class LocationService {
 
   public async printCurrentPosition() : Promise<any>{
     return await Geolocation.getCurrentPosition().then(e => {
-      console.log(e);
       return e;
     });
     };

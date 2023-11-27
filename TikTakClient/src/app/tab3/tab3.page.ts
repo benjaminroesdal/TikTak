@@ -19,7 +19,6 @@ export class Tab3Page {
       const jwtDec = jwt_decode.jwtDecode<User>(e);
       this.imgUrl = jwtDec.profile_img;
       this.name = jwtDec.user_email;
-      console.log(jwtDec);
     })
   }
 

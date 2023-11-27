@@ -6,7 +6,8 @@ export const environment = {
     storageBucket: "tiktak-732cd.appspot.com",
     messagingSenderId: "69308154140",
     appId: "1:69308154140:web:4ff0e62e5b5cf8114c3ad9",
-    measurementId: "G-8D6BS4ERV0"
+    measurementId: "G-8D6BS4ERV0",
+    apiBaseUrl: 'http://localhost:3000/api'
   },
   production: true
 };

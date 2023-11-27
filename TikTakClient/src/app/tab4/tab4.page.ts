@@ -3,6 +3,7 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Filesystem } from '@capacitor/filesystem';
 import { ToastService } from '../services/toast.service';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class Tab4Page implements OnInit {
   mediaRecorder: any;
   videoPlayer: any;
   maxTags: number = 5; // Set your desired maximum number of tags
+  private apiBaseUrl = environment.firebase.apiBaseUrl;
 
   constructor(private http: HttpClient, private toastService: ToastService) { }
 
@@ -28,8 +30,7 @@ export class Tab4Page implements OnInit {
     this.tagsArray.forEach((tag, index) => {
       this.formData.append(`Tags[${index}].Name`, tag);
     });
-    this.http.post('https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage/PostBlob', this.formData).subscribe(e => {
-      console.log(e);
+    this.http.post(`${this.apiBaseUrl}/BlobStorage/PostBlob`, this.formData).subscribe(e => {
     });
   }
 
@@ -67,7 +68,6 @@ export class Tab4Page implements OnInit {
       } else {
         // Optionally, provide user feedback that the max number of tags has been reached
         this.toastService.showToast("maximum number of tags reached.")
-        console.error('Maximum number of tags reached.');
         // You can use an Ionic toast for better user experience
       }
     }
@@ -90,7 +90,6 @@ export class Tab4Page implements OnInit {
   convertDataToBlob(data:any) {
           // Assume 'base64String' is the long base64-encoded data string you retrieved
       const base64String = data; // Your actual base64 string will be much longer
-      console.log(base64String);
       // Convert Base64 string to a Blob
       const byteCharacters = atob(base64String);
       const byteNumbers = new Array(byteCharacters.length);
@@ -99,7 +98,6 @@ export class Tab4Page implements OnInit {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const fileBlob = new Blob([byteArray], { type: 'video/mp4' }); // Specify the correct MIME type
-      console.log(fileBlob);
       // Append the Blob to FormData
       this.formData.append('file', fileBlob, 'file'); // Replace 'filename.mp4' with the actual file name if available
   }

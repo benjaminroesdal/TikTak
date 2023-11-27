@@ -5,6 +5,7 @@ import { Preferences } from '@capacitor/preferences';
 import {StorageService} from 'src/app/services/storage.service';
 import {AuthService} from 'src/app/services/auth.service';
 import { LocationService } from '../services/location.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -29,48 +30,23 @@ export class Tab1Page {
     });
   }
 
-  goToHome(user : any) {
-      let navigationExtras: NavigationExtras = { state: { user: user } };
-      this.router.navigate(['tabs/tab2'], navigationExtras);
-    }
-
   async doLogin() {
-    console.log("THISSS");
     let user = await GoogleAuth.signIn();
-    console.log(user);
-    const newUser: User = {
+      const newUser: User = {
       GoogleAccessToken: user.authentication.accessToken,
       FulLName: user.name,
       ImageUrl: user.imageUrl,
       Latitude: this.lat,
       Longitude: this.long
     };
-    await this.authService.CreateAccount(newUser);
-    if (user) { this.goToHome(user); }
+    await this.authService.CreateAccount(newUser).then(() =>{
+    });
   }
 
   async checkLoggedIn() {
     const loggedOut = await this.authService.isTokenExpired();
-    console.log(loggedOut) + "DEN ER IKKE EXPIRED";
-    if(loggedOut == false){
-      GoogleAuth.refresh().then((data) => {
-        console.log(data + 'Hello');
-        if (data.accessToken) {
-          let navigationExtras: NavigationExtras = {
-            state: {
-              user: { type: 'existing', accessToken: data.accessToken, idToken: data.idToken }
-            }
-          };
-          this.router.navigate(['tabs/tab2'], navigationExtras);
-        }
-      }).catch(e => {
-        if (e.type === 'userLoggedOut') {
-          this.doLogin();
-        }
-      });
-    }
-    if(loggedOut == true){
-      this.doLogin();
+    if(loggedOut){
+      this.doLogin()
     }
   }
 }

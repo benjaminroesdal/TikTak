@@ -12,7 +12,7 @@ export class ToastService {
     await Toast.show({
       text: textShow,
       duration: "long",
-      position: "center"
+      position: 'top'
     });
   };
 }

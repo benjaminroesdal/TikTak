@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlobStorageService {
-  private baseUrl = 'https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage';
+  private apiBaseUrl = environment.firebase.apiBaseUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -19,21 +20,27 @@ export class BlobStorageService {
   uploadBlob(file: File) {
     const formData: FormData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post(`${this.baseUrl}/PostBlob`, formData);
+    return this.http.post(`${this.apiBaseUrl}/BlobStorage/PostBlob`, formData);
   }
 
   removeBlob(blobName: string) {
-    return this.http.post(`${this.baseUrl}/RemoveBlob`, { blobName });
+    return this.http.post(`${this.apiBaseUrl}/BlobStorage/RemoveBlob`, { blobName });
   }
 
   getBlobManifest(id: string) {
     const headers = this.getHeaders();
-    console.log(headers)
-    return this.http.get(`${this.baseUrl}/GetBlobManifest?Id=${id}`, { headers });
+    return this.http.get(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?Id=${id}`, { headers });
   }
 
-  getFyp(): Observable<string[]> {
+  getFyp(): Observable<Video[]> {
     //this recieves 3 videos to the fyp
-    return this.http.get<string[]>(`${this.baseUrl}/GetFyp`);
+    return this.http.get<Video[]>(`${this.apiBaseUrl}/BlobStorage/GetFyp`);
   }
+}
+
+export interface Video {
+  UserId: string;
+  ProfileImage: string;
+  Email: string; // HLS manifest URL
+  BlobVideoStorageId: string;
 }
