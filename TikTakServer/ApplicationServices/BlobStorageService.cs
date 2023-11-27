@@ -44,8 +44,8 @@ namespace TikTakServer.ApplicationServices
 
         public async Task<List<VideoAndOwnedUserInfo>> GetFyp()
         {
-            var storageIds = await recommendationFacade.GetFyp();
-            return storageIds;
+            var vidAndUserInfo = await recommendationFacade.GetFyp();
+            return vidAndUserInfo;
         }
 
         public async Task RemoveBlobs(string blobId)
