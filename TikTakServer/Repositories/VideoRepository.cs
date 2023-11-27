@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq;
 using TikTakServer.Database;
 using TikTakServer.Managers;
@@ -33,11 +34,32 @@ namespace TikTakServer.Repositories
             return fypIds;
         }
 
-        public Task CreateVideo(VideoDao video)
+        public async Task<Task> CreateVideo(VideoDao video)
         {
+            video.Tags = video.Tags;
             var result = _context.Add(video);
             _context.SaveChanges();
             return Task.CompletedTask;
+        }
+
+        public async Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag)
+        {
+            var updatedDaoList = new List<TagDao>();
+            foreach (var item in tag)
+            {
+                var result = _context.Tags.Any(e => e.Name == item.Name);
+                TagDao tagDao;
+                if (result)
+                {
+                    updatedDaoList.Add(_context.Tags.First(e => e.Name == item.Name));
+                }
+                if (!result)
+                {
+                    updatedDaoList.Add(_context.Tags.Add(new TagDao() { Name = item.Name}).Entity);
+                }
+            }
+            _context.SaveChanges();
+            return updatedDaoList;
         }
 
         public Task RemoveVideoByStorageId(string id)

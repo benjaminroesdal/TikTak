@@ -11,7 +11,22 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-button color="success" expand="block" class="logout-button" (click)="appendFileToFormData()">
-    Upload
-  </ion-button>
+  <div class="upload-section">
+    <ion-label class="section-label">Select Video</ion-label>
+    <ion-button fill="outline" (click)="appendFileToFormData()">Choose File</ion-button>
+    <input #fileInput type="file" accept="video/*" hidden (change)="onFileSelected($event)">
+  </div>
+
+  <div class="tags-section">
+    <ion-label class="section-label">Tags</ion-label>
+    <div class="tags-container">
+      <ion-chip *ngFor="let tag of tagsArray" outline>
+        <ion-label>{{ tag }}</ion-label>
+        <ion-icon name="close-circle" (click)="removeTag(tag)"></ion-icon>
+      </ion-chip>
+      <ion-input #tagInput [(ngModel)]="currentTag" type="text" placeholder="Add a tag" (keyup.enter)="addTag(); currentTag=''"></ion-input>
+    </div>
+  </div>
+
+  <ion-button expand="block" class="submit-btn" (click)="uploadFile()">Upload Video</ion-button>
 </ion-content>

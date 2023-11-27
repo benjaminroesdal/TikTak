@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BlobStorageService {
-  private baseUrl = 'https://reliably-generous-grub.ngrok-free.app/BlobStorage';
+  private baseUrl = 'https://ee5d-93-176-82-57.ngrok-free.app/BlobStorage';
 
   constructor(private http: HttpClient) { }
 

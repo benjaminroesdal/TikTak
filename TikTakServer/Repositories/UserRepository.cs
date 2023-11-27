@@ -29,7 +29,7 @@ namespace TikTakServer.Repositories
         }
 
         public async Task<bool> UserExists(string email)
-        {
+            {
             var see = await _context.Users.AnyAsync(e => e.Email == email);
             return see;
         }

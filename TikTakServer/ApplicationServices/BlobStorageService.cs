@@ -58,12 +58,12 @@ namespace TikTakServer.ApplicationServices
             videoRepository.RemoveVideoByStorageId(blobId);
         }
 
-        public async Task UploadBlob(IFormFile file)
+        public async Task UploadBlob(PostBlobModel file)
         {
             var handler = new HlsHandler();
             var blobGuid = Guid.NewGuid().ToString();
             HlsObj hlsObj = new HlsObj();
-            using (var stream = file.OpenReadStream())
+            using (var stream = file.File.OpenReadStream())
             {
                 hlsObj = await handler.ConvertToHls(stream, blobGuid);
             }
@@ -73,11 +73,13 @@ namespace TikTakServer.ApplicationServices
                 await blobStorageFacade.UploadBlob(blobGuid + $"{i}.ts", containerName, hlsObj.Path + $"\\{blobGuid}{i}.ts");
             }
             await handler.ClearTempFiles(hlsObj.Guid, hlsObj.Path);
+            var tags = await videoRepository.AddTag(file.Tags);
             await videoRepository.CreateVideo(new VideoDao()
             {
                 BlobStorageId = blobGuid,
                 UploadDate = DateTime.Now,
-                UserId = int.Parse(_requestClaims.UserId)
+                UserId = int.Parse("6"),
+                Tags = tags
             });
         }
     }
