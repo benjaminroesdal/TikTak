@@ -1,4 +1,6 @@
-﻿namespace TikTakServer.Models.Business
+﻿using TikTakServer.Models.DaoModels;
+
+namespace TikTakServer.Models.Business
 {
     public class User
     {

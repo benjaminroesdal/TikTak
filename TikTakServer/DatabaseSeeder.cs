@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TikTakServer.Database;
-using TikTakServer.Models;
+using TikTakServer.Models.DaoModels;
 
 namespace TikTakServer
 {

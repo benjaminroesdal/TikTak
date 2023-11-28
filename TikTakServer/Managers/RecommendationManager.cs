@@ -1,24 +1,25 @@
-﻿using TikTakServer.Models;
-using TikTakServer.Repositories;
+﻿using TikTakServer.Models.Business;
+using TikTakServer.Models.DaoModels;
+using TikTakServer.Facades;
 
 namespace TikTakServer.Managers
 {
     public class RecommendationManager : IRecommendationManager
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserFacade _userFacade;
         private readonly UserRequestAndClaims _userRequestAndClaims;
 
         private static int videoCount = 3;
         private static double CountryWeight = 0.8;
 
-        public RecommendationManager(IUserRepository userRepository, UserRequestAndClaims userRequestAndClaims)
+        public RecommendationManager(IUserFacade userFacade, UserRequestAndClaims userRequestAndClaims)
         {
-            _userRepository = userRepository;
+            _userFacade = userFacade;
             _userRequestAndClaims = userRequestAndClaims;
         }
         public List<string> GetRandomTagsBasedOnUserPreference()
         {
-            List<UserTagInteractionDao> preferences = _userRepository.GetUserTagInteractions();
+            List<UserTagInteractionDao> preferences = _userFacade.GetUserTagInteractions();
 
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
             double countryWeight = TotalWeightofPreferences * CountryWeight;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using TikTakServer.Database;
-using TikTakServer.Models;
+using TikTakServer.Models.DaoModels;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Repositories
@@ -61,13 +60,6 @@ namespace TikTakServer.Repositories
                 throw new UnauthorizedAccessException("The provided refresh token has expired, please log in again.");
             }
             return await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
-        }
-
-        public async Task InvalidateRefreshToken(string refreshToken)
-        {
-            var user = await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
-            _context.Tokens.Remove(user.Tokens.First(x => x.RefreshToken == refreshToken));
-            await _context.SaveChangesAsync();
         }
 
         public List<UserTagInteractionDao> GetUserTagInteractions()

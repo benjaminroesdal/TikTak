@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TikTakServer.ApplicationServices;
-using TikTakServer.Database;
 using TikTakServer.Facades;
-using TikTakServer.Models;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
@@ -14,7 +10,7 @@ namespace TikTakServer.Controllers
     {
         private readonly IUserFacade _userFacade;
 
-        public VideoController(TikTakContext context, IUserFacade userFacade)
+        public VideoController(IUserFacade userFacade)
         {
             _userFacade = userFacade;
         }

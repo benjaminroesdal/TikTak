@@ -1,4 +1,4 @@
-﻿using TikTakServer.Models;
+﻿using TikTakServer.Models.Business;
 
 namespace TikTakServer.ApplicationServices
 {

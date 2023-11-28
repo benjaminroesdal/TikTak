@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Facades;
-using TikTakServer.Models;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {

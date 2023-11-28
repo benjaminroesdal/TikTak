@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Linq;
 using TikTakServer.Database;
-using TikTakServer.Managers;
-using TikTakServer.Models;
+using TikTakServer.Models.DaoModels;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Repositories

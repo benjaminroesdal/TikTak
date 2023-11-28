@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TikTakServer.ApplicationServices;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {
@@ -35,14 +35,5 @@ namespace TikTakServer.Controllers
             var result = await _authService.RefreshAccessToken(refreshToken);
             return Ok(result);
         }
-    }
-
-    public class CreateUserRequest
-    {
-        public string GoogleAccessToken { get; set; }
-        public string FulLName { get; set; }
-        public string ImageUrl { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 }

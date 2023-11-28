@@ -1,5 +1,4 @@
-﻿using TikTakServer.Models.Business;
-using TikTakServer.Models;
+﻿using TikTakServer.Models.DaoModels;
 
 namespace TikTakServer.Repositories
 {
@@ -7,7 +6,6 @@ namespace TikTakServer.Repositories
     {
         Task<UserDao> CreateUser(UserDao user);
         Task<UserDao> ValidateRefreshToken(string refreshToken);
-        Task InvalidateRefreshToken(string refreshToken);
         Task<UserDao> GetUser(string email);
         Task CreateTokensOnUser(string email, string refreshToken);
         Task<bool> UserExists(string email);

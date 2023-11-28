@@ -1,10 +1,9 @@
-﻿using Azure.Core;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.ApplicationServices
 {
-    public class GoogleAuthService
+    public class GoogleAuthService : IGoogleAuthService
     {
         private readonly HttpClient _httpClient;
         private readonly string _clientId;
@@ -42,44 +41,9 @@ namespace TikTakServer.ApplicationServices
             var geoUrl = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={lati},{longi}&key=AIzaSyCFzyvOxCneBvkJhTV1hj8R5UzpYMMpTHM";
             var response = await _httpClient.GetAsync(geoUrl);
             var jsonContent = await response.Content.ReadAsStringAsync();
-            var googleInfo = JsonConvert.DeserializeObject<Root>(jsonContent);
+            var googleInfo = JsonConvert.DeserializeObject<LocationResult>(jsonContent);
             //var countryName = googleInfo.results.Where(e => e.types.Contains("country")).First().address_components.FirstOrDefault().long_name;
             return "Denmark";
         }
-    }
-
-
-    public class GoogleInfoModel
-    {
-        [JsonProperty("email")]
-        public string Email { get; set; }
-        [JsonProperty("exp")]
-        public string ExpireDate { get; set; }
-        [JsonProperty("expires_in")]
-        public string ExpiresIn { get; set; }
-        [JsonProperty("email_verified")]
-        public string EmailVerified { get; set; }
-        [JsonProperty("aud")]
-        public string Audience { get; set; }
-    }
-
-
-    public class Root
-    {
-        public List<Result> results { get; set; }
-        public string status { get; set; }
-    }
-
-    public class Result
-    {
-        public List<AddressComponent> address_components { get; set; }
-        public List<string> types { get; set; }
-    }
-
-    public class AddressComponent
-    {
-        public string long_name { get; set; }
-        public string short_name { get; set; }
-        public List<string> types { get; set; }
     }
 }

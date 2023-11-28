@@ -1,6 +1,4 @@
-﻿
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
+﻿using Azure.Storage.Blobs;
 
 namespace TikTakServer.Repositories
 {
@@ -27,7 +25,7 @@ namespace TikTakServer.Repositories
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public async Task<string> UploadBlob(string blobName, string containerName, string path)
+        public async Task UploadBlob(string blobName, string containerName, string path)
         {
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
@@ -41,9 +39,8 @@ namespace TikTakServer.Repositories
             catch (Exception e)
             {
 
-                throw;
+                throw new Exception("Blob was not able to be uploaded:" + e.Message);
             }
-            return "Ok";
         }
     }
 }

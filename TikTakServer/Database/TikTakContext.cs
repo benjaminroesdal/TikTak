@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TikTakServer.Models;
+using TikTakServer.Models.DaoModels;
 
 namespace TikTakServer.Database
 {

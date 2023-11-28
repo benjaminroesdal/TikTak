@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="RSA\" />
+    <Folder Include="TempFiles\" />
   </ItemGroup>
 
 </Project>

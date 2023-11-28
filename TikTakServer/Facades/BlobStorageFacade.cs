@@ -21,9 +21,9 @@ namespace TikTakServer.Facades
             await _repository.RemoveBlob(blobName, containerName);
         }
 
-        public async Task<string> UploadBlob(string blobName, string containerName, string path)
+        public async Task UploadBlob(string blobName, string containerName, string path)
         {
-            return await _repository.UploadBlob(blobName,  containerName, path);
+            await _repository.UploadBlob(blobName,  containerName, path);
         }
     }
 }

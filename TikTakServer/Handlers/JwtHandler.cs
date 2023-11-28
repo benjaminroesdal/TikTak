@@ -4,18 +4,18 @@ using System.Security.Claims;
 
 namespace TikTakServer.Handlers
 {
-    public class JwtHandler
+    public class JwtHandler : IJwtHandler
     {
         private readonly string _secretKey;
         private readonly IConfiguration config;
 
         public JwtHandler(IConfiguration configuration)
         {
-            _secretKey = configuration["SecretKey"];
+            _secretKey = configuration["SecretKey"] ?? "";
             config = configuration;
         }
 
-        public List<Claim> CreateClaims(int userId, string userEmail, string userImg, string countryName)
+        private List<Claim> CreateClaims(int userId, string userEmail, string userImg, string countryName)
         {
             var claims = new List<Claim>
             {

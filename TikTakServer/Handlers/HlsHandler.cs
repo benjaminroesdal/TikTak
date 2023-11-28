@@ -3,7 +3,7 @@ using System;
 
 namespace TikTakServer.Handlers
 {
-    public class HlsHandler
+    public class HlsHandler : IHlsHandler
     {
         private readonly FFMpegConverter _converter;
         private const string AzureBlobPath = "https://tiktakstorage.blob.core.windows.net/tiktaks/";
@@ -45,7 +45,7 @@ namespace TikTakServer.Handlers
         {
             var tempFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "TempFiles");
             int fileCount = 0;
-            string[] lines = File.ReadAllLines(tempFolderPath + $"\\{guid}.M3U8");
+            string[] lines = await File.ReadAllLinesAsync(tempFolderPath + $"\\{guid}.M3U8");
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].EndsWith(".ts"))
@@ -55,7 +55,7 @@ namespace TikTakServer.Handlers
                 }
             }
 
-            File.WriteAllLines(tempFolderPath + $"\\{guid}.M3U8", lines);
+            await File.WriteAllLinesAsync(tempFolderPath + $"\\{guid}.M3U8", lines);
             return new HlsObj() { FileCount = fileCount, Guid = guid, Path = tempFolderPath };
         }
 
