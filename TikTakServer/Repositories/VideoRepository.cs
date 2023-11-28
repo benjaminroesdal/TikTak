@@ -8,10 +8,12 @@ namespace TikTakServer.Repositories
     public class VideoRepository : IVideoRepository
     {
         private readonly TikTakContext _context;
+        private readonly ITagRepository _tagRepository;
 
-        public VideoRepository(TikTakContext context)
+        public VideoRepository(TikTakContext context, ITagRepository tagRepository)
         {
             _context = context;
+            _tagRepository = tagRepository;
         }
 
         public async Task<VideoDao> GetVideo(string id)
@@ -78,23 +80,19 @@ namespace TikTakServer.Repositories
             await AddNewTagInteractions(interaction, unusedTags);
         }
 
-        public async Task RegisterVideoLike(Like like)
+        public async Task<Task> RegisterVideoLike(Like like)
         {
             LikeDao likeDao = new LikeDao(like);
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
-        }
-
-        public int GetTagCount(string name)
-        {
-            return _context.Tags.Where(x => x.Name == name).SelectMany(e => e.Videos).Distinct().Count();
+            return Task.CompletedTask;
         }
 
         public string GetRandomVideoBlobId(string name)
         {
             Random rnd = new Random();
-            var tagCount = GetTagCount(name);
+            var tagCount = await _tagRepository.GetTagCount(name);
             if (tagCount == 0)
             {
                 var videoCount = _context.Videos.Count();
