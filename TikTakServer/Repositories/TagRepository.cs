@@ -4,7 +4,7 @@ using TikTakServer.Models;
 
 namespace TikTakServer.Repositories
 {
-    public class TagRepository:ITagRepository
+    public class TagRepository : ITagRepository
     {
         private readonly TikTakContext _context;
         public TagRepository(TikTakContext context)
@@ -19,7 +19,7 @@ namespace TikTakServer.Repositories
             return await _context.Tags.Where(x => x.Id == rndTag).Select(y => y.Name).FirstAsync();
         }
 
-        public async Task<int> GetTagCount(string name)
+        public int GetTagCount(string name)
         {
             return _context.Tags.Where(x => x.Name == name).SelectMany(e => e.Videos).Distinct().Count();
         }

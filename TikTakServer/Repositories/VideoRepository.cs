@@ -80,19 +80,18 @@ namespace TikTakServer.Repositories
             await AddNewTagInteractions(interaction, unusedTags);
         }
 
-        public async Task<Task> RegisterVideoLike(Like like)
+        public async Task RegisterVideoLike(Like like)
         {
             LikeDao likeDao = new LikeDao(like);
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
-            return Task.CompletedTask;
         }
 
         public string GetRandomVideoBlobId(string name)
         {
             Random rnd = new Random();
-            var tagCount = await _tagRepository.GetTagCount(name);
+            var tagCount = _tagRepository.GetTagCount(name);
             if (tagCount == 0)
             {
                 var videoCount = _context.Videos.Count();
