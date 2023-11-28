@@ -10,7 +10,7 @@ namespace TikTakServer.Repositories
         Task<VideoDao> GetVideo(string id);
         Task<List<string>> GetFyp(List<string> vidIds);
         Task CountUserVideoInteraction(UserTagInteraction interaction);
-        Task RegisterVideoLike(Like like);
+        Task<Task> RegisterVideoLike(Like like);
         Task<int> GetTagCount(string name);
         Task<string> GetRandomVideoBlobId(string name);
         Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag);

@@ -83,12 +83,13 @@ namespace TikTakServer.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task RegisterVideoLike(Like like)
+        public async Task<Task> RegisterVideoLike(Like like)
         {
             LikeDao likeDao = new LikeDao(like);
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public async Task<int> GetTagCount(string name)

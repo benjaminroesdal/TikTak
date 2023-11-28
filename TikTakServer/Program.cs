@@ -29,6 +29,7 @@ builder.Services.AddScoped<IBlobStorageFacade, BlobStorageFacade>();
 builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserFacade, UserFacade>();
 builder.Services.AddScoped<IRecommendationFacade, RecommendationFacade>();
 builder.Services.AddScoped<IRecommendationManager, RecommendationManager>();
 builder.Services.AddScoped<HttpClient>();
