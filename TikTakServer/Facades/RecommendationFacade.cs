@@ -22,7 +22,7 @@ namespace TikTakServer.Facades
             var blobIds = new List<string>();
             for (int i = 0; i < userPrefTags.Count; i++)
             {
-                blobIds.Add(await _videoFacade.GetRandomVideoBlobId(userPrefTags[i]));
+                blobIds.Add(_videoFacade.GetRandomVideoBlobId(userPrefTags[i]));
             }
             var fypIds = await _videoFacade.GetFyp(blobIds);
             var infoToFrontend = new List<VideoAndOwnedUserInfo>();

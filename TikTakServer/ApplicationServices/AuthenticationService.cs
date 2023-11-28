@@ -9,10 +9,10 @@ namespace TikTakServer.ApplicationServices
     {
         private readonly IUserFacade userFacade;
         private readonly IJwtHandler jwtHandler;
-        private readonly GoogleAuthService googleAuth;
+        private readonly IGoogleAuthService googleAuth;
         private readonly UserRequestAndClaims _requestAndClaims;
 
-        public AuthenticationService(IUserFacade userFacade, IJwtHandler jwtHandler, GoogleAuthService googleAuthService, UserRequestAndClaims requestClaims)
+        public AuthenticationService(IUserFacade userFacade, IJwtHandler jwtHandler, IGoogleAuthService googleAuthService, UserRequestAndClaims requestClaims)
         {
             this.userFacade = userFacade;
             this.jwtHandler = jwtHandler;
@@ -42,7 +42,7 @@ namespace TikTakServer.ApplicationServices
 
         public async Task<User> Login(string googleAccessToken, string name, string imgUrl, double longi, double lati)
         {
-            var googleUser = await googleAuth.VerifyTokenAsync(googleAccessToken);
+            var googleUser = await googleAuth.VerifyToken(googleAccessToken);
             var countryName = await googleAuth.GetCountryOfLocation(longi, lati);
             var userExists = await userFacade.UserExists(googleUser.Email);
             if (!userExists)

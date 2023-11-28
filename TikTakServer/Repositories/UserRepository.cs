@@ -24,12 +24,12 @@ namespace TikTakServer.Repositories
 
         public async Task<UserDao> GetUser(string email)
         {
-            return _context.Users.First(e => e.Email == email);
+            return await _context.Users.FirstAsync(e => e.Email == email);
         }
 
         public async Task<UserDao> GetUserByVideoBlobId(string blobId)
         {
-            return _context.Users.Include(x => x.Videos).Where(i => i.Videos.Where(e => e.BlobStorageId == blobId).Any()).First();
+            return await _context.Users.Include(x => x.Videos).Where(i => i.Videos.Where(e => e.BlobStorageId == blobId).Any()).FirstAsync();
         }
 
         public async Task<bool> UserExists(string email)

@@ -20,7 +20,7 @@ namespace TikTakServer.ApplicationServices
             _id = configuration["AndroidClientId2"];
         }
 
-        public async Task<GoogleInfoModel> VerifyTokenAsync(string accessToken)
+        public async Task<GoogleInfoModel> VerifyToken(string accessToken)
         {
             var response = await _httpClient.GetAsync($"{_googleTokenInfoUrl}?access_token={accessToken}");
             response.EnsureSuccessStatusCode();

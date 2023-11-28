@@ -10,7 +10,7 @@ namespace TikTakServer.Managers
         private readonly UserRequestAndClaims _userRequestAndClaims;
 
         private static int videoCount = 3;
-        private static double CountryWeight = 0.8;
+        private static double countryWeight = 0.8;
 
         public RecommendationManager(IUserFacade userFacade, UserRequestAndClaims userRequestAndClaims)
         {
@@ -22,7 +22,7 @@ namespace TikTakServer.Managers
             List<UserTagInteractionDao> preferences = _userFacade.GetUserTagInteractions();
 
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
-            double countryWeight = TotalWeightofPreferences * CountryWeight;
+            double countryWeight = TotalWeightofPreferences * RecommendationManager.countryWeight;
 
 
             List<string> videoTagResults = new List<string>();

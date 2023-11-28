@@ -19,7 +19,7 @@ namespace TikTakServer.Facades
         public Task<List<string>> GetFyp(List<string> videoIds)
             => _videoRepository.GetFyp(videoIds);
 
-        public Task<Task> CreateVideo(VideoDao video)
+        public Task CreateVideo(VideoDao video)
             => _videoRepository.CreateVideo(video);
 
         public Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag)
@@ -34,10 +34,10 @@ namespace TikTakServer.Facades
         public Task RegisterVideoLike(Like like)
             => _videoRepository.RegisterVideoLike(like);
 
-        public Task<int> GetTagCount(string name)
+        public int GetTagCount(string name)
             => _videoRepository.GetTagCount(name);
 
-        public Task<string> GetRandomVideoBlobId(string name)
+        public string GetRandomVideoBlobId(string name)
             => _videoRepository.GetRandomVideoBlobId(name);
     }
 }

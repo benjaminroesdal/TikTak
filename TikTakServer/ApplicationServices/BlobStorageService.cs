@@ -71,10 +71,10 @@ namespace TikTakServer.ApplicationServices
             {
                 hlsObj = await this.hlsHandler.ConvertToHls(stream, blobGuid);
             }
-            await blobStorageFacade.UploadBlob(blobGuid + $".M3U8", containerName, hlsObj.Path + $"\\{blobGuid}.M3U8");
+            blobStorageFacade.UploadBlob(blobGuid + $".M3U8", containerName, hlsObj.Path + $"\\{blobGuid}.M3U8");
             for (int i = 0; i < hlsObj.FileCount; i++)
             {
-                await blobStorageFacade.UploadBlob(blobGuid + $"{i}.ts", containerName, hlsObj.Path + $"\\{blobGuid}{i}.ts");
+                blobStorageFacade.UploadBlob(blobGuid + $"{i}.ts", containerName, hlsObj.Path + $"\\{blobGuid}{i}.ts");
             }
             await this.hlsHandler.ClearTempFiles(hlsObj.Guid, hlsObj.Path);
             var tags = await videoFacade.AddTag(file.Tags);

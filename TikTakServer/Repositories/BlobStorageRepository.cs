@@ -25,7 +25,7 @@ namespace TikTakServer.Repositories
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public async Task UploadBlob(string blobName, string containerName, string path)
+        public void UploadBlob(string blobName, string containerName, string path)
         {
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
