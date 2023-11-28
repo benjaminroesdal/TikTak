@@ -11,10 +11,12 @@ namespace TikTakServer.Repositories
     public class VideoRepository : IVideoRepository
     {
         private readonly TikTakContext _context;
+        private readonly ITagRepository _tagRepository;
 
-        public VideoRepository(TikTakContext context)
+        public VideoRepository(TikTakContext context, ITagRepository tagRepository)
         {
             _context = context;
+            _tagRepository = tagRepository;
         }
 
         public async Task<VideoDao> GetVideo(string id)
@@ -92,15 +94,10 @@ namespace TikTakServer.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<int> GetTagCount(string name)
-        {
-            return _context.Tags.Where(x => x.Name == name).SelectMany(e => e.Videos).Distinct().Count();
-        }
-
         public async Task<string> GetRandomVideoBlobId(string name)
         {
             Random rnd = new Random();
-            var tagCount = await GetTagCount(name);
+            var tagCount = await _tagRepository.GetTagCount(name);
             if (tagCount == 0)
             {
                 var videoCount = _context.Videos.Count();

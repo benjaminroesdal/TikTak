@@ -32,6 +32,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFacade, UserFacade>();
 builder.Services.AddScoped<IRecommendationFacade, RecommendationFacade>();
 builder.Services.AddScoped<IRecommendationManager, RecommendationManager>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<JwtHandler>();
