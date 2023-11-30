@@ -45,8 +45,13 @@ export class AuthService {
   }
 
   async Logout() : Promise<void> {
-    this.isLoggedIn.next(false);
-    await this.storageService.clear();
+    await this.storageService.get('RefreshToken').then(e => {
+      return this.http.post(`${this.apiBaseUrl}/Logout`, JSON.stringify(e), this.httpOptions).subscribe(() => {
+        this.isLoggedIn.next(false);
+        this.router.navigate(['tabs/tab1']);
+        this.storageService.clear();
+      })
+    });
   }
 
   async RefreshAccessToken() : Promise<void>{

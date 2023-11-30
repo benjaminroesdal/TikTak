@@ -14,5 +14,6 @@ namespace TikTakServer.Facades
         Task CreateTokensOnUser(string email, string refreshToken);
         Task<UserDao> ValidateRefreshToken(string refreshToken);
         List<UserTagInteractionDao> GetUserTagInteractions();
+        Task RemoveRefreshToken(string refreshToken);
     }
 }

@@ -29,6 +29,13 @@ namespace TikTakServer.Controllers
             return Ok(result);
         }
 
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] string token)
+        {
+            await _authService.Logout(token);
+            return Ok();
+        }
+
         [HttpPost("RefreshAccessToken")]
         public async Task<IActionResult> RefreshAccessToken([FromBody]string refreshToken)
         {

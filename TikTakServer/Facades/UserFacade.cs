@@ -40,5 +40,8 @@ namespace TikTakServer.Facades
 
         public List<UserTagInteractionDao> GetUserTagInteractions()
             => _userRepository.GetUserTagInteractions();
+
+        public Task RemoveRefreshToken(string refreshToken)
+            => _userRepository.RemoveRefreshToken(refreshToken);
     }
 }

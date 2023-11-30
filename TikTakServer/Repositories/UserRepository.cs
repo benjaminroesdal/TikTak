@@ -38,6 +38,13 @@ namespace TikTakServer.Repositories
             return see;
         }
 
+        public async Task RemoveRefreshToken(string refreshToken)
+        {
+            var token = await _context.Tokens.FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task CreateTokensOnUser(string email, string refreshToken)
         {
             var user = _context.Users.Include(x => x.Tokens).First(e => e.Email == email);

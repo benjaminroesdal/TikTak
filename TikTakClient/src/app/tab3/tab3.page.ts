@@ -23,7 +23,7 @@ export class Tab3Page {
   }
 
   async logout() {
-    await this.authService.Logout().then(() => {
+    await this.authService.Logout().finally(() => {
       this.router.navigate(['tabs/tab1']);
     });
   }

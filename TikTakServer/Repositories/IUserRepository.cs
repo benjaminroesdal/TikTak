@@ -11,5 +11,6 @@ namespace TikTakServer.Repositories
         Task<bool> UserExists(string email);
         List<UserTagInteractionDao> GetUserTagInteractions();
         Task<UserDao> GetUserByVideoBlobId(string blobId);
+        Task RemoveRefreshToken(string refreshToken);
     }
 }

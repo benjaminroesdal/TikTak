@@ -56,6 +56,11 @@ namespace TikTakServer.ApplicationServices
             return new User(user, accessToken, refreshToken);
         }
 
+        public async Task Logout(string refreshToken)
+        {
+            await userFacade.RemoveRefreshToken(refreshToken);
+        }
+
         private UserDao CreateUserDao(GoogleInfoModel infoModel, string name, string imgUrl, string refreshToken, string country)
         {
             return new UserDao()
