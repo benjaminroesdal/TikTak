@@ -31,8 +31,8 @@ namespace TikTakServer.Controllers
         [Route("RegisterVideoLike")]
         public async Task<IActionResult> RegisterVideoLike([FromBody] Like like)
         {
-            if (like == null || like.UserId == 0 || like.VideoId == 0)
-                return BadRequest("Could not register video like. Video og user ID not specified or 0");
+            if (like == null || like.UserId == 0 || string.IsNullOrEmpty(like.BlobStorageId))
+                return BadRequest("Could not register video like. Blob storage og user ID not specified or 0");
 
             if (like.LikeDate == DateTime.MinValue)
                 return BadRequest("Couldnt register like. Date time was default");

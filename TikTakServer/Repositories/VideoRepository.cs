@@ -82,7 +82,9 @@ namespace TikTakServer.Repositories
 
         public async Task RegisterVideoLike(Like like)
         {
-            LikeDao likeDao = new LikeDao(like);
+            var videoId = _context.Videos.Where(x => x.BlobStorageId == like.BlobStorageId).Select(i => i.Id).FirstOrDefault();
+
+            LikeDao likeDao = new LikeDao(like, videoId);
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
