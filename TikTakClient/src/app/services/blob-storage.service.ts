@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Video } from '../models/video';
+import { Video, VideoInfoModel } from '../models/video';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +33,8 @@ export class BlobStorageService {
     return this.http.get(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?Id=${id}`, { headers });
   }
 
-  getFyp(): Observable<Video[]> {
+  getFyp(): Observable<VideoInfoModel[]> {
     //this recieves 3 videos to the fyp
-    return this.http.get<Video[]>(`${this.apiBaseUrl}/BlobStorage/GetFyp`);
+    return this.http.get<VideoInfoModel[]>(`${this.apiBaseUrl}/BlobStorage/GetFyp`);
   }
 }

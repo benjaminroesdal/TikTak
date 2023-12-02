@@ -8,7 +8,7 @@ namespace TikTakServer.Repositories
         Task CreateVideo(VideoDao video);
         Task RemoveVideoByStorageId(string id);
         Task<VideoDao> GetVideo(string id);
-        Task<List<string>> GetFyp(List<string> vidIds);
+        Task<List<VideoModel>> GetRandomVideos(int videoAmount);
         Task CountUserVideoInteraction(UserTagInteraction interaction);
         Task RegisterVideoLike(Like like);
         VideoModel GetRandomVideoBlobId(string name);

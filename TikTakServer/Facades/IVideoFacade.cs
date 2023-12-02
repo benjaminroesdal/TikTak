@@ -6,7 +6,7 @@ namespace TikTakServer.Facades
     public interface IVideoFacade
     {
         Task<VideoDao> GetVideo(string id);
-        Task<List<string>> GetFyp(List<string> videoIds);
+        Task<List<VideoModel>> GetRandomVideos(int videoAmount);
         Task CreateVideo(VideoDao video);
         Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag);
         Task RemoveVideoByStorageId(string id);

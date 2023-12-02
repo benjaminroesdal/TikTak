@@ -24,16 +24,18 @@ namespace TikTakServer.Repositories
             return video;
         }
 
-        public async Task<List<string>> GetFyp(List<string> videoIds)
+        public async Task<List<VideoModel>> GetRandomVideos(int videoAmount)
         {
-            var fypIds = new List<string>();
-            foreach (var id in videoIds)
+            var videoCount = _context.Videos.Count() - 1;
+            List<VideoModel> videos = new List<VideoModel>();
+            for (int i = 0; i < videoAmount; i++)
             {
-                var fypId = await _context.Videos.Where(x => x.BlobStorageId == id).Select(x => x.BlobStorageId).FirstOrDefaultAsync();
-                fypIds.Add(fypId);
+                var rnd = new Random().Next(0, videoCount);
+                var video = _context.Videos.Include(e => e.Likes).Include(e => e.Tags).ElementAt(rnd);
+                videos.Add(new VideoModel(video));
             }
 
-            return fypIds;
+            return videos;
         }
 
         public async Task CreateVideo(VideoDao video)

@@ -16,8 +16,8 @@ namespace TikTakServer.Facades
         public Task<VideoDao> GetVideo(string id) 
             => _videoRepository.GetVideo(id);
 
-        public Task<List<string>> GetFyp(List<string> videoIds)
-            => _videoRepository.GetFyp(videoIds);
+        public Task<List<VideoModel>> GetRandomVideos(int videoAmount)
+            => _videoRepository.GetRandomVideos(videoAmount);
 
         public Task CreateVideo(VideoDao video)
             => _videoRepository.CreateVideo(video);

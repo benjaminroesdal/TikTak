@@ -117,19 +117,20 @@ export class Tab2Page implements AfterViewInit {
   async loadVideos(): Promise<void> {
     this.newVideosReadyToPlay = false;
     return new Promise((resolve, reject) => {
-      this.blobStorageService.getFyp().subscribe((videos: any[]) => {
-        this.videosArray.push(...videos);
+      this.blobStorageService.getFyp().subscribe((videoInfoList: any[]) => {
+        console.log(videoInfoList);
+        this.videosArray.push(...videoInfoList);
         setTimeout(() => {
           this.videosArray.forEach(item1 => {
-            const matchingItem = videos.find(item2 => item2.id === item1.id);
+            const matchingItem = videoInfoList.find(item2 => item2.id === item1.id);
             if (matchingItem) {
-              item1.manifestUrl = "https://localhost:7001/BlobStorage/GetBlobManifest?id=" + matchingItem.blobVideoStorageId;
+              item1.manifestUrl = "https://localhost:7001/BlobStorage/GetBlobManifest?id=" + matchingItem.video.blobStorageId;
             }
           });
           console.log(this.videosArray)
           this.videosArray.forEach((video, index) => {
             // Ensure that video.blobVideoStorageId is the correct property from your video object
-            this.setupHlsPlayer("https://localhost:7001/BlobStorage/GetBlobManifest?id=" + video.blobVideoStorageId, index, video.blobVideoStorageId);
+            this.setupHlsPlayer("https://localhost:7001/BlobStorage/GetBlobManifest?id=" + video.video.blobStorageId, index, video.video.blobStorageId);
           });
           this.newVideosReadyToPlay = true;
           resolve();

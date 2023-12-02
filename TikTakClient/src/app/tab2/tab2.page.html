@@ -1,17 +1,17 @@
 <ion-content [fullscreen]="false">
   <swiper-container #swiperRef [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)" init="false" pagination-dynamic-bullets="true">
-    <swiper-slide class="video-container" *ngFor="let video of videosArray; let i = index" >
+    <swiper-slide class="video-container" *ngFor="let videoInfo of videosArray; let i = index" >
       <video playsinline class="videoName" [id]="'video_' + i" [muted]="false" preload="none"></video>
       <div class="video-overlay">
         
         <ion-chip>
           <ion-avatar>
-            <img alt="Img" src="{{video.profileImage}}" />
+            <img alt="Img" src="{{videoInfo.profileImage}}" />
           </ion-avatar>
-          <ion-label>{{video.email}}</ion-label>
+          <ion-label>{{videoInfo.email}}</ion-label>
         </ion-chip>
         <!-- Heart-shaped button using Ionic icons -->
-        <ion-button fill="clear" (click)="likeVideo(video.blobVideoStorageId)">
+        <ion-button fill="clear" (click)="likeVideo(videoInfo.video.blobStorageId)">
           <ion-icon name="heart" slot="icon-only"></ion-icon>
         </ion-button>
       </div>
