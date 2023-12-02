@@ -7,13 +7,13 @@ namespace TikTakServer.Models.Business
         public int UserId { get; set; }
         public string ProfileImage { get; set; }
         public string Email { get; set; }
-        public string BlobVideoStorageId { get; set; }
-        public VideoAndOwnedUserInfo(UserDao user, string videoBlobId)
+        public VideoModel Video { get; set; }
+        public VideoAndOwnedUserInfo(UserDao user, VideoModel video)
         {
             UserId = user.Id;
             ProfileImage = user.ImageUrl;
             Email = user.Email;
-            BlobVideoStorageId = videoBlobId;
+            Video = video;
         }
     }
 }

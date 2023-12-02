@@ -101,19 +101,20 @@ namespace TikTakServer.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public string GetRandomVideoBlobId(string name)
+        public VideoModel GetRandomVideoBlobId(string name)
         {
             Random rnd = new Random();
             var tagCount = _tagRepository.GetTagCount(name);
             if (tagCount == 0)
             {
-                var videoCount = _context.Videos.Count();
-                return _context.Videos.Select(x => x.BlobStorageId).ElementAt(rnd.Next(0, videoCount));
+                var videoCount = _context.Videos.Count() - 1;
+                var randomVideo = _context.Videos.Include(e => e.Tags).ElementAt(rnd.Next(0, videoCount));
+                return new VideoModel(randomVideo);
             }
 
             var rd = rnd.Next(0, tagCount);
-            var blobId = _context.Videos.Include(video => video.Tags).Where(x => x.Tags.Any(e => e.Name == name)).Select(y => y.BlobStorageId).ElementAt(rd);
-            return blobId;
+            var randomTagVideo = _context.Videos.Include(video => video.Tags).Include(e => e.Likes).Where(x => x.Tags.Any(e => e.Name == name)).ElementAt(rd);
+            return new VideoModel(randomTagVideo);
         }
 
         private async Task IncrementTagInteraction(List<TagDao> interactions)

@@ -12,6 +12,6 @@ namespace TikTakServer.Facades
         Task RemoveVideoByStorageId(string id);
         Task CountUserVideoInteraction(UserTagInteraction interaction);
         Task RegisterVideoLike(Like like);
-        string GetRandomVideoBlobId(string name);
+        VideoModel GetRandomVideoBlobId(string name);
     }
 }

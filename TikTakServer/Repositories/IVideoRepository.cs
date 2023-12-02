@@ -11,7 +11,7 @@ namespace TikTakServer.Repositories
         Task<List<string>> GetFyp(List<string> vidIds);
         Task CountUserVideoInteraction(UserTagInteraction interaction);
         Task RegisterVideoLike(Like like);
-        string GetRandomVideoBlobId(string name);
+        VideoModel GetRandomVideoBlobId(string name);
         Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag);
     }
 }

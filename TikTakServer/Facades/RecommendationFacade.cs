@@ -19,18 +19,17 @@ namespace TikTakServer.Facades
         public async Task<List<VideoAndOwnedUserInfo>> GetFyp()
         {
             var userPrefTags = _recommendationManager.GetRandomTagsBasedOnUserPreference();
-            var blobIds = new List<string>();
+            var blobIds = new List<VideoModel>();
             for (int i = 0; i < userPrefTags.Count; i++)
             {
                 blobIds.Add(_videoFacade.GetRandomVideoBlobId(userPrefTags[i]));
             }
-            var fypIds = await _videoFacade.GetFyp(blobIds);
             var infoToFrontend = new List<VideoAndOwnedUserInfo>();
 
-            for (int i = 0; i < fypIds.Count; i++)
+            for (int i = 0; i < blobIds.Count; i++)
             {
-                var vidOwner = await _userFacade.GetUserByVideoBlobId(fypIds[i]);
-                infoToFrontend.Add(new VideoAndOwnedUserInfo(vidOwner, fypIds[i]));
+                var vidOwner = await _userFacade.GetUserByVideoBlobId(blobIds[i].BlobStorageId);
+                infoToFrontend.Add(new VideoAndOwnedUserInfo(vidOwner, blobIds[i]));
             }
 
             return infoToFrontend;

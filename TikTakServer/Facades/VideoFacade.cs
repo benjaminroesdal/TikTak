@@ -34,7 +34,7 @@ namespace TikTakServer.Facades
         public Task RegisterVideoLike(Like like)
             => _videoRepository.RegisterVideoLike(like);
 
-        public string GetRandomVideoBlobId(string name)
+        public VideoModel GetRandomVideoBlobId(string name)
             => _videoRepository.GetRandomVideoBlobId(name);
     }
 }
