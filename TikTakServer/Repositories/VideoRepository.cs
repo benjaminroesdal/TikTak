@@ -54,7 +54,7 @@ namespace TikTakServer.Repositories
                 }
                 if (!result)
                 {
-                    updatedDaoList.Add(_context.Tags.Add(new TagDao() { Name = item.Name}).Entity);
+                    updatedDaoList.Add(_context.Tags.Add(new TagDao() { Name = item.Name }).Entity);
                 }
             }
             await _context.SaveChangesAsync();
@@ -71,13 +71,22 @@ namespace TikTakServer.Repositories
 
         public async Task CountUserVideoInteraction(UserTagInteraction interaction)
         {
-            List<TagDao> videoTags = _context.Videos.Where(v => v.Id == interaction.VideoId).SelectMany(x => x.Tags).ToList();
+            var videoId = _context.Videos.Where(x => x.BlobStorageId == interaction.BlobStorageId).Select(y => y.Id).FirstOrDefault();
+
+            List<TagDao> videoTags = _context.Videos.Where(v => v.Id == videoId).SelectMany(x => x.Tags).ToList();
             var usedTagsByUser = _context.Users.Where(u => u.Id == interaction.UserId).SelectMany(x => x.UserTagInteractions).ToList();
             var unusedTags = videoTags.Where(x => !usedTagsByUser.Any(y => y.TagId == x.Id)).ToList();
             var usedTags = videoTags.Where(x => usedTagsByUser.Any(y => y.TagId == x.Id)).ToList();
 
-            await IncrementTagInteraction(usedTags);
-            await AddNewTagInteractions(interaction, unusedTags);
+            if (unusedTags.Count > 0)
+            {
+                await AddNewTagInteractions(interaction, unusedTags);
+            }
+
+            if (usedTags.Count > 0)
+            {
+                await IncrementTagInteraction(usedTags);
+            }
         }
 
         public async Task RegisterVideoLike(Like like)
@@ -120,7 +129,7 @@ namespace TikTakServer.Repositories
         {
             foreach (var tag in tags)
             {
-                UserTagInteractionDao dao = new UserTagInteractionDao(newInteractions);
+                UserTagInteractionDao dao = new UserTagInteractionDao(newInteractions, tag.Id);
                 await _context.UserTagsInteractions.AddAsync(dao);
                 await _context.SaveChangesAsync();
             }

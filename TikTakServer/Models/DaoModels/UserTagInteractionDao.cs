@@ -16,10 +16,10 @@ namespace TikTakServer.Models.DaoModels
             
         }
 
-        public UserTagInteractionDao(UserTagInteraction userInteraction)
+        public UserTagInteractionDao(UserTagInteraction userInteraction, int tagId)
         {
             UserId = userInteraction.UserId;
-            TagId = userInteraction.VideoId;
+            TagId = tagId;
             InteractionCount = 0;
         }
     }
