@@ -16,9 +16,9 @@ namespace TikTakServer.Models.DaoModels
             
         }
 
-        public LikeDao(Like like, int videoId)
+        public LikeDao(Like like, int videoId, string userId)
         {
-            UserId = like.UserId;
+            UserId = int.Parse(userId);
             VideoId = videoId;
             LikeDate = like.LikeDate;
         }
