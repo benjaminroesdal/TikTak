@@ -1,6 +1,4 @@
-﻿using TikTakServer.Models;
-
-namespace TikTakServer.Managers
+﻿namespace TikTakServer.Managers
 {
     public interface IRecommendationManager
     {

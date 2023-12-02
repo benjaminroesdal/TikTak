@@ -1,6 +1,7 @@
 ﻿using TikTakServer.Models.Business;
 using TikTakServer.Models.DaoModels;
 using TikTakServer.Facades;
+using Azure;
 
 namespace TikTakServer.Managers
 {
@@ -9,8 +10,8 @@ namespace TikTakServer.Managers
         private readonly IUserFacade _userFacade;
         private readonly UserRequestAndClaims _userRequestAndClaims;
 
+        private static readonly Random _random = new Random();
         private static int videoCount = 3;
-        private static double countryWeight = 0.8;
 
         public RecommendationManager(IUserFacade userFacade, UserRequestAndClaims userRequestAndClaims)
         {
@@ -19,52 +20,40 @@ namespace TikTakServer.Managers
         }
         public List<string> GetRandomTagsBasedOnUserPreference()
         {
-            List<UserTagInteractionDao> preferences = _userFacade.GetUserTagInteractions();
+            var preferences = _userFacade.GetUserTagInteractions();
 
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
-            double countryWeight = TotalWeightofPreferences * RecommendationManager.countryWeight;
 
+            var videoTagResults = PopulateTagsList(preferences, TotalWeightofPreferences);
 
-            List<string> videoTagResults = new List<string>();
-            if(preferences.Count == 0)
+            return videoTagResults;
+        }
+
+        private List<string> PopulateTagsList(List<UserTagInteractionDao> interactions, int weight)
+        {
+            var listOfTags = new List<string>();
+            for (int I = listOfTags.Count; I < videoCount; I++)
             {
-                for(int i = 0; i < videoCount; i++)
-                {
-                    videoTagResults.Add(_userRequestAndClaims.Country);
-                }
-                return videoTagResults;
-            }
-
-            Random rnd = new Random();
-
-            int countryRnd = rnd.Next(TotalWeightofPreferences);
-            if (countryRnd <= countryWeight)
-            {
-                videoTagResults.Add(_userRequestAndClaims.Country);
-            }
-
-            for (int I = videoTagResults.Count; I < videoCount; I++)
-            {
-                int rndmNumber = rnd.Next(TotalWeightofPreferences);
+                int rndmNumber = _random.Next(weight);
                 int sumOfInteractions = 0;
-                for (int j = 0; j < preferences.Count; j++)
+                for (int j = 0; j < interactions.Count; j++)
                 {
-                    if (preferences[j].InteractionCount <= 0)
+                    if (interactions[j].InteractionCount <= 0)
                     {
-                        videoTagResults.Add(preferences[rnd.Next(0, preferences.Count)].Tag.Name);
+                        listOfTags.Add(interactions[_random.Next(0, interactions.Count)].Tag.Name);
                         break;
                     }
 
 
-                    sumOfInteractions += preferences[j].InteractionCount;
+                    sumOfInteractions += interactions[j].InteractionCount;
                     if (rndmNumber < sumOfInteractions)
                     {
-                        videoTagResults.Add(preferences[j].Tag.Name);
+                        listOfTags.Add(interactions[j].Tag.Name);
                         break;
                     }
                 }
             }
-            return videoTagResults;
+            return listOfTags;
         }
     }
 }

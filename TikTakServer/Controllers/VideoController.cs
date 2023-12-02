@@ -19,7 +19,7 @@ namespace TikTakServer.Controllers
         [Route("CountUserVideoInteraction")]
         public async Task<IActionResult> CountUserVideoInteraction([FromBody] UserTagInteraction tagInteraction)
         {
-            if (tagInteraction.UserId == 0 || string.IsNullOrEmpty(tagInteraction.BlobStorageId))
+            if (string.IsNullOrEmpty(tagInteraction.BlobStorageId))
                 return BadRequest("VideoId or blob storage ID not specified");
 
             await _userFacade.CountUserTagInteraction(tagInteraction);

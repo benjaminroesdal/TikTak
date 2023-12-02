@@ -33,8 +33,6 @@ namespace TikTakServer.Facades
                 infoToFrontend.Add(new VideoAndOwnedUserInfo(vidOwner, fypIds[i]));
             }
 
-
-
             return infoToFrontend;
         }
     }

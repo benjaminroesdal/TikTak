@@ -16,11 +16,11 @@ namespace TikTakServer.Models.DaoModels
             
         }
 
-        public UserTagInteractionDao(UserTagInteraction userInteraction, int tagId)
+        public UserTagInteractionDao(string userId, int tagId)
         {
-            UserId = userInteraction.UserId;
+            UserId = int.Parse(userId);
             TagId = tagId;
-            InteractionCount = 0;
+            InteractionCount = 1;
         }
     }
 
