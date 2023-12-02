@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Video } from '../models/video';
 
 @Injectable({
   providedIn: 'root'
@@ -36,11 +37,4 @@ export class BlobStorageService {
     //this recieves 3 videos to the fyp
     return this.http.get<Video[]>(`${this.apiBaseUrl}/BlobStorage/GetFyp`);
   }
-}
-
-export interface Video {
-  UserId: string;
-  ProfileImage: string;
-  Email: string; // HLS manifest URL
-  BlobVideoStorageId: string;
 }

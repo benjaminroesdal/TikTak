@@ -3,9 +3,15 @@
     <swiper-slide class="video-container" *ngFor="let video of videosArray; let i = index" >
       <video playsinline class="videoName" [id]="'video_' + i" [muted]="false" preload="none"></video>
       <div class="video-overlay">
+        
+        <ion-chip>
+          <ion-avatar>
+            <img alt="Img" src="{{video.profileImage}}" />
+          </ion-avatar>
+          <ion-label>{{video.email}}</ion-label>
+        </ion-chip>
         <!-- Heart-shaped button using Ionic icons -->
-        <p>{{video.email}}</p>
-        <ion-button fill="clear" (onClick)="likeVideo(i)">
+        <ion-button fill="clear" (click)="likeVideo(video.blobVideoStorageId)">
           <ion-icon name="heart" slot="icon-only"></ion-icon>
         </ion-button>
       </div>
