@@ -27,7 +27,12 @@ export class AuthService {
   initializeAuth(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.isTokenExpired().then(e => {
-        this.isLoggedIn.next(true);
+        if(e){
+          this.isLoggedIn.next(true);
+        }
+        if(!e){
+          this.isLoggedIn.next(false);
+        }
       })
       resolve(true);
     });
