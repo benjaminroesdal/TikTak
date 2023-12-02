@@ -95,7 +95,7 @@ namespace TikTakServer.Repositories
         {
             var videoId = _context.Videos.Where(x => x.BlobStorageId == like.BlobStorageId).Select(i => i.Id).FirstOrDefault();
 
-            LikeDao likeDao = new LikeDao(like, videoId, _requestAndClaims.UserId);
+            LikeDao likeDao = new LikeDao(like, videoId, int.Parse(_requestAndClaims.UserId));
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();

@@ -18,7 +18,10 @@ namespace TikTakServer.Facades
             => await _videoFacade.CountUserVideoInteraction(interaction);
 
         public async Task RegisterVideoLike(Like like)
-            => await _videoFacade.RegisterVideoLike(like);
+        {
+            await _videoFacade.RegisterVideoLike(like);
+            await _videoFacade.CountUserVideoInteraction(new UserTagInteraction() { BlobStorageId = like.BlobStorageId});
+        }
 
         public async Task<UserDao> CreateUser(UserDao user)
             => await _userRepository.CreateUser(user);

@@ -38,7 +38,7 @@ namespace TikTakServer.Handlers
                 issuer: config["Issuer"],
                 audience: config["Audience"],
                 claims: allClaims,
-                expires: DateTime.UtcNow.AddSeconds(80),
+                expires: DateTime.UtcNow.AddSeconds(10000),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

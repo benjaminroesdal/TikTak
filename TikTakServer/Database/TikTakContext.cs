@@ -28,7 +28,7 @@ namespace TikTakServer.Database
             modelBuilder.Entity<VideoDao>()
                 .HasMany(e => e.Likes)
                 .WithOne(x => x.Video)
-                .HasForeignKey(c => c.UserId)
+                .HasForeignKey(c => c.VideoId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserDao>()
