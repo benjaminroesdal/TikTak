@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Filesystem } from '@capacitor/filesystem';
 import { ToastService } from '../services/toast.service';
 import { environment } from '../../environments/environment';
+import { LoadingController } from '@ionic/angular';
 
 
 @Component({
@@ -14,29 +15,35 @@ import { environment } from '../../environments/environment';
 export class Tab4Page implements OnInit {
   currentTag: string = ''; // This will hold the value of the tag input
   videoFile: File | null = null;
+  videoName: string = 'No file selected!';
   tagsArray: string[] = [];
   formData = new FormData();
-  mediaRecorder: any;
-  videoPlayer: any;
+  loadingElement!: HTMLIonLoadingElement;
   maxTags: number = 5; // Set your desired maximum number of tags
   private apiBaseUrl = environment.firebase.apiBaseUrl;
 
-  constructor(private http: HttpClient, private toastService: ToastService) { }
+  constructor(private http: HttpClient, private toastService: ToastService, private loadingCtrl: LoadingController) { }
 
 
 
   uploadFile() {
     // Append each tag separately
+    this.showLoading();
     this.tagsArray.forEach((tag, index) => {
       this.formData.append(`Tags[${index}].Name`, tag);
     });
     this.http.post(`${this.apiBaseUrl}/BlobStorage/PostBlob`, this.formData).subscribe(e => {
+      this.videoName = 'No file selected';
+      this.formData = new FormData();
+      this.tagsArray = [];
+      this.loadingElement.dismiss();
     });
   }
 
   appendFileToFormData = async () => {
     await FilePicker.pickMedia().then(e =>{
       const file = e.files[0];
+      this.videoName = e.files[0].name;
       if (file.blob) {
         const rawFile = new File([file.blob], 'file', {
           type: file.mimeType,
@@ -50,6 +57,14 @@ export class Tab4Page implements OnInit {
       }
     });
   };
+
+  async showLoading() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Uploading ' + this.videoName + '... Please wait',
+    });
+    loading.present();
+    this.loadingElement = loading;
+  }
 
   onFileSelected(event: Event) {
     const element = event.currentTarget as HTMLInputElement;

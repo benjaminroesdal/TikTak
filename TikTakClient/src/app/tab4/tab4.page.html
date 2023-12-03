@@ -1,13 +1,9 @@
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">tab4</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
   <div class="upload-section">
     <ion-label class="section-label">Select Video</ion-label>
     <ion-button fill="outline" (click)="appendFileToFormData()">Choose File</ion-button>
+    <p>{{videoName}}</p>
     <input #fileInput type="file" accept="video/*" hidden (change)="onFileSelected($event)">
   </div>
 

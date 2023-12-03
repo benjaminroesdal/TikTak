@@ -11,6 +11,7 @@ import { Video } from '../models/video';
 import { UserTagInteraction } from '../models/userTagInteraction';
 import { IonDatetime } from '@ionic/angular';
 import { Like } from '../models/like';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -19,6 +20,7 @@ import { Like } from '../models/like';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements AfterViewInit {
+  private apiBaseUrl = environment.firebase.apiBaseUrl;
   @ViewChild('swiperRef', { static: false }) // Change to "false"
   protected _swiperRef: ElementRef | undefined
   public videoSources: string[] = []; // Initialize as empty
@@ -124,13 +126,13 @@ export class Tab2Page implements AfterViewInit {
           this.videosArray.forEach(item1 => {
             const matchingItem = videoInfoList.find(item2 => item2.id === item1.id);
             if (matchingItem) {
-              item1.manifestUrl = "https://localhost:7001/BlobStorage/GetBlobManifest?id=" + matchingItem.video.blobStorageId;
+              item1.manifestUrl = `${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + matchingItem.video.blobStorageId;
             }
           });
           console.log(this.videosArray)
           this.videosArray.forEach((video, index) => {
             // Ensure that video.blobVideoStorageId is the correct property from your video object
-            this.setupHlsPlayer("https://localhost:7001/BlobStorage/GetBlobManifest?id=" + video.video.blobStorageId, index, video.video.blobStorageId);
+            this.setupHlsPlayer(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + video.video.blobStorageId, index, video.video.blobStorageId);
           });
           this.newVideosReadyToPlay = true;
           resolve();
