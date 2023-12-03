@@ -8,15 +8,13 @@ namespace TikTakServer.Managers
     public class RecommendationManager : IRecommendationManager
     {
         private readonly IUserFacade _userFacade;
-        private readonly UserRequestAndClaims _userRequestAndClaims;
 
         private static readonly Random _random = new Random();
         private static int videoCount = 3;
 
-        public RecommendationManager(IUserFacade userFacade, UserRequestAndClaims userRequestAndClaims)
+        public RecommendationManager(IUserFacade userFacade)
         {
             _userFacade = userFacade;
-            _userRequestAndClaims = userRequestAndClaims;
         }
         public List<string> GetRandomTagsBasedOnUserPreference()
         {
