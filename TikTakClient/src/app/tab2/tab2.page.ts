@@ -21,7 +21,8 @@ import { Like } from '../models/like';
 export class Tab2Page implements AfterViewInit {
   @ViewChild('swiperRef', { static: false }) // Change to "false"
   protected _swiperRef: ElementRef | undefined
-  public videoSources: string[] = []; // Initialize as empty
+  public videosArray: any[] = []; // To store the video objects
+
   @ViewChildren('video') videoElements!: HTMLCollectionOf<Element>;
   public userName!: string;
   user: any;
@@ -49,7 +50,7 @@ export class Tab2Page implements AfterViewInit {
       const swiperEl = this._swiperRef?.nativeElement;
       swiperEl.initialize();
       this.playFirstVideo(); // Play the first video
-    }, 1000); // You may adjust this delay as necessary
+    }, 500); // May need adjustment for the delay as necessary
   }
 
   ngOnDestroy() {
@@ -95,14 +96,27 @@ export class Tab2Page implements AfterViewInit {
     }, 5000); // Set timeout for 5 seconds
   }
 
-  private playFirstVideo() {
-    if (this.videoSources.length > 0) {
-        const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
-        if (firstVideoElement) {
+  private playFirstVideo() {  
+    if (this.videosArray.length > 0) {
+      const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
+  
+      if (firstVideoElement) {
+        // Ensure the video is loaded
+        if (firstVideoElement.readyState >= 4) {
+          firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
+        } else {
+          firstVideoElement.addEventListener('loadeddata', () => {
             firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
+          });
         }
+      } else {
+        console.error("First video element not found");
+      }
+    } else {
+      console.error("Video sources array is empty");
     }
   }
+  
 
   setupHlsPlayer(videoSrc: string, index: number, blobVideoStorageId: string) {
     const videoElementId = 'video_' + index;
@@ -111,7 +125,6 @@ export class Tab2Page implements AfterViewInit {
   }
   
 
-  public videosArray: any[] = []; // To store the video objects
 
 
   async loadVideos(): Promise<void> {
@@ -135,7 +148,7 @@ export class Tab2Page implements AfterViewInit {
           this.newVideosReadyToPlay = true;
           resolve();
           this.cdr.detectChanges();
-        }, 700);
+        }, 500);
       }, error => {
         this.toastService.showToast("Loading videos failed, please try again.");
       });
@@ -168,7 +181,7 @@ export class Tab2Page implements AfterViewInit {
             swiperEl.swiper.update();
             setTimeout(() => {
             currentVideoElement.play();
-            }, 700);
+            }, 500);
         }).catch(() => {
           this.toastService.showToast("Loading videos failed, please try again.");
         });
