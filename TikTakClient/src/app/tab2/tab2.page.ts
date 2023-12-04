@@ -4,12 +4,9 @@ import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { BlobStorageService } from '../services/blob-storage.service';
 import { VideoService } from '../services/video.service';
-import { mergeMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from '../services/toast.service';
-import { Video } from '../models/video';
 import { UserTagInteraction } from '../models/userTagInteraction';
-import { IonDatetime } from '@ionic/angular';
 import { Like } from '../models/like';
 import { environment } from '../../environments/environment';
 
@@ -133,7 +130,6 @@ export class Tab2Page implements AfterViewInit {
     this.newVideosReadyToPlay = false;
     return new Promise((resolve, reject) => {
       this.blobStorageService.getFyp().subscribe((videoInfoList: any[]) => {
-        console.log(videoInfoList);
         this.videosArray.push(...videoInfoList);
         setTimeout(() => {
           this.videosArray.forEach(item1 => {
@@ -143,6 +139,7 @@ export class Tab2Page implements AfterViewInit {
             }
           });
           console.log(this.videosArray)
+          console.log(videoInfoList)
           this.videosArray.forEach((video, index) => {
             // Ensure that video.blobVideoStorageId is the correct property from your video object
             this.setupHlsPlayer(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + video.video.blobStorageId, index, video.video.blobStorageId);

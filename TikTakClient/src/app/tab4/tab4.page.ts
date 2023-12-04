@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Filesystem } from '@capacitor/filesystem';
 import { ToastService } from '../services/toast.service';
 import { environment } from '../../environments/environment';
