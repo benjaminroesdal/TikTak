@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { Router, NavigationExtras } from '@angular/router';
-import { Preferences } from '@capacitor/preferences';
-import {StorageService} from 'src/app/services/storage.service';
+import { Router } from '@angular/router';
 import {AuthService} from 'src/app/services/auth.service';
 import { LocationService } from '../services/location.service';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',

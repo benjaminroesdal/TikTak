@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {AuthService} from 'src/app/services/auth.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import * as jwt_decode from 'jwt-decode';
 import { StorageService } from '../services/storage.service';
 

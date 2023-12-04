@@ -5,7 +5,7 @@ import * as jwt_decode from 'jwt-decode';
 import { BehaviorSubject, Observable, from, map } from 'rxjs';
 import { ToastService } from './toast.service';
 import { environment } from '../../environments/environment';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'

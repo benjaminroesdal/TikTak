@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { JwtModule } from "@auth0/angular-jwt";
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { register } from 'swiper/element/bundle';
 import { FormsModule } from '@angular/forms';
