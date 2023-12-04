@@ -15,21 +15,26 @@ namespace TikTakServer.Repositories
             _requestAndClaims = requestAndClaims;
         }
 
-        public async Task<UserDao> CreateUser(UserDao user)
+        public async Task<User> CreateUser(User user)
         {
-            var userDao = await _context.AddAsync(user);
+            var userDao = new UserDao(user);
+            await _context.AddAsync(userDao);
             await _context.SaveChangesAsync();
             return user;
         }
 
-        public async Task<UserDao> GetUser(string email)
+        public async Task<User> GetUserOnRefreshToken(string refreshToken)
         {
-            return await _context.Users.FirstAsync(e => e.Email == email);
+            var userDao = await _context.Users.FirstAsync(e => e.Tokens.Where(x => x.RefreshToken == refreshToken).Any());
+            return new User(userDao, refreshToken);
         }
 
         public async Task<UserDao> GetUserByVideoBlobId(string blobId)
         {
-            return await _context.Users.Include(x => x.Videos).Where(i => i.Videos.Where(e => e.BlobStorageId == blobId).Any()).FirstAsync();
+            return await _context.Users
+                .Include(x => x.Videos)
+                .Where(i => i.Videos.Where(e => e.BlobStorageId == blobId).Any())
+                .FirstAsync();
         }
 
         public async Task<bool> UserExists(string email)
@@ -40,21 +45,25 @@ namespace TikTakServer.Repositories
 
         public async Task RemoveRefreshToken(string refreshToken)
         {
-            var token = await _context.Tokens.FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
+            var token = await _context.Tokens.FirstAsync(e => e.RefreshToken == refreshToken);
             _context.Tokens.Remove(token);
             await _context.SaveChangesAsync();
         }
 
         public async Task CreateTokensOnUser(string email, string refreshToken)
         {
-            var user = _context.Users.Include(x => x.Tokens).First(e => e.Email == email);
+            var user = await _context.Users
+                .Include(x => x.Tokens)
+                .FirstAsync(e => e.Email == email);
             user.Tokens.Add(new UserTokenDao() { RefreshToken = refreshToken, RefreshTokenExpiry = DateTime.Now.AddDays(200), UserId = user.Id});
             await _context.SaveChangesAsync();
         }
 
-        public async Task<UserDao> ValidateRefreshToken(string refreshToken)
+        public async Task<bool> IsRefreshTokenValid(string refreshToken)
         {
-            var token = _context.Tokens.Where(e => e.RefreshToken == refreshToken).FirstOrDefault();
+            var token = await _context.Tokens
+                .Where(e => e.RefreshToken == refreshToken && e.User.Email == this._requestAndClaims.Email)
+                .FirstOrDefaultAsync();
             if (token == null)
             {
                 throw new UnauthorizedAccessException("The provided refresh token is not valid");
@@ -66,12 +75,16 @@ namespace TikTakServer.Repositories
                 await _context.SaveChangesAsync();
                 throw new UnauthorizedAccessException("The provided refresh token has expired, please log in again.");
             }
-            return await _context.Users.Where(e => e.Tokens.Any(e => e.RefreshToken == refreshToken)).FirstOrDefaultAsync();
+            return true;
         }
 
-        public List<UserTagInteractionDao> GetUserTagInteractions()
+        public async Task<List<UserTagInteractionDao>> GetUserTagInteractions()
         {
-            var userInteractions = _context.UserTagsInteractions.Include(tag => tag.Tag).Where(i => i.UserId == int.Parse(_requestAndClaims.UserId)).OrderByDescending(x => x.InteractionCount).ToList();
+            var userInteractions = await _context.UserTagsInteractions
+                .Include(tag => tag.Tag)
+                .Where(i => i.User.Email == _requestAndClaims.Email)
+                .OrderByDescending(x => x.InteractionCount)
+                .ToListAsync();
             return userInteractions;
         }
     }

@@ -2,7 +2,7 @@
 {
     public interface IJwtHandler
     {
-        string CreateJwtAccess(int userId, string userEmail, string userImg, string countryName);
+        string CreateJwtAccess(string userEmail, string userImg);
         string CreateRefreshToken();
     }
 }

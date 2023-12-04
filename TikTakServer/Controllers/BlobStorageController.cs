@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.IO;
+﻿using Microsoft.AspNetCore.Mvc;
 using TikTakServer.ApplicationServices;
-using TikTakServer.Facades;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers

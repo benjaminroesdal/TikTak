@@ -40,7 +40,6 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<UserRequestAndClaims>();
-builder.Services.AddScoped<DatabaseSeeder>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

@@ -20,7 +20,7 @@ namespace TikTakServer.Repositories
 
         public async Task<VideoDao> GetVideo(string id)
         {
-            var video = await _context.Videos.Where(e => e.BlobStorageId == id).FirstOrDefaultAsync();
+            var video = await _context.Videos.Where(e => e.BlobStorageId == id).FirstAsync();
             return video;
         }
 
@@ -31,15 +31,21 @@ namespace TikTakServer.Repositories
             for (int i = 0; i < videoAmount; i++)
             {
                 var rnd = new Random().Next(0, videoCount);
-                var video = _context.Videos.Include(e => e.Likes).Include(e => e.Tags).ElementAt(rnd);
+                var video = await _context.Videos.Include(e => e.Likes).Include(e => e.Tags).ElementAtAsync(rnd);
                 videos.Add(new VideoModel(video));
             }
 
             return videos;
         }
 
-        public async Task CreateVideo(VideoDao video)
+        public async Task SaveVideo(VideoModel video)
         {
+            var user = await _context.Users.Where(e => e.Email == _requestAndClaims.Email).FirstAsync();
+            var tags = await _context.Tags.Where(e => video.Tags.Any(x => e.Name == x.Name)).ToListAsync();
+            var videoDao = new VideoDao(video)
+            {
+                User = user,
+            };
             video.Tags = video.Tags;
             _context.Add(video);
             await _context.SaveChangesAsync();
@@ -65,22 +71,33 @@ namespace TikTakServer.Repositories
             return updatedDaoList;
         }
 
-        public Task RemoveVideoByStorageId(string id)
+        public async Task RemoveVideoByStorageId(string id)
         {
-            var dao = _context.Videos.Where(e => e.BlobStorageId == id).FirstOrDefault();
+            var dao = await _context.Videos.Where(e => e.BlobStorageId == id).FirstAsync();
             _context.Videos.Remove(dao);
-            _context.SaveChanges(true);
-            return Task.CompletedTask;
+            await _context.SaveChangesAsync(true);
         }
 
         public async Task CountUserVideoInteraction(UserTagInteraction interaction)
         {
-            var videoId = _context.Videos.Where(x => x.BlobStorageId == interaction.BlobStorageId).Select(y => y.Id).FirstOrDefault();
+            var videoId = await _context.Videos.Where(x => x.BlobStorageId == interaction.BlobStorageId).Select(y => y.Id).FirstAsync();
 
-            List<TagDao> videoTags = _context.Videos.Where(v => v.Id == videoId).SelectMany(x => x.Tags).ToList();
-            var usedTagsByUser = _context.Users.Where(u => u.Id == int.Parse(_requestAndClaims.UserId)).SelectMany(x => x.UserTagInteractions).ToList();
-            var unusedTags = videoTags.Where(x => !usedTagsByUser.Any(y => y.TagId == x.Id)).ToList();
-            var usedTags = videoTags.Where(x => usedTagsByUser.Any(y => y.TagId == x.Id)).ToList();
+            List<TagDao> videoTags = await _context.Videos
+                .Where(v => v.Id == videoId)
+                .SelectMany(x => x.Tags)
+                .ToListAsync();
+            var usedTagsByUser = await _context.Users
+                .Where(u => u.Email == _requestAndClaims.Email)
+                .SelectMany(x => x.UserTagInteractions)
+                .ToListAsync();
+            var unusedTags = videoTags
+                .Where(x => !usedTagsByUser
+                .Any(y => y.TagId == x.Id))
+                .ToList();
+            var usedTags = videoTags
+                .Where(x => usedTagsByUser
+                .Any(y => y.TagId == x.Id))
+                .ToList();
 
             if (unusedTags.Count > 0)
             {
@@ -95,27 +112,36 @@ namespace TikTakServer.Repositories
 
         public async Task RegisterVideoLike(Like like)
         {
-            var videoId = _context.Videos.Where(x => x.BlobStorageId == like.BlobStorageId).Select(i => i.Id).FirstOrDefault();
+            var video = await _context.Videos
+                .Where(x => x.BlobStorageId == like.BlobStorageId)
+                .Include(x => x.User)
+                .FirstAsync();
 
-            LikeDao likeDao = new LikeDao(like, videoId, int.Parse(_requestAndClaims.UserId));
+            LikeDao likeDao = new LikeDao(like, video.Id, video.User.Id);
 
             await _context.Likes.AddAsync(likeDao);
             await _context.SaveChangesAsync();
         }
 
-        public VideoModel GetRandomVideoBlobId(string name)
+        public async Task<VideoModel> GetRandomVideoBlobId(string name)
         {
             Random rnd = new Random();
-            var tagCount = _tagRepository.GetTagCount(name);
+            var tagCount = await _tagRepository.GetTagCount(name);
             if (tagCount == 0)
             {
                 var videoCount = _context.Videos.Count() - 1;
-                var randomVideo = _context.Videos.Include(e => e.Tags).ElementAt(rnd.Next(0, videoCount));
+                var randomVideo = _context.Videos
+                    .Include(e => e.Tags)
+                    .ElementAt(rnd.Next(0, videoCount));
                 return new VideoModel(randomVideo);
             }
 
             var rd = rnd.Next(0, tagCount);
-            var randomTagVideo = _context.Videos.Include(video => video.Tags).Include(e => e.Likes).Where(x => x.Tags.Any(e => e.Name == name)).ElementAt(rd);
+            var randomTagVideo = _context.Videos
+                .Include(video => video.Tags)
+                .Include(e => e.Likes)
+                .Where(x => x.Tags.Any(e => e.Name == name))
+                .ElementAt(rd);
             return new VideoModel(randomTagVideo);
         }
 
@@ -123,7 +149,7 @@ namespace TikTakServer.Repositories
         {
             foreach (var tag in interactions)
             {
-                var userTagInteraction = await _context.UserTagsInteractions.Where(x => x.Tag == tag).FirstOrDefaultAsync();
+                var userTagInteraction = await _context.UserTagsInteractions.Where(x => x.Tag == tag).FirstAsync();
                 userTagInteraction.InteractionCount++;
                 await _context.SaveChangesAsync();
             }
@@ -132,9 +158,10 @@ namespace TikTakServer.Repositories
 
         private async Task AddNewTagInteractions(List<TagDao> tags)
         {
+            var user = await _context.Users.FirstAsync(e => e.Email == _requestAndClaims.Email);
             foreach (var tag in tags)
             {
-                UserTagInteractionDao dao = new UserTagInteractionDao(_requestAndClaims.UserId, tag.Id);
+                UserTagInteractionDao dao = new UserTagInteractionDao(user.Id.ToString(), tag.Id);
                 await _context.UserTagsInteractions.AddAsync(dao);
                 await _context.SaveChangesAsync();
             }

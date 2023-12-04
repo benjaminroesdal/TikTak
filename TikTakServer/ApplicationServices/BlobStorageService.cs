@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using TikTakServer.Facades;
-using TikTakServer.Repositories;
 using TikTakServer.Models.DaoModels;
 using TikTakServer.Models.Business;
 using TikTakServer.Handlers;
@@ -32,11 +31,6 @@ namespace TikTakServer.ApplicationServices
             recommendationFacade = recommendationManager;
             _requestClaims = requestClaims;
             this.hlsHandler = hlsHandler;
-        }
-
-        public Task DownloadBlob(string blobName)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<MemoryStream> DownloadManifest(string id)
@@ -76,14 +70,12 @@ namespace TikTakServer.ApplicationServices
             {
                 blobStorageFacade.UploadBlob(blobGuid + $"{i}.ts", containerName, hlsObj.Path + $"\\{blobGuid}{i}.ts");
             }
-            await this.hlsHandler.ClearTempFiles(hlsObj.Guid, hlsObj.Path);
-            var tags = await videoFacade.AddTag(file.Tags);
-            await videoFacade.CreateVideo(new VideoDao()
+            this.hlsHandler.ClearTempFiles(hlsObj.Guid, hlsObj.Path);
+            await videoFacade.SaveVideo(new VideoModel()
             {
                 BlobStorageId = blobGuid,
                 UploadDate = DateTime.Now,
-                UserId = int.Parse(this._requestClaims.UserId),
-                Tags = tags
+                Tags = file.Tags
             });
         }
     }

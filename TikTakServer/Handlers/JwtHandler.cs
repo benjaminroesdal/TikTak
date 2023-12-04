@@ -15,24 +15,22 @@ namespace TikTakServer.Handlers
             config = configuration;
         }
 
-        private List<Claim> CreateClaims(int userId, string userEmail, string userImg, string countryName)
+        private List<Claim> CreateClaims(string userEmail, string userImg)
         {
             var claims = new List<Claim>
             {
-                new Claim("user_id", userId.ToString()),
                 new Claim("user_email", userEmail),
                 new Claim("profile_img", userImg),
-                new Claim("user_country", countryName)
             };
             return claims;
         }
 
-        public string CreateJwtAccess(int userId, string userEmail, string userImg, string countryName)
+        public string CreateJwtAccess(string userEmail, string userImg)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var allClaims = CreateClaims(userId, userEmail, userImg, countryName);
+            var allClaims = CreateClaims(userEmail, userImg);
 
             var token = new JwtSecurityToken(
                 issuer: config["Issuer"],

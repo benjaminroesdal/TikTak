@@ -1,7 +1,5 @@
-﻿using TikTakServer.Models.Business;
-using TikTakServer.Models.DaoModels;
+﻿using TikTakServer.Models.DaoModels;
 using TikTakServer.Facades;
-using Azure;
 
 namespace TikTakServer.Managers
 {
@@ -16,9 +14,9 @@ namespace TikTakServer.Managers
         {
             _userFacade = userFacade;
         }
-        public List<string> GetRandomTagsBasedOnUserPreference()
+        public async Task<List<string>> GetRandomTagsBasedOnUserPreference()
         {
-            var preferences = _userFacade.GetUserTagInteractions();
+            var preferences = await _userFacade.GetUserTagInteractions();
 
             int TotalWeightofPreferences = preferences.Sum(x => x.InteractionCount);
 

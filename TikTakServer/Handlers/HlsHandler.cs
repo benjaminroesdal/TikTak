@@ -1,5 +1,4 @@
 ﻿using NReco.VideoConverter;
-using System;
 
 namespace TikTakServer.Handlers
 {
@@ -59,7 +58,7 @@ namespace TikTakServer.Handlers
             return new HlsObj() { FileCount = fileCount, Guid = guid, Path = tempFolderPath };
         }
 
-        public async Task ClearTempFiles(string guid, string path)
+        public void ClearTempFiles(string guid, string path)
         {
             string[] files = Directory.GetFiles(path).Where(e => e.Contains(guid)).ToArray();
             foreach (string file in files)

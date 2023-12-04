@@ -1,4 +1,6 @@
-﻿namespace TikTakServer.Models.DaoModels
+﻿using TikTakServer.Models.Business;
+
+namespace TikTakServer.Models.DaoModels
 {
     public class VideoDao
     {
@@ -9,5 +11,12 @@
         public UserDao User { get; set; }
         public virtual ICollection<TagDao> Tags { get; set; }
         public virtual ICollection<LikeDao> Likes { get; set; }
+
+        public VideoDao(VideoModel videoModel)
+        {
+            BlobStorageId = videoModel.BlobStorageId;
+            UploadDate = videoModel.UploadDate;
+            Tags = new List<TagDao>();
+        }
     }
 }

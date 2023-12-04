@@ -1,15 +1,16 @@
-﻿using TikTakServer.Models.DaoModels;
+﻿using TikTakServer.Models.Business;
+using TikTakServer.Models.DaoModels;
 
 namespace TikTakServer.Repositories
 {
     public interface IUserRepository
     {
-        Task<UserDao> CreateUser(UserDao user);
-        Task<UserDao> ValidateRefreshToken(string refreshToken);
-        Task<UserDao> GetUser(string email);
+        Task<User> CreateUser(User user);
+        Task<bool> IsRefreshTokenValid(string refreshToken);
+        Task<User> GetUserOnRefreshToken(string refreshToken);
         Task CreateTokensOnUser(string email, string refreshToken);
         Task<bool> UserExists(string email);
-        List<UserTagInteractionDao> GetUserTagInteractions();
+        Task<List<UserTagInteractionDao>> GetUserTagInteractions();
         Task<UserDao> GetUserByVideoBlobId(string blobId);
         Task RemoveRefreshToken(string refreshToken);
     }

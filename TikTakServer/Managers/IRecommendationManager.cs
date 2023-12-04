@@ -2,7 +2,7 @@
 {
     public interface IRecommendationManager
     {
-        List<string> GetRandomTagsBasedOnUserPreference();
+        Task<List<string>> GetRandomTagsBasedOnUserPreference();
 
     }
 }

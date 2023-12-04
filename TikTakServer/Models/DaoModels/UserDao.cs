@@ -8,7 +8,6 @@ namespace TikTakServer.Models.DaoModels
         public string Email { get; set; }
         public string FullName { get; set; }
         public string ImageUrl { get; set; }
-        public string Country { get; set; }
         public DateTime DateOfBirth { get; set; }
         public virtual ICollection<VideoDao> Videos {get; set;}
         public virtual ICollection<UserTagInteractionDao> UserTagInteractions {get; set;}
@@ -22,7 +21,18 @@ namespace TikTakServer.Models.DaoModels
 
         public UserDao(User user)
         {
-            DateOfBirth = user.DateOfBirth;
+            Email = user.Email;
+            FullName = user.FullName;
+            ImageUrl = user.ImageUrl;
+            DateOfBirth = DateTime.Now;
+            Tokens = new List<UserTokenDao>()
+            {
+                new UserTokenDao()
+                {
+                    RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiry = DateTime.Now.AddYears(2)
+                }
+            };
         }
     }
 }

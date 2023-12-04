@@ -3,6 +3,6 @@
     public interface IHlsHandler
     {
         Task<HlsObj> ConvertToHls(Stream stream, string guid);
-        Task ClearTempFiles(string guid, string path);
+        void ClearTempFiles(string guid, string path);
     }
 }

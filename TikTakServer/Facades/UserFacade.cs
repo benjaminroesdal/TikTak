@@ -23,11 +23,11 @@ namespace TikTakServer.Facades
             await _videoFacade.CountUserVideoInteraction(new UserTagInteraction() { BlobStorageId = like.BlobStorageId});
         }
 
-        public async Task<UserDao> CreateUser(UserDao user)
+        public async Task<User> CreateUser(User user)
             => await _userRepository.CreateUser(user);
 
-        public async Task<UserDao> GetUser(string email)
-            => await _userRepository.GetUser(email);
+        public async Task<User> GetUserOnRefreshToken(string refreshToken)
+            => await _userRepository.GetUserOnRefreshToken(refreshToken);
 
         public async Task<UserDao> GetUserByVideoBlobId(string blobId)
             => await _userRepository.GetUserByVideoBlobId(blobId);
@@ -35,16 +35,16 @@ namespace TikTakServer.Facades
         public async Task<bool> UserExists(string email) 
             => await _userRepository.UserExists(email);
 
-        public Task CreateTokensOnUser(string email, string refreshToken)
-            => _userRepository.CreateTokensOnUser(email, refreshToken);
+        public async Task CreateTokensOnUser(string email, string refreshToken)
+            => await _userRepository.CreateTokensOnUser(email, refreshToken);
 
-        public async Task<UserDao> ValidateRefreshToken(string refreshToken)
-            => await _userRepository.ValidateRefreshToken(refreshToken);
+        public async Task<bool> IsRefreshTokenValid(string refreshToken)
+            => await _userRepository.IsRefreshTokenValid(refreshToken);
 
-        public List<UserTagInteractionDao> GetUserTagInteractions()
-            => _userRepository.GetUserTagInteractions();
+        public async Task<List<UserTagInteractionDao>> GetUserTagInteractions()
+            => await _userRepository.GetUserTagInteractions();
 
-        public Task RemoveRefreshToken(string refreshToken)
-            => _userRepository.RemoveRefreshToken(refreshToken);
+        public async Task RemoveRefreshToken(string refreshToken)
+            => await _userRepository.RemoveRefreshToken(refreshToken);
     }
 }

@@ -35,15 +35,5 @@ namespace TikTakServer.ApplicationServices
 
             return googleInfo;
         }
-
-        public async Task<string> GetCountryOfLocation(double longi, double lati)
-        {
-            var geoUrl = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={lati},{longi}&key=AIzaSyCFzyvOxCneBvkJhTV1hj8R5UzpYMMpTHM";
-            var response = await _httpClient.GetAsync(geoUrl);
-            var jsonContent = await response.Content.ReadAsStringAsync();
-            var googleInfo = JsonConvert.DeserializeObject<LocationResult>(jsonContent);
-            //var countryName = googleInfo.results.Where(e => e.types.Contains("country")).First().address_components.FirstOrDefault().long_name;
-            return "Denmark";
-        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TikTakServer.Database;
-using TikTakServer.Models;
 
 namespace TikTakServer.Repositories
 {
@@ -14,14 +13,21 @@ namespace TikTakServer.Repositories
         public async Task<string> GetRandomTag()
         {
             var rnd = new Random();
-            var count = _context.Tags.Count();
+            var count = await _context.Tags.CountAsync();
             var rndTag = rnd.Next(count);
-            return await _context.Tags.Where(x => x.Id == rndTag).Select(y => y.Name).FirstAsync();
+            return await _context.Tags.
+                Where(x => x.Id == rndTag)
+                .Select(y => y.Name)
+                .FirstAsync();
         }
 
-        public int GetTagCount(string name)
+        public async Task<int> GetTagCount(string name)
         {
-            return _context.Tags.Where(x => x.Name == name).SelectMany(e => e.Videos).Distinct().Count();
+            return await _context.Tags
+                .Where(x => x.Name == name)
+                .SelectMany(e => e.Videos)
+                .Distinct()
+                .CountAsync();
         }
     }
 }

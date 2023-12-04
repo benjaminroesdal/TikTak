@@ -1,5 +1,4 @@
-﻿
-using TikTakServer.Repositories;
+﻿using TikTakServer.Repositories;
 
 namespace TikTakServer.Facades
 {

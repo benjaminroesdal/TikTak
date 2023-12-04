@@ -10,50 +10,51 @@ namespace TikTakServer.ApplicationServices
         private readonly IUserFacade userFacade;
         private readonly IJwtHandler jwtHandler;
         private readonly IGoogleAuthService googleAuth;
-        private readonly UserRequestAndClaims _requestAndClaims;
 
-        public AuthenticationService(IUserFacade userFacade, IJwtHandler jwtHandler, IGoogleAuthService googleAuthService, UserRequestAndClaims requestClaims)
+        public AuthenticationService(IUserFacade userFacade, IJwtHandler jwtHandler, IGoogleAuthService googleAuthService)
         {
             this.userFacade = userFacade;
             this.jwtHandler = jwtHandler;
             this.googleAuth = googleAuthService;
-            this._requestAndClaims = requestClaims;
         }
 
         public async Task<User> RefreshAccessToken(string refreshToken)
         {
-            var user = await userFacade.ValidateRefreshToken(refreshToken);
-            if (user == null && _requestAndClaims.UserId != user.Id.ToString())
+            var isRefreshTokenValid = await userFacade.IsRefreshTokenValid(refreshToken);
+            var user = await userFacade.GetUserOnRefreshToken(refreshToken);
+            if (!isRefreshTokenValid)
             {
                 throw new Exception("Token could not be matched with a user, try again.");
             }
-            var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl, user.Country);
-            return new User(user, accessToken, refreshToken);
+            var accessToken = jwtHandler.CreateJwtAccess(user.Email, user.ImageUrl);
+            user.AccessToken = accessToken;
+            return user;
         }
 
-        private async Task<User> CreateUser(GoogleInfoModel infoModel,string name, string imgUrl, string country)
+        private async Task<User> CreateUser(GoogleInfoModel infoModel,string name, string imgUrl)
         {
             var refreshToken = jwtHandler.CreateRefreshToken();
-            var newUser = CreateUserDao(infoModel, name, imgUrl, refreshToken, country);
+            var newUser = CreateUserModel(infoModel, name, imgUrl, refreshToken);
             var user = await userFacade.CreateUser(newUser);
-            var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl, country);
-            return new User(user, accessToken, refreshToken);
+            var accessToken = jwtHandler.CreateJwtAccess(user.Email, user.ImageUrl);
+            user.AccessToken = accessToken;
+            return user;
         }
 
-        public async Task<User> Login(string googleAccessToken, string name, string imgUrl, double longi, double lati)
+        public async Task<User> Login(string googleAccessToken, string name, string imgUrl)
         {
             var googleUser = await googleAuth.VerifyToken(googleAccessToken);
-            var countryName = await googleAuth.GetCountryOfLocation(longi, lati);
             var userExists = await userFacade.UserExists(googleUser.Email);
             if (!userExists)
             {
-                return await CreateUser(googleUser, name, imgUrl, countryName);
+                return await CreateUser(googleUser, name, imgUrl);
             }
-            var user = await userFacade.GetUser(googleUser.Email);
+            var user = await userFacade.GetUserOnRefreshToken(googleUser.Email);
             var refreshToken = jwtHandler.CreateRefreshToken();
-            var accessToken = jwtHandler.CreateJwtAccess(user.Id, user.Email, user.ImageUrl, countryName);
+            var accessToken = jwtHandler.CreateJwtAccess(user.Email, user.ImageUrl);
             await userFacade.CreateTokensOnUser(user.Email, refreshToken);
-            return new User(user, accessToken, refreshToken);
+            user.AccessToken = accessToken;
+            return user;
         }
 
         public async Task Logout(string refreshToken)
@@ -61,23 +62,15 @@ namespace TikTakServer.ApplicationServices
             await userFacade.RemoveRefreshToken(refreshToken);
         }
 
-        private UserDao CreateUserDao(GoogleInfoModel infoModel, string name, string imgUrl, string refreshToken, string country)
+        private User CreateUserModel(GoogleInfoModel infoModel, string name, string imgUrl, string refreshToken)
         {
-            return new UserDao()
+            return new User()
             {
                 FullName = name,
                 Email = infoModel.Email,
                 ImageUrl = imgUrl,
-                Country = country,
                 DateOfBirth = DateTime.Now.AddYears(-14),
-                Tokens = new List<UserTokenDao>()
-                {
-                    new UserTokenDao()
-                    {
-                        RefreshToken = refreshToken,
-                        RefreshTokenExpiry = DateTime.Now.AddDays(200)
-                    }
-                }
+                RefreshToken = refreshToken
             };
         }
     }

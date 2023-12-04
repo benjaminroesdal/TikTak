@@ -25,7 +25,7 @@ namespace TikTakServer.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] CreateUserRequest userRequest)
         {
-            var result = await _authService.Login(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl, userRequest.Longitude, userRequest.Latitude);
+            var result = await _authService.Login(userRequest.GoogleAccessToken, userRequest.FulLName, userRequest.ImageUrl);
             return Ok(result);
         }
 

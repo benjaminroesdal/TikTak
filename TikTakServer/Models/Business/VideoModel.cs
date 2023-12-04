@@ -9,6 +9,11 @@ namespace TikTakServer.Models.Business
         public List<TagModel> Tags { get; set; }
         public int Likes { get; set; }
 
+        public VideoModel()
+        {
+            
+        }
+
         public VideoModel(VideoDao dao)
         {
             Tags = new List<TagModel>();

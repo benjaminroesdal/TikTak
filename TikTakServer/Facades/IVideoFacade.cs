@@ -7,11 +7,10 @@ namespace TikTakServer.Facades
     {
         Task<VideoDao> GetVideo(string id);
         Task<List<VideoModel>> GetRandomVideos(int videoAmount);
-        Task CreateVideo(VideoDao video);
-        Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag);
+        Task SaveVideo(VideoModel video);
         Task RemoveVideoByStorageId(string id);
         Task CountUserVideoInteraction(UserTagInteraction interaction);
         Task RegisterVideoLike(Like like);
-        VideoModel GetRandomVideoBlobId(string name);
+        Task<VideoModel> GetRandomVideoBlobId(string name);
     }
 }
