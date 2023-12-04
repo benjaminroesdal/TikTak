@@ -7,11 +7,12 @@ namespace TikTakServer.Repositories
     {
         Task<User> CreateUser(User user);
         Task<bool> IsRefreshTokenValid(string refreshToken);
-        Task<User> GetUserOnRefreshToken(string refreshToken);
+        Task<User> GetUser(string email);
         Task CreateTokensOnUser(string email, string refreshToken);
         Task<bool> UserExists(string email);
-        Task<List<UserTagInteractionDao>> GetUserTagInteractions();
-        Task<UserDao> GetUserByVideoBlobId(string blobId);
+        Task<List<UserTagInteractionModel>> GetUserTagInteractions();
+        Task<User> GetUserByVideoBlobId(string blobId);
         Task RemoveRefreshToken(string refreshToken);
+        Task<User> GetUserOnRefreshToken(string refreshToken);
     }
 }

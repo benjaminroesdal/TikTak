@@ -1,26 +1,14 @@
 ﻿using TikTakServer.Models.Business;
-using TikTakServer.Models.DaoModels;
 using TikTakServer.Repositories;
 
 namespace TikTakServer.Facades
 {
     public class UserFacade : IUserFacade
     {
-        private readonly IVideoFacade _videoFacade;
         private readonly IUserRepository _userRepository;
-        public UserFacade(IVideoFacade videoFacade, IUserRepository userRepository)
+        public UserFacade(IUserRepository userRepository)
         {
-            _videoFacade = videoFacade;
             _userRepository = userRepository;
-        }
-
-        public async Task CountUserTagInteraction(UserTagInteraction interaction) 
-            => await _videoFacade.CountUserVideoInteraction(interaction);
-
-        public async Task RegisterVideoLike(Like like)
-        {
-            await _videoFacade.RegisterVideoLike(like);
-            await _videoFacade.CountUserVideoInteraction(new UserTagInteraction() { BlobStorageId = like.BlobStorageId});
         }
 
         public async Task<User> CreateUser(User user)
@@ -29,7 +17,10 @@ namespace TikTakServer.Facades
         public async Task<User> GetUserOnRefreshToken(string refreshToken)
             => await _userRepository.GetUserOnRefreshToken(refreshToken);
 
-        public async Task<UserDao> GetUserByVideoBlobId(string blobId)
+        public async Task<User> GetUser(string email)
+            => await _userRepository.GetUser(email);
+
+        public async Task<User> GetUserByVideoBlobId(string blobId)
             => await _userRepository.GetUserByVideoBlobId(blobId);
 
         public async Task<bool> UserExists(string email) 
@@ -41,7 +32,7 @@ namespace TikTakServer.Facades
         public async Task<bool> IsRefreshTokenValid(string refreshToken)
             => await _userRepository.IsRefreshTokenValid(refreshToken);
 
-        public async Task<List<UserTagInteractionDao>> GetUserTagInteractions()
+        public async Task<List<UserTagInteractionModel>> GetUserTagInteractions()
             => await _userRepository.GetUserTagInteractions();
 
         public async Task RemoveRefreshToken(string refreshToken)

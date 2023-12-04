@@ -5,15 +5,14 @@ namespace TikTakServer.Facades
 {
     public interface IUserFacade
     {
-        Task CountUserTagInteraction(UserTagInteraction interaction);
-        Task RegisterVideoLike(Like like);
         Task<User> CreateUser(User user);
+        Task<User> GetUser(string refreshToken);
         Task<User> GetUserOnRefreshToken(string refreshToken);
-        Task<UserDao> GetUserByVideoBlobId(string blobId);
+        Task<User> GetUserByVideoBlobId(string blobId);
         Task<bool> UserExists(string email);
         Task CreateTokensOnUser(string email, string refreshToken);
         Task<bool> IsRefreshTokenValid(string refreshToken);
-        Task<List<UserTagInteractionDao>> GetUserTagInteractions();
+        Task<List<UserTagInteractionModel>> GetUserTagInteractions();
         Task RemoveRefreshToken(string refreshToken);
     }
 }

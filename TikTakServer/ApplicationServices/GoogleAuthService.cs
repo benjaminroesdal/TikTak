@@ -20,6 +20,12 @@ namespace TikTakServer.ApplicationServices
             _id = configuration["AndroidClientId2"];
         }
 
+        /// <summary>
+        /// Calls google tokenInfo endpoint to verify integrity of provided accessToken
+        /// </summary>
+        /// <param name="accessToken">access token to verify</param>
+        /// <returns>GoogleInfoModel containing Token info from Google</returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
         public async Task<GoogleInfoModel> VerifyToken(string accessToken)
         {
             var response = await _httpClient.GetAsync($"{_googleTokenInfoUrl}?access_token={accessToken}");

@@ -8,22 +8,19 @@ namespace TikTakServer.Repositories
     public class VideoRepository : IVideoRepository
     {
         private readonly TikTakContext _context;
-        private readonly ITagRepository _tagRepository;
         private readonly UserRequestAndClaims _requestAndClaims;
 
-        public VideoRepository(TikTakContext context, ITagRepository tagRepository, UserRequestAndClaims requestAndClaims)
+        public VideoRepository(TikTakContext context, UserRequestAndClaims requestAndClaims)
         {
             _context = context;
-            _tagRepository = tagRepository;
             _requestAndClaims = requestAndClaims;
         }
 
-        public async Task<VideoDao> GetVideo(string id)
-        {
-            var video = await _context.Videos.Where(e => e.BlobStorageId == id).FirstAsync();
-            return video;
-        }
-
+        /// <summary>
+        /// Gets x amount of random videos.
+        /// </summary>
+        /// <param name="videoAmount">Amount of random videos desired</param>
+        /// <returns>List of random videos.</returns>
         public async Task<List<VideoModel>> GetRandomVideos(int videoAmount)
         {
             var videoCount = _context.Videos.Count() - 1;
@@ -38,39 +35,46 @@ namespace TikTakServer.Repositories
             return videos;
         }
 
+        /// <summary>
+        /// Saves provided video to the database.
+        /// </summary>
+        /// <param name="video">Video to be saved</param>
         public async Task SaveVideo(VideoModel video)
         {
             var user = await _context.Users.Where(e => e.Email == _requestAndClaims.Email).FirstAsync();
-            var tags = await _context.Tags.Where(e => video.Tags.Any(x => e.Name == x.Name)).ToListAsync();
+            var tagNames = video.Tags.Select(x => x.Name).ToList();
+            var existingTags = await _context.Tags.Where(e => tagNames.Contains(e.Name)).ToListAsync();
+            var newTags = FindNonDuplicates(existingTags.Select(x => x.Name).ToList(), tagNames);
             var videoDao = new VideoDao(video)
             {
                 User = user,
+                Tags = new List<TagDao>()
             };
-            video.Tags = video.Tags;
-            _context.Add(video);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<ICollection<TagDao>> AddTag(ICollection<TagModel> tag)
-        {
-            var updatedDaoList = new List<TagDao>();
-            foreach (var item in tag)
+            videoDao.Tags = existingTags;
+            newTags.ForEach(x => videoDao.Tags.Add(new TagDao()
             {
-                var result = _context.Tags.Any(e => e.Name == item.Name);
-                TagDao tagDao;
-                if (result)
-                {
-                    updatedDaoList.Add(_context.Tags.First(e => e.Name == item.Name));
-                }
-                if (!result)
-                {
-                    updatedDaoList.Add(_context.Tags.Add(new TagDao() { Name = item.Name }).Entity);
-                }
-            }
+                Name = x
+            }));
+            _context.Videos.Add(videoDao);
             await _context.SaveChangesAsync();
-            return updatedDaoList;
         }
 
+        /// <summary>
+        /// Returns the non-duplicate elements between two provided lists.
+        /// </summary>
+        private List<string> FindNonDuplicates(List<string> tagListOne, List<string> tagListTwo)
+        {
+            var nonDuplicateTags = tagListOne.Concat(tagListTwo)
+                            .GroupBy(tag => tag)
+                            .Where(group => group.Count() == 1)
+                            .Select(group => group.Key).ToList();
+            return nonDuplicateTags;
+        }
+
+        /// <summary>
+        /// Removes a video from the database with the provided ID as BlobStorageId
+        /// </summary>
+        /// <param name="id">BlobStorageId to remove video on</param>
         public async Task RemoveVideoByStorageId(string id)
         {
             var dao = await _context.Videos.Where(e => e.BlobStorageId == id).FirstAsync();
@@ -78,9 +82,14 @@ namespace TikTakServer.Repositories
             await _context.SaveChangesAsync(true);
         }
 
-        public async Task CountUserVideoInteraction(UserTagInteraction interaction)
+        /// <summary>
+        /// Finds tags on the video of blobStorageId provided, and adds or increments the interaction count for that tag
+        /// on the user initiating the request.
+        /// </summary>
+        /// <param name="blobStorageId"></param>
+        public async Task IncrementUserVideoInteraction(string blobStorageId)
         {
-            var videoId = await _context.Videos.Where(x => x.BlobStorageId == interaction.BlobStorageId).Select(y => y.Id).FirstAsync();
+            var videoId = await _context.Videos.Where(x => x.BlobStorageId == blobStorageId).Select(y => y.Id).FirstAsync();
 
             List<TagDao> videoTags = await _context.Videos
                 .Where(v => v.Id == videoId)
@@ -110,6 +119,10 @@ namespace TikTakServer.Repositories
             }
         }
 
+        /// <summary>
+        /// Saves a like in the database on the video corrosponding to the blobStorageId provided in the Like object parameter.
+        /// </summary>
+        /// <param name="like">Like object containing information about what video to save the like on, and date.</param>
         public async Task RegisterVideoLike(Like like)
         {
             var video = await _context.Videos
@@ -123,10 +136,15 @@ namespace TikTakServer.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<VideoModel> GetRandomVideoBlobId(string name)
+        /// <summary>
+        /// Gets a random video from a provided tag if exists, else returns a random video.
+        /// </summary>
+        /// <param name="tagName">Tag name to find random video on</param>
+        /// <returns>VideoModel of the found video.</returns>
+        public async Task<VideoModel> GetRandomVideoBlobId(string tagName)
         {
             Random rnd = new Random();
-            var tagCount = await _tagRepository.GetTagCount(name);
+            var tagCount = await GetTagCount(tagName);
             if (tagCount == 0)
             {
                 var videoCount = _context.Videos.Count() - 1;
@@ -140,11 +158,15 @@ namespace TikTakServer.Repositories
             var randomTagVideo = _context.Videos
                 .Include(video => video.Tags)
                 .Include(e => e.Likes)
-                .Where(x => x.Tags.Any(e => e.Name == name))
+                .Where(x => x.Tags.Any(e => e.Name == tagName))
                 .ElementAt(rd);
             return new VideoModel(randomTagVideo);
         }
 
+        /// <summary>
+        /// Loops through provided Tags to find userInteractions on this tag, and increments these with 1.
+        /// </summary>
+        /// <param name="interactions">List of tags to increment interactions on</param>
         private async Task IncrementTagInteraction(List<TagDao> interactions)
         {
             foreach (var tag in interactions)
@@ -156,6 +178,10 @@ namespace TikTakServer.Repositories
 
         }
 
+        /// <summary>
+        /// Adds new TagInteractions in the database based on provided tags.
+        /// </summary>
+        /// <param name="tags">Tags to add interactions on.</param>
         private async Task AddNewTagInteractions(List<TagDao> tags)
         {
             var user = await _context.Users.FirstAsync(e => e.Email == _requestAndClaims.Email);
@@ -165,6 +191,18 @@ namespace TikTakServer.Repositories
                 await _context.UserTagsInteractions.AddAsync(dao);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        /// <summary>
+        /// Gets count of tags in DB and returns this.
+        /// </summary>
+        private async Task<int> GetTagCount(string name)
+        {
+            return await _context.Tags
+                .Where(x => x.Name == name)
+                .SelectMany(e => e.Videos)
+                .Distinct()
+                .CountAsync();
         }
     }
 }

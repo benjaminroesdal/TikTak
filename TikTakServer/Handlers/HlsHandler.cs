@@ -12,7 +12,13 @@ namespace TikTakServer.Handlers
             _converter = new FFMpegConverter();
         }
 
-        public async Task<HlsObj> ConvertToHls(Stream stream, string guid)
+        /// <summary>
+        /// Converts provided MP4 stream into segments and manifest file with provided guid as name.
+        /// </summary>
+        /// <param name="stream">MP4 stream to convert</param>
+        /// <param name="guid">name for files</param>
+        /// <returns>Object containing information about local path, filecount and name of converted files.</returns>
+        public async Task<HlsModel> ConvertToHls(Stream stream, string guid)
         {
             var tempFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "TempFiles");
             var tempFilePath = Path.Combine(tempFolderPath, Guid.NewGuid().ToString());
@@ -39,8 +45,12 @@ namespace TikTakServer.Handlers
             return hlsResult;
         }
 
-
-        private async Task<HlsObj> ReplaceChunkLinks(string guid)
+        /// <summary>
+        /// Loops through a local manifest file of the provided guid and replaces segment links in the file with azure path.
+        /// </summary>
+        /// <param name="guid">Guid to process manifest file on.</param>
+        /// <returns>HlsModel</returns>
+        private async Task<HlsModel> ReplaceChunkLinks(string guid)
         {
             var tempFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "TempFiles");
             int fileCount = 0;
@@ -55,9 +65,14 @@ namespace TikTakServer.Handlers
             }
 
             await File.WriteAllLinesAsync(tempFolderPath + $"\\{guid}.M3U8", lines);
-            return new HlsObj() { FileCount = fileCount, Guid = guid, Path = tempFolderPath };
+            return new HlsModel() { FileCount = fileCount, Guid = guid, Path = tempFolderPath };
         }
 
+        /// <summary>
+        /// Clears local temp files with provided GUID at provided path
+        /// </summary>
+        /// <param name="guid">To remove files with this guild in the name</param>
+        /// <param name="path">Path to remove files from</param>
         public void ClearTempFiles(string guid, string path)
         {
             string[] files = Directory.GetFiles(path).Where(e => e.Contains(guid)).ToArray();
@@ -68,7 +83,7 @@ namespace TikTakServer.Handlers
         }
     }
 
-    public class HlsObj
+    public class HlsModel
     {
         public int FileCount { get; set; }
         public string Guid { get; set; }

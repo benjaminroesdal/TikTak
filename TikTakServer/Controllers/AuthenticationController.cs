@@ -6,20 +6,11 @@ namespace TikTakServer.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly IGoogleAuthService _googleAuthService;
         private readonly IAuthenticationService _authService;
 
-        public AuthenticationController(IGoogleAuthService googleAuthService, IAuthenticationService authService)
+        public AuthenticationController(IAuthenticationService authService)
         {
-            _googleAuthService = googleAuthService;
             _authService = authService;
-        }
-
-        [HttpPost("VerifyToken")]
-        public async Task<IActionResult> VerifyToken([FromBody] string token)
-        {
-            var result = await _googleAuthService.VerifyToken(token);
-            return Ok();
         }
 
         [HttpPost("Login")]

@@ -1,5 +1,5 @@
-﻿using TikTakServer.Models.DaoModels;
-using TikTakServer.Facades;
+﻿using TikTakServer.Facades;
+using TikTakServer.Models.Business;
 
 namespace TikTakServer.Managers
 {
@@ -14,6 +14,11 @@ namespace TikTakServer.Managers
         {
             _userFacade = userFacade;
         }
+
+        /// <summary>
+        /// Find a list of random tags based on user interaction
+        /// </summary>
+        /// <returns>List of random tags based on user interactions</returns>
         public async Task<List<string>> GetRandomTagsBasedOnUserPreference()
         {
             var preferences = await _userFacade.GetUserTagInteractions();
@@ -25,7 +30,13 @@ namespace TikTakServer.Managers
             return videoTagResults;
         }
 
-        private List<string> PopulateTagsList(List<UserTagInteractionDao> interactions, int weight)
+        /// <summary>
+        /// Populates a list with tags based on weight and interactions.
+        /// </summary>
+        /// <param name="interactions">UserTagInteractions from the user</param>
+        /// <param name="weight">weight to base tag population on</param>
+        /// <returns></returns>
+        private List<string> PopulateTagsList(List<UserTagInteractionModel> interactions, int weight)
         {
             var listOfTags = new List<string>();
             for (int I = listOfTags.Count; I < videoCount; I++)
