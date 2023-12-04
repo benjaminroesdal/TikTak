@@ -27,7 +27,7 @@ namespace TikTakServer.Facades
         public async Task RegisterVideoLike(Like like)
             => await _videoRepository.RegisterVideoLike(like);
 
-        public async Task<VideoModel> GetRandomVideoBlobId(string name)
-            => await _videoRepository.GetRandomVideoBlobId(name);
+        public async Task<VideoModel> GetRandomVideoBlobId(string tagName)
+            => await _videoRepository.GetRandomVideoBlobId(tagName);
     }
 }

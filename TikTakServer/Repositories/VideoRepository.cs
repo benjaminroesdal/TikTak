@@ -60,18 +60,6 @@ namespace TikTakServer.Repositories
         }
 
         /// <summary>
-        /// Returns the non-duplicate elements between two provided lists.
-        /// </summary>
-        private List<string> FindNonDuplicates(List<string> tagListOne, List<string> tagListTwo)
-        {
-            var nonDuplicateTags = tagListOne.Concat(tagListTwo)
-                            .GroupBy(tag => tag)
-                            .Where(group => group.Count() == 1)
-                            .Select(group => group.Key).ToList();
-            return nonDuplicateTags;
-        }
-
-        /// <summary>
         /// Removes a video from the database with the provided ID as BlobStorageId
         /// </summary>
         /// <param name="id">BlobStorageId to remove video on</param>
@@ -203,6 +191,18 @@ namespace TikTakServer.Repositories
                 .SelectMany(e => e.Videos)
                 .Distinct()
                 .CountAsync();
+        }
+
+        /// <summary>
+        /// Returns the non-duplicate elements between two provided lists.
+        /// </summary>
+        private List<string> FindNonDuplicates(List<string> tagListOne, List<string> tagListTwo)
+        {
+            var nonDuplicateTags = tagListOne.Concat(tagListTwo)
+                            .GroupBy(tag => tag)
+                            .Where(group => group.Count() == 1)
+                            .Select(group => group.Key).ToList();
+            return nonDuplicateTags;
         }
     }
 }
