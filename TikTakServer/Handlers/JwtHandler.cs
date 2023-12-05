@@ -25,6 +25,12 @@ namespace TikTakServer.Handlers
             return claims;
         }
 
+        /// <summary>
+        /// Creates a signed JWT with claims and configurations.
+        /// </summary>
+        /// <param name="userEmail">Email to put into claims</param>
+        /// <param name="userImg">UserImg to put into claims</param>
+        /// <returns>the final JWT</returns>
         public string CreateJwtAccess(string userEmail, string userImg)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_secretKey));
@@ -36,12 +42,16 @@ namespace TikTakServer.Handlers
                 issuer: config["Issuer"],
                 audience: config["Audience"],
                 claims: allClaims,
-                expires: DateTime.UtcNow.AddSeconds(10000),
+                expires: DateTime.UtcNow.AddSeconds(80),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// Creates a random string for use as refreshToken.
+        /// </summary>
+        /// <returns>Random string</returns>
         public string CreateRefreshToken()
         {
             var randomNumber = new byte[32];

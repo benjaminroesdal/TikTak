@@ -16,15 +16,20 @@ namespace TikTakServer.Facades
             _recommendationManager = recommendationManager;
             _userFacade = userFacade;
         }
+
+        /// <summary>
+        /// Gets a fyp based on user preferences
+        /// </summary>
+        /// <returns>list of VideoUserInfo models containing information regarding each returned video</returns>
         public async Task<List<VideoAndOwnedUserInfo>> GetFyp()
         {
-            var infoToFrontend = new List<VideoAndOwnedUserInfo>();
+            var videoInfo = new List<VideoAndOwnedUserInfo>();
             var userPrefTags = await _recommendationManager.GetRandomTagsBasedOnUserPreference();
             if (userPrefTags.Count == 0)
             {
                 var randomVideos = await _videoFacade.GetRandomVideos(3);
-                await ConstructInfoModelForVideo(infoToFrontend, randomVideos);
-                return infoToFrontend;
+                await ConstructInfoModelForVideo(videoInfo, randomVideos);
+                return videoInfo;
             }
 
             var blobIds = new List<VideoModel>();
@@ -32,17 +37,23 @@ namespace TikTakServer.Facades
             {
                 blobIds.Add(await _videoFacade.GetRandomVideoBlobId(userPrefTags[i]));
             }
-            await ConstructInfoModelForVideo(infoToFrontend, blobIds);
+            await ConstructInfoModelForVideo(videoInfo, blobIds);
 
-            return infoToFrontend;
+            return videoInfo;
         }
 
-        private async Task ConstructInfoModelForVideo(List<VideoAndOwnedUserInfo> infoToFrontend, List<VideoModel> blobIds)
+        /// <summary>
+        /// Constructs the VideoAndOwnedUserInfo model with relevant information regarding the video.
+        /// </summary>
+        /// <param name="videoInfo"></param>
+        /// <param name="blobIds"></param>
+        /// <returns></returns>
+        private async Task ConstructInfoModelForVideo(List<VideoAndOwnedUserInfo> videoInfo, List<VideoModel> blobIds)
         {
             for (int i = 0; i < blobIds.Count; i++)
             {
                 var vidOwner = await _userFacade.GetUserByVideoBlobId(blobIds[i].BlobStorageId);
-                infoToFrontend.Add(new VideoAndOwnedUserInfo(vidOwner, blobIds[i]));
+                videoInfo.Add(new VideoAndOwnedUserInfo(vidOwner, blobIds[i]));
             }
         }
     }

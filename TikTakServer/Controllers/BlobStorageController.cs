@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Models.Business;
 
@@ -15,6 +16,7 @@ namespace TikTakServer.Controllers
             _blobStorageService = blobService;
         }
 
+        [Authorize]
         [HttpPost("PostBlob")]
         [RequestSizeLimit(100_000_000)]
         public async Task<IActionResult> PostBlob([FromForm] PostBlobModel file)
@@ -23,6 +25,7 @@ namespace TikTakServer.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("RemoveBlob")]
         public async Task<IActionResult> RemoveBlob([FromBody] string blobName)
         {
@@ -37,6 +40,7 @@ namespace TikTakServer.Controllers
             return File(manifest, "application/vnd.apple.mpegurl", "manifest" + ".M3U8");
         }
 
+        [Authorize]
         [HttpGet("GetFyp")]
         public async Task<IActionResult> GetFyp()
         {

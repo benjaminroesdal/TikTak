@@ -1,5 +1,4 @@
-﻿using TikTakServer.Models.DaoModels;
-
+﻿
 namespace TikTakServer.Models.Business
 {
     public class Like

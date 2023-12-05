@@ -11,7 +11,6 @@ using System.Text;
 using TikTakServer.Models.Business;
 using TikTakServer.Middleware;
 using TikTakServer.Managers;
-using TikTakServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +36,6 @@ builder.Services.AddScoped<IRecommendationFacade, RecommendationFacade>();
 builder.Services.AddScoped<IRecommendationManager, RecommendationManager>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<UserRequestAndClaims>();
 

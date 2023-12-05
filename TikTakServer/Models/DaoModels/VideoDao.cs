@@ -12,6 +12,11 @@ namespace TikTakServer.Models.DaoModels
         public virtual ICollection<TagDao> Tags { get; set; }
         public virtual ICollection<LikeDao> Likes { get; set; }
 
+        public VideoDao()
+        {
+            
+        }
+
         public VideoDao(VideoModel videoModel)
         {
             BlobStorageId = videoModel.BlobStorageId;
