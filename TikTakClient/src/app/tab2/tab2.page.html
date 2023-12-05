@@ -8,15 +8,15 @@
           <ion-avatar>
             <img alt="Img" src="{{videoInfo.profileImage}}" />
           </ion-avatar>
-          <ion-label>{{videoInfo.email}}</ion-label>
+          <ion-label style="color:white">{{videoInfo.email}}</ion-label>
         </ion-chip>
         <!-- Heart-shaped button using Ionic icons -->
         <ion-button fill="clear" (click)="likeVideo(videoInfo.video.blobStorageId)">
-          <ion-icon name="heart" slot="icon-only"></ion-icon>
+          <ion-icon style="color:red" name="heart" slot="icon-only"></ion-icon>
         </ion-button>
         <br>
         <ion-chip *ngFor="let tag of videoInfo.video.tags">
-          <ion-label>{{tag.name}}</ion-label>
+          <ion-label style="color:white">{{tag.name}}</ion-label>
         </ion-chip>
       </div>
     </swiper-slide>
