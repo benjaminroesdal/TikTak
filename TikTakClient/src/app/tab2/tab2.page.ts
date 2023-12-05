@@ -17,6 +17,7 @@ import { environment } from '../../environments/environment';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements AfterViewInit {
+  private currentVideoIndex!: number;
   private apiBaseUrl = environment.firebase.apiBaseUrl;
   @ViewChild('swiperRef', { static: false }) // Change to "false"
   protected _swiperRef: ElementRef | undefined
@@ -95,6 +96,22 @@ export class Tab2Page implements AfterViewInit {
     }, 5000); // Set timeout for 5 seconds
   }
 
+  ionViewDidLeave() {
+    const currentVideoElement = document.getElementById('video_' + this.currentVideoIndex) as HTMLVideoElement;
+    if (currentVideoElement) {
+      console.log("WE JUST LEFT!")
+      currentVideoElement.pause();
+    }
+  }
+
+  ionViewDidEnter() {
+    const currentVideoElement = document.getElementById('video_' + this.currentVideoIndex) as HTMLVideoElement;
+    if (currentVideoElement) {
+      console.log("WE JUST CAME BACK!")
+      currentVideoElement.play();
+    }
+  }
+
   private playFirstVideo() {  
     if (this.videosArray.length > 0) {
       const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
@@ -156,6 +173,7 @@ export class Tab2Page implements AfterViewInit {
 
   onSlideChange(swiperEvent: any) {
     const currentIndex = swiperEvent.detail[0].activeIndex;
+    this.currentVideoIndex = swiperEvent.detail[0].activeIndex;
     const currentVideoElement = document.getElementById('video_' + currentIndex) as HTMLVideoElement;
     const previousIndex = currentIndex > 0 ? currentIndex - 1 : this.videosArray.length - 1;
     const nextIndex = currentIndex < this.videosArray.length - 1 ? currentIndex + 1 : 0;
