@@ -8,7 +8,7 @@ namespace TikTakServer.Managers
         private readonly IUserFacade _userFacade;
 
         private static readonly Random _random = new Random();
-        private static int videoCount = 3;
+        private static int videoCount = 5;
 
         public RecommendationManager(IUserFacade userFacade)
         {

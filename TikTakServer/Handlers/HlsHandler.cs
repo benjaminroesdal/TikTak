@@ -37,7 +37,7 @@ namespace TikTakServer.Handlers
 
             var hlsSettings = new ConvertSettings
             {
-                CustomOutputArgs = "-profile:v baseline -level 3.0 -s 720x1280 -start_number 0 -hls_time 10 -hls_list_size 0 -f hls"
+                CustomOutputArgs = "-profile:v baseline -level 3.0 -s 720x1280 -b:v 2000k -start_number 0 -hls_time 4 -hls_list_size 0 -f hls"
             };
 
             _converter.ConvertMedia(tempFilePath, "mp4", tempOutputPath, "hls", hlsSettings);

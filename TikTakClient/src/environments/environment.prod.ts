@@ -7,7 +7,7 @@ export const environment = {
     messagingSenderId: "69308154140",
     appId: "1:69308154140:web:4ff0e62e5b5cf8114c3ad9",
     measurementId: "G-8D6BS4ERV0",
-    apiBaseUrl: 'https://localhost:7001'
+    apiBaseUrl: 'https://2b1e-87-52-111-106.ngrok-free.app'
   },
   production: true
 };

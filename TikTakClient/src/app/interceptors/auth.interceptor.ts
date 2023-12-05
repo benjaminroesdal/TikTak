@@ -41,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
       this.refreshTokenSubject.next(null);
 
       return from(this.authService.RefreshAccessToken()).pipe(
-        delay(100),
+        delay(300),
         switchMap(() => from(this.storage.get('AccessToken'))),
         switchMap((token: string) => {
           console.log(token)
@@ -77,39 +77,5 @@ export class AuthInterceptor implements HttpInterceptor {
         "ngrok-skip-browser-warning": "69420"
       }
     });
-  }
-
-  private addAuthenticationToken(request: HttpRequest<any>): Observable<HttpRequest<any>> {
-    return from(this.authService.isTokenExpired()).pipe(
-      switchMap(isExpired => {
-        if (isExpired) {
-          // If the token is expired, refresh it
-          return from(this.authService.RefreshAccessToken()).pipe(
-            switchMap(() => this.storage.get('AccessToken')) // Get the new access token
-          );
-        } else {
-          // If the token is not expired, get the current token
-          return this.storage.get('AccessToken');
-        }
-      }),
-      switchMap(token => {
-        // If there's a token, clone the request and add the token to the headers
-        if (token) {
-          return [request.clone({
-            setHeaders: {
-              Authorization: `Bearer ${token}`,
-              "ngrok-skip-browser-warning": "69420"
-            }
-          })];
-        }
-        // If there's no token, return the original request
-        return [request];
-      }),
-      catchError((error) => {
-        // handle error
-        this.toastService.showToast("Error occurred when handling the token.");
-        return throwError(error);
-      })
-    );
   }
 }

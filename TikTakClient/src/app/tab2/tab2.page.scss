@@ -1,34 +1,82 @@
-.video-container {
-    position: relative;
-    width: 100%; /* Full width on mobile */
-    max-width: 500px; /* Maximum width on larger screens */
-    margin: 0 auto; /* Center the container */
-    overflow: hidden; /* Hide any overflow */
-}
+
 
 .video-container video {
     width: 100%; /* Video takes full width of the container */
-    height: auto; /* Height is set to auto to maintain aspect ratio */
-    object-fit: contain; /* Ensures the entire video is visible, may introduce black bars */
+    height: 100%; /* Height is set to auto to maintain aspect ratio */
+    object-fit: cover; /* Ensures the entire video is visible, may introduce black bars */
 }
 
 .video-container {
-    position: relative;
-  }
-  
-  .video-overlay {
+  position: relative;
+  width: 100%; /* Full width on mobile */
+  max-width: 500px; /* Maximum width on larger screens */
+  margin: 0 auto; /* Center the container */
+  overflow: hidden; /* Hide any overflow */
+}
+
+.video-overlay {
     position: absolute;
-    bottom: 0;
+    bottom: 70px; /* Align with the bottom of the video */
     left: 0;
     width: 100%;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-    text-align: center;
-  }
-  
-  .video-overlay button {
-    /* Style your button */
-  }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Align uploader name on the left and tags on the right */
+    align-items: flex-start;
+    padding: 5px 10px; /* Padding inside the overlay */
+}
+
+.like-button {
+  position: absolute;
+  bottom: 10px; /* Distance from the bottom of the overlay */
+  right: 10px; /* Distance from the right of the overlay */
+  --padding-start: 0; /* Reduce button padding */
+  --padding-end: 0;
+}
+
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; /* Circular container for the icon */
+  padding: 5px; /* Space around the icon */
+  background-color: rgba(255, 87, 87, 0.3); /* Semi-transparent light red background */
+}
+
+ion-icon {
+  color: #ff4757; /* Red color for the heart icon */
+  font-size: 25px; /* Size of the heart icon */
+}
+
+.video-overlay ion-button {
+  position: absolute;
+  bottom: 300px; /* Distance from the bottom of the overlay */
+  right: 10px; /* Distance from the right of the overlay */
+  --padding-start: 0; /* Reduce button padding */
+  --padding-end: 0;
+}
+
+.video-overlay ion-chip {
+  background-color: rgba(0, 0, 0, 0.5); /* Optionally add a subtle background to the chips */
+  border: none; /* Remove border if present */
+}
+
+.video-overlay ion-button {
+  --padding-start: 0; /* Reduce button padding */
+  --padding-end: 0;
+}
+
+.video-overlay img {
+  width: 20px; /* Smaller image size */
+  height: 20px;
+  border-radius: 50%; /* Circular image */
+}
+
+/* Style the heart icon to be smaller and less intrusive */
+.video-overlay ion-icon {
+  font-size: 40px; /* Smaller icon size */
+  color: #ff4757; /* Pleasant color for the like icon */
+}
 
 swiper-container {
     width: 100%;

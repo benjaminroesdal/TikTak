@@ -33,7 +33,9 @@ namespace TikTakServer.Facades
             }
 
             var blobIds = new List<VideoModel>();
-            for (int i = 0; i < userPrefTags.Count; i++)
+            var tempVid = await _videoFacade.GetRandomVideos(1);
+            blobIds.Add(tempVid.First());
+            for (int i = 0; i < 4; i++)
             {
                 blobIds.Add(await _videoFacade.GetRandomVideoBlobId(userPrefTags[i]));
             }

@@ -22,7 +22,7 @@ export function initializeApp(authService: AuthService) {
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule],
+  imports: [BrowserModule, IonicModule.forRoot({ mode: 'ios' }), AppRoutingModule, IonicStorageModule.forRoot(), HttpClientModule, FormsModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

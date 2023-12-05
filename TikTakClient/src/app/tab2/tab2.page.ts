@@ -17,7 +17,7 @@ import { environment } from '../../environments/environment';
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements AfterViewInit {
-  private currentVideoIndex!: number;
+  private currentVideoIndex: number = 0;
   private apiBaseUrl = environment.firebase.apiBaseUrl;
   @ViewChild('swiperRef', { static: false }) // Change to "false"
   protected _swiperRef: ElementRef | undefined
@@ -40,7 +40,9 @@ export class Tab2Page implements AfterViewInit {
   }
 
   async ngOnInit() {
-    await this.loadVideos(); // Load videos first
+    setTimeout(async () => {
+      await this.loadVideos(); // Load videos first
+    }, 300);
     // Removed this.cdr.detectChanges() from here
   }
 
@@ -49,7 +51,7 @@ export class Tab2Page implements AfterViewInit {
     setTimeout(() => {
       const swiperEl = this._swiperRef?.nativeElement;
       swiperEl.initialize();
-      this.playFirstVideo(); // Play the first video
+      //this.playFirstVideo(); // Play the first video
     }, 500); // May need adjustment for the delay as necessary
   }
 
@@ -79,6 +81,7 @@ export class Tab2Page implements AfterViewInit {
       likeDate: new Date()
     }
     this.videoService.registerVideoLike(like).subscribe();
+    this.toastService.showToast("Liked video!");
     if (!blobVideoStorageId) {
         console.error("blobVideoStorageId is undefined");
     }
@@ -99,7 +102,6 @@ export class Tab2Page implements AfterViewInit {
   ionViewDidLeave() {
     const currentVideoElement = document.getElementById('video_' + this.currentVideoIndex) as HTMLVideoElement;
     if (currentVideoElement) {
-      console.log("WE JUST LEFT!")
       currentVideoElement.pause();
     }
   }
@@ -107,13 +109,12 @@ export class Tab2Page implements AfterViewInit {
   ionViewDidEnter() {
     const currentVideoElement = document.getElementById('video_' + this.currentVideoIndex) as HTMLVideoElement;
     if (currentVideoElement) {
-      console.log("WE JUST CAME BACK!")
       currentVideoElement.play();
     }
   }
 
   private playFirstVideo() {  
-    if (this.videosArray.length > 0) {
+    if (this.videosArray.length == 3) {
       const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
   
       if (firstVideoElement) {
@@ -198,7 +199,7 @@ export class Tab2Page implements AfterViewInit {
             swiperEl.swiper.update();
             setTimeout(() => {
             currentVideoElement.play();
-            }, 500);
+            }, 200);
         }).catch(() => {
           this.toastService.showToast("Loading videos failed, please try again.");
         });

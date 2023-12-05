@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="false">
-  <swiper-container #swiperRef [slidesPerView]="1" [loop]="false" [pagination]="true" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)" init="false" pagination-dynamic-bullets="true">
+  <swiper-container #swiperRef [slidesPerView]="1" [loop]="false" [pagination]="false" [direction]="'vertical'" (swiperslidechange)="onSlideChange($event)" init="false">
     <swiper-slide class="video-container" *ngFor="let videoInfo of videosArray; let i = index" >
-      <video playsinline class="videoName" [id]="'video_' + i" [muted]="false" preload="none"></video>
+      <video controls playsinline class="videoName" poster="../../assets/TikTakThumb.png" preload="metadata" [id]="'video_' + i" [muted]="false" preload="none"></video>
       <div class="video-overlay">
         
         <ion-chip>
@@ -11,13 +11,16 @@
           <ion-label style="color:white">{{videoInfo.email}}</ion-label>
         </ion-chip>
         <!-- Heart-shaped button using Ionic icons -->
-        <ion-button fill="clear" (click)="likeVideo(videoInfo.video.blobStorageId)">
-          <ion-icon style="color:red" name="heart" slot="icon-only"></ion-icon>
+        <ion-button fill="clear" (click)="likeVideo(videoInfo.video.blobStorageId)" class="like-button">
+          <div class="icon-container">
+              <ion-icon name="heart" slot="icon-only"></ion-icon>
+          </div>
         </ion-button>
-        <br>
-        <ion-chip *ngFor="let tag of videoInfo.video.tags">
-          <ion-label style="color:white">{{tag.name}}</ion-label>
-        </ion-chip>
+        <div class="video-overlay-tags">
+          <ion-chip *ngFor="let tag of videoInfo.video.tags">
+              <ion-label style="color:white">{{tag.name}}</ion-label>
+          </ion-chip>
+      </div>
       </div>
     </swiper-slide>
   </swiper-container>

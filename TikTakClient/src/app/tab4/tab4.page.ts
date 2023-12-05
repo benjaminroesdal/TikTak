@@ -37,6 +37,7 @@ export class Tab4Page implements OnInit {
       this.formData = new FormData();
       this.tagsArray = [];
       this.loadingElement.dismiss();
+      this.toastService.showToast("Video Uploaded!")
     }, error => {
       this.loadingElement.dismiss();
     });
