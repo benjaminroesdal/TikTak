@@ -37,6 +37,8 @@ export class Tab4Page implements OnInit {
       this.formData = new FormData();
       this.tagsArray = [];
       this.loadingElement.dismiss();
+    }, error => {
+      this.loadingElement.dismiss();
     });
   }
 

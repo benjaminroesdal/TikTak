@@ -2,9 +2,11 @@
 
   <div class="upload-section">
     <ion-label class="section-label">Select Video</ion-label>
-    <ion-button fill="outline" (click)="appendFileToFormData()">Choose File</ion-button>
-    <p>{{videoName}}</p>
-    <input #fileInput type="file" accept="video/*" hidden (change)="onFileSelected($event)">
+    <div class="file-upload-wrapper">
+      <ion-button fill="outline" (click)="appendFileToFormData()">Choose File</ion-button>
+      <input #fileInput type="file" accept="video/*" hidden (change)="onFileSelected($event)">
+      <p class="file-name">{{videoName}}</p>
+    </div>
   </div>
 
   <div class="tags-section">
@@ -14,7 +16,7 @@
         <ion-label>{{ tag }}</ion-label>
         <ion-icon name="close-circle" (click)="removeTag(tag)"></ion-icon>
       </ion-chip>
-      <ion-input #tagInput [(ngModel)]="currentTag" type="text" placeholder="Add a tag" (keyup.enter)="addTag(); currentTag=''"></ion-input>
+      <ion-input #tagInput class="tag-input" [(ngModel)]="currentTag" type="text" placeholder="Add a tag" (keyup.enter)="addTag(); currentTag=''"></ion-input>
     </div>
   </div>
 
