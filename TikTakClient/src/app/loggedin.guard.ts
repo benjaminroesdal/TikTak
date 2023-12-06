@@ -17,7 +17,6 @@ export class LoggedinGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     return this.authService.isLoggedIn$.pipe(
       map(isLoggedIn => {
-        console.log(isLoggedIn)
         if (isLoggedIn) {
           // Redirect using UrlTree
           return this.router.createUrlTree(['tabs/tab2']);

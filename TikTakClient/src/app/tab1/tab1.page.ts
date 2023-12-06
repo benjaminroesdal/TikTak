@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { Router } from '@angular/router';
-import {AuthService} from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { LocationService } from '../services/location.service';
 
 @Component({
@@ -29,20 +29,20 @@ export class Tab1Page {
 
   async doLogin() {
     let user = await GoogleAuth.signIn();
-      const newUser: User = {
+    const newUser: User = {
       GoogleAccessToken: user.authentication.accessToken,
       FulLName: user.name,
       ImageUrl: user.imageUrl,
       Latitude: this.lat,
       Longitude: this.long
     };
-    await this.authService.CreateAccount(newUser).then(() =>{
+    await this.authService.CreateAccount(newUser).then(() => {
     });
   }
 
   async checkLoggedIn() {
     const loggedOut = await this.authService.isTokenExpired();
-    if(loggedOut){
+    if (loggedOut) {
       this.doLogin()
     }
   }

@@ -33,10 +33,10 @@ export class Tab2Page implements AfterViewInit {
 
   // Add a state variable to track if new videos are ready to be played
   newVideosReadyToPlay = false;
-  
-  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService:BlobStorageService,
-     private authService:AuthService, private videoService: VideoService, private cdr: ChangeDetectorRef, private toastService: ToastService) {
-      
+
+  constructor(private route: ActivatedRoute, private router: Router, private blobStorageService: BlobStorageService,
+    private authService: AuthService, private videoService: VideoService, private cdr: ChangeDetectorRef, private toastService: ToastService) {
+
   }
 
   async ngOnInit() {
@@ -65,7 +65,7 @@ export class Tab2Page implements AfterViewInit {
       }
     }
   }
-  
+
   async signOut() {
     GoogleAuth.signOut().then(() => {
       this.router.navigate(['tabs/tab1']);
@@ -74,16 +74,15 @@ export class Tab2Page implements AfterViewInit {
   }
 
 
-  likeVideo(blobVideoStorageId: string){
-    console.log("Like video called with ID:", blobVideoStorageId);
+  likeVideo(blobVideoStorageId: string) {
     const like: Like = {
-      blobStorageId:blobVideoStorageId,
+      blobStorageId: blobVideoStorageId,
       likeDate: new Date()
     }
     this.videoService.registerVideoLike(like).subscribe();
     this.toastService.showToast("Liked video!");
     if (!blobVideoStorageId) {
-        console.error("blobVideoStorageId is undefined");
+      console.error("blobVideoStorageId is undefined");
     }
   }
 
@@ -91,10 +90,9 @@ export class Tab2Page implements AfterViewInit {
     setTimeout(() => {
       if (!videoElement.paused) { // Check if the video is still playing
         const userTagInteraction: UserTagInteraction = {
-          blobStorageId:blobVideoStorageId
+          blobStorageId: blobVideoStorageId
         }
-        this.videoService.countUserVideoInteraction(userTagInteraction).subscribe();    
-        console.log(`BlobStorageID ${blobVideoStorageId} has been running for 5 seconds`);
+        this.videoService.countUserVideoInteraction(userTagInteraction).subscribe();
       }
     }, 5000); // Set timeout for 5 seconds
   }
@@ -113,10 +111,10 @@ export class Tab2Page implements AfterViewInit {
     }
   }
 
-  private playFirstVideo() {  
+  private playFirstVideo() {
     if (this.videosArray.length == 3) {
       const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
-  
+
       if (firstVideoElement) {
         // Ensure the video is loaded
         if (firstVideoElement.readyState >= 4) {
@@ -133,14 +131,14 @@ export class Tab2Page implements AfterViewInit {
       console.error("Video sources array is empty");
     }
   }
-  
+
 
   setupHlsPlayer(videoSrc: string, index: number, blobVideoStorageId: string) {
     const videoElementId = 'video_' + index;
     const videoElement = document.getElementById(videoElementId) as HTMLVideoElement;
     this.initHlsPlayer(videoElement, videoSrc, blobVideoStorageId);
   }
-  
+
 
 
 
@@ -156,8 +154,6 @@ export class Tab2Page implements AfterViewInit {
               item1.manifestUrl = `${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + matchingItem.video.blobStorageId;
             }
           });
-          console.log(this.videosArray)
-          console.log(videoInfoList)
           this.videosArray.forEach((video, index) => {
             // Ensure that video.blobVideoStorageId is the correct property from your video object
             this.setupHlsPlayer(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + video.video.blobStorageId, index, video.video.blobStorageId);
@@ -184,80 +180,72 @@ export class Tab2Page implements AfterViewInit {
 
     // Pause the previous and next videos to handle both forward and backward navigation
     if (previousVideoElement && previousIndex !== currentIndex) {
-        previousVideoElement.currentTime = 0;
-        previousVideoElement.pause();
+      previousVideoElement.currentTime = 0;
+      previousVideoElement.pause();
     }
     if (nextVideoElement && nextIndex !== currentIndex) {
-        nextVideoElement.currentTime = 0;
-        nextVideoElement.pause();
+      nextVideoElement.currentTime = 0;
+      nextVideoElement.pause();
     }
 
     // Load more videos if the last video is reached
     if (isLastVideo) {
-        this.loadVideos().then(() => {
-            const swiperEl = this._swiperRef?.nativeElement;
-            swiperEl.swiper.update();
-            setTimeout(() => {
-            currentVideoElement.play();
-            }, 200);
-        }).catch(() => {
-          this.toastService.showToast("Loading videos failed, please try again.");
-        });
+      this.loadVideos().then(() => {
+        const swiperEl = this._swiperRef?.nativeElement;
+        swiperEl.swiper.update();
+        setTimeout(() => {
+          currentVideoElement.play();
+        }, 200);
+      }).catch(() => {
+        this.toastService.showToast("Loading videos failed, please try again.");
+      });
     }
 
     // Only play the video if new videos are ready
     if (this.newVideosReadyToPlay && currentVideoElement && currentVideoElement.readyState >= 4) {
-        currentVideoElement.play().catch(() => {
-          this.toastService.showToast("Loading video failed, please try again.");
-        });
+      currentVideoElement.play().catch(() => {
+        this.toastService.showToast("Loading video failed, please try again.");
+      });
     }
   }
 
   private initHlsPlayer(video: HTMLVideoElement, source: string, blobVideoStorageId: string): void {
     if (Hls.isSupported()) {
-        this.setupHls(video, source);
+      this.setupHls(video, source);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        this.setupNativeVideoPlayer(video, source);
+      this.setupNativeVideoPlayer(video, source);
     }
 
     this.addVideoEventListeners(video, blobVideoStorageId);
-}
+  }
 
-private setupHls(video: HTMLVideoElement, source: string): void {
+  private setupHls(video: HTMLVideoElement, source: string): void {
     const hls = new Hls();
     hls.loadSource(source);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, () => video.pause());
     hls.on(Hls.Events.ERROR, (event, data) => this.handleHlsError(hls, data));
-}
+  }
 
-private setupNativeVideoPlayer(video: HTMLVideoElement, source: string): void {
+  private setupNativeVideoPlayer(video: HTMLVideoElement, source: string): void {
     video.src = source;
     video.addEventListener('loadedmetadata', () => video.pause());
-}
+  }
 
-private handleHlsError(hls: Hls, data: any): void {
+  private handleHlsError(hls: Hls, data: any): void {
     if (data.fatal) {
-        switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-                // handle network error
-                break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-                // handle media error
-                break;
-            default:
-                // handle other error types
-                hls.destroy();
-                break;
-        }
+      switch (data.type) {
+        default:
+          // handle other error types
+          hls.destroy();
+          break;
+      }
     }
-}
+  }
 
-private addVideoEventListeners(video: HTMLVideoElement, blobVideoStorageId: string): void {
+  private addVideoEventListeners(video: HTMLVideoElement, blobVideoStorageId: string): void {
     video.addEventListener('play', () => this.startFiveSecondTimer(video, blobVideoStorageId));
     video.addEventListener('ended', () => console.log(`Video with blobVideoStorageId ${blobVideoStorageId} has finished playing.`));
-}
-
-
+  }
 }
 

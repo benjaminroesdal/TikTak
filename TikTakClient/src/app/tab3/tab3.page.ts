@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AuthService} from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import * as jwt_decode from 'jwt-decode';
 import { StorageService } from '../services/storage.service';
@@ -12,7 +12,7 @@ import { StorageService } from '../services/storage.service';
 export class Tab3Page {
   public imgUrl: string = "";
   public name: string = "Username";
-  constructor(private authService: AuthService, private router: Router, private storage: StorageService) {}
+  constructor(private authService: AuthService, private router: Router, private storage: StorageService) { }
 
   async ngOnInit() {
     this.storage.get('AccessToken').then(e => {

@@ -44,7 +44,7 @@ export class Tab4Page implements OnInit {
   }
 
   appendFileToFormData = async () => {
-    await FilePicker.pickMedia().then(e =>{
+    await FilePicker.pickMedia().then(e => {
       const file = e.files[0];
       this.videoName = e.files[0].name;
       if (file.blob) {
@@ -53,7 +53,7 @@ export class Tab4Page implements OnInit {
         });
         this.formData.append('file', rawFile, 'file');
       }
-      if(!file.blob){
+      if (!file.blob) {
         this.readFilePath(file.path).then(e => {
           this.convertDataToBlob(e);
         })
@@ -95,7 +95,7 @@ export class Tab4Page implements OnInit {
     this.tagsArray = this.tagsArray.filter(tag => tag !== tagToRemove);
   }
 
-  async readFilePath(path:any) : Promise<string> {
+  async readFilePath(path: any): Promise<string> {
     // Here's an example of reading a file with a full file path. Use this to
     // read binary data (base64 encoded) from plugins that return File URIs, such as
     // the Camera.
@@ -105,19 +105,19 @@ export class Tab4Page implements OnInit {
     return contents.data as string;
   };
 
-  convertDataToBlob(data:any) {
-          // Assume 'base64String' is the long base64-encoded data string you retrieved
-      const base64String = data; // Your actual base64 string will be much longer
-      // Convert Base64 string to a Blob
-      const byteCharacters = atob(base64String);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const fileBlob = new Blob([byteArray], { type: 'video/mp4' }); // Specify the correct MIME type
-      // Append the Blob to FormData
-      this.formData.append('file', fileBlob, 'file'); // Replace 'filename.mp4' with the actual file name if available
+  convertDataToBlob(data: any) {
+    // Assume 'base64String' is the long base64-encoded data string you retrieved
+    const base64String = data; // Your actual base64 string will be much longer
+    // Convert Base64 string to a Blob
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const fileBlob = new Blob([byteArray], { type: 'video/mp4' }); // Specify the correct MIME type
+    // Append the Blob to FormData
+    this.formData.append('file', fileBlob, 'file'); // Replace 'filename.mp4' with the actual file name if available
   }
 
   ngOnInit() {

@@ -22,7 +22,6 @@ export class AuthInterceptor implements HttpInterceptor {
     return from(this.authService.isTokenExpired()).pipe(
       switchMap(isExpired => {
         if (isExpired) {
-          console.log(req)
           return this.handleTokenRefresh(req, next);
         } else {
           return this.addTokenToRequest(req, next);
@@ -44,7 +43,6 @@ export class AuthInterceptor implements HttpInterceptor {
         delay(300),
         switchMap(() => from(this.storage.get('AccessToken'))),
         switchMap((token: string) => {
-          console.log(token)
           this.isRefreshing = false;
           this.refreshTokenSubject.next(token);
           return next.handle(this.addToken(req, token));
@@ -55,7 +53,6 @@ export class AuthInterceptor implements HttpInterceptor {
         filter(token => token != null),
         take(1),
         switchMap(token => {
-          console.log(token)
           return next.handle(this.addToken(req, token));
         })
       );
