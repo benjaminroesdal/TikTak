@@ -11,7 +11,10 @@ export const environment = {
     messagingSenderId: "69308154140",
     appId: "1:69308154140:web:4ff0e62e5b5cf8114c3ad9",
     measurementId: "G-8D6BS4ERV0",
-    apiBaseUrl: 'https://localhost:7001'
+    apiBaseUrl: 'https://localhost:7001',
+  },
+  backend: {
+    apiKey: '64a02fa4-b079-4051-a745-7137537fc101'
   },
   production: false
 };

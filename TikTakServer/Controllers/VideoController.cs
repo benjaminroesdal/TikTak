@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TikTakServer.Facades;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {
-    [Authorize]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",ApiKey")]
     [Route("[controller]")]
     public class VideoController : Controller
     {

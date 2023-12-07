@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TikTakServer.ApplicationServices;
 using TikTakServer.Models.Business;
 
 namespace TikTakServer.Controllers
 {
+    [ApiController]
+    [Authorize(AuthenticationSchemes = "ApiKey")]
     public class AuthenticationController : Controller
     {
         private readonly IAuthenticationService _authService;
