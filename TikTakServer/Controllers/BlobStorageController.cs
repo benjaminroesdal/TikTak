@@ -46,7 +46,7 @@ namespace TikTakServer.Controllers
         [HttpGet("GetBlobManifest")]
         public async Task<IActionResult> DownloadManifest([FromQuery] string id)
         {
-            if (id == null)
+            if (String.IsNullOrEmpty(id))
             {
                 return BadRequest("No blob id specified");
             }
