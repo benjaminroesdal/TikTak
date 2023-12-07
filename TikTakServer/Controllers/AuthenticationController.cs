@@ -23,6 +23,11 @@ namespace TikTakServer.Controllers
         [HttpPost("Logout")]
         public async Task<IActionResult> Logout([FromBody] string token)
         {
+            if(String.IsNullOrEmpty(token))
+            {
+                return BadRequest("Token for logout was incorrect");
+            }
+
             await _authService.Logout(token);
             return Ok();
         }
@@ -30,6 +35,11 @@ namespace TikTakServer.Controllers
         [HttpPost("RefreshAccessToken")]
         public async Task<IActionResult> RefreshAccessToken([FromBody]string refreshToken)
         {
+            if (String.IsNullOrEmpty(refreshToken))
+            {
+                return BadRequest("Access token for refreshing was incorrect");
+            }
+
             var result = await _authService.RefreshAccessToken(refreshToken);
             return Ok(result);
         }
