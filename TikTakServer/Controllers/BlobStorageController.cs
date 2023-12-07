@@ -22,6 +22,11 @@ namespace TikTakServer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",ApiKey")]
         public async Task<IActionResult> PostBlob([FromForm] PostBlobModel file)
         {
+            if (file.Tags.Count == 0)
+            {
+                return BadRequest("Cannot upload blob, no tags was specified");
+            }
+
             await _blobStorageService.UploadBlob(file);
             return Ok();
         }
@@ -30,6 +35,11 @@ namespace TikTakServer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",ApiKey")]
         public async Task<IActionResult> RemoveBlob([FromBody] string blobName)
         {
+            if (String.IsNullOrEmpty(blobName))
+            {
+                return BadRequest("No blobname specified, could not remove blob");
+            }
+
             await _blobStorageService.RemoveBlobs(blobName);
             return Ok();
         }
@@ -37,6 +47,11 @@ namespace TikTakServer.Controllers
         [HttpGet("GetBlobManifest")]
         public async Task<IActionResult> DownloadManifest([FromQuery] string id)
         {
+            if (String.IsNullOrEmpty(id))
+            {
+                return BadRequest("No blob id specified");
+            }
+
             var manifest = await _blobStorageService.DownloadManifest(id);
             return File(manifest, "application/vnd.apple.mpegurl", "manifest" + ".M3U8");
         }
@@ -46,6 +61,12 @@ namespace TikTakServer.Controllers
         public async Task<IActionResult> GetFyp()
         {
             var videoAndOwnedUserInfo = await _blobStorageService.GetFyp();
+
+            if (videoAndOwnedUserInfo == null || videoAndOwnedUserInfo.Count == 0)
+            {
+                return BadRequest("No user info and blob IDs found");
+            }
+
             return Ok(videoAndOwnedUserInfo);
         }
     }
