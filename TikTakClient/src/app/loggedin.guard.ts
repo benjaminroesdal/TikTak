@@ -18,7 +18,6 @@ export class LoggedinGuard implements CanActivate {
     return this.authService.isLoggedIn$.pipe(
       map(isLoggedIn => {
         if (isLoggedIn) {
-          // Redirect using UrlTree
           return this.router.createUrlTree(['tabs/tab2']);
         }
         // Allow access to the route

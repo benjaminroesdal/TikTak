@@ -34,7 +34,7 @@ export class BlobStorageService {
   }
 
   getFyp(): Observable<VideoInfoModel[]> {
-    //this recieves 3 videos to the fyp
+    //this recieves x videos to the fyp
     return this.http.get<VideoInfoModel[]>(`${this.apiBaseUrl}/BlobStorage/GetFyp`);
   }
 }

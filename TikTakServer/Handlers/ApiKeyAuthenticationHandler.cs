@@ -5,13 +5,13 @@ using System.Text.Encodings.Web;
 
 namespace TikTakServer.Handlers
 {
-    public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
+    public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private const string ApiKeyHeaderName = "X-Api-Key";
+        private readonly string _apiKeyHeaderName = "X-Api-Key";
         private readonly string _apiKey;
 
         public ApiKeyAuthenticationHandler(
-            IOptionsMonitor<ApiKeyAuthenticationOptions> options,
+            IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             IConfiguration configuration) : base(options, logger, encoder)
@@ -21,7 +21,7 @@ namespace TikTakServer.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var apiKeyHeaderValues))
+            if (!Request.Headers.TryGetValue(_apiKeyHeaderName, out var apiKeyHeaderValues))
             {
                 return AuthenticateResult.NoResult();
             }

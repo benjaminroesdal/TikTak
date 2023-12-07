@@ -42,9 +42,9 @@ export class AuthService {
     await this.http.post<UserModel>(`${this.apiBaseUrl}/Login`, user)
     .subscribe(e => {
       this.storageService.set('AccessToken', e.accessToken).then(() => {
-        this.router.navigate(['tabs/tab2']); // Redirect to home or another page
+        this.router.navigate(['tabs/tab2']);
       });
-      this.router.navigate(['tabs/tab2']); // Redirect to home or another page
+      this.router.navigate(['tabs/tab2']);
       this.storageService.set('RefreshToken', e.refreshToken);
     });
   }

@@ -5,26 +5,26 @@
     justify-content: center;
     height: 100%;
     ion-avatar {
-      margin-top: 20%; /* Adjust as needed */
+      margin-top: 20%;
     }
     .profile-image {
-      --border-radius: 50%; /* Makes the image round */
-      overflow: hidden; /* Ensures the image fits the border radius */
-      width: 100px; /* Adjust size as needed */
-      height: 100px; /* Adjust size as needed */
+      --border-radius: 50%;
+      overflow: hidden;
+      width: 100px;
+      height: 100px;
       img {
         width: 100%;
         height: 100%;
       }
     }
     .user-name {
-      margin-top: 16px; /* Spacing between image and name */
-      font-size: 1.2em; /* Adjust size as needed */
+      margin-top: 16px;
+      font-size: 1.2em;
       font-weight: bold;
     }
     .logout-button {
-      margin-top: 16px; /* Spacing between name and button */
-      --background: var(--ion-color-danger); /* Use the danger color variable for red */
+      margin-top: 16px;
+      --background: var(--ion-color-danger);
     }
   }
   

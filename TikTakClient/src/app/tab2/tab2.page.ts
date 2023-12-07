@@ -31,7 +31,7 @@ export class Tab2Page implements AfterViewInit {
     direction: 'vertical'
   };
 
-  // Add a state variable to track if new videos are ready to be played
+  // state variable to track if new videos are ready to be played
   newVideosReadyToPlay = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private blobStorageService: BlobStorageService,
@@ -43,7 +43,6 @@ export class Tab2Page implements AfterViewInit {
     setTimeout(async () => {
       await this.loadVideos(); // Load videos first
     }, 300);
-    // Removed this.cdr.detectChanges() from here
   }
 
   ngAfterViewInit() {
@@ -51,7 +50,6 @@ export class Tab2Page implements AfterViewInit {
     setTimeout(() => {
       const swiperEl = this._swiperRef?.nativeElement;
       swiperEl.initialize();
-      //this.playFirstVideo(); // Play the first video
     }, 500); // May need adjustment for the delay as necessary
   }
 
@@ -111,27 +109,6 @@ export class Tab2Page implements AfterViewInit {
     }
   }
 
-  private playFirstVideo() {
-    if (this.videosArray.length == 3) {
-      const firstVideoElement = document.getElementById('video_0') as HTMLVideoElement;
-
-      if (firstVideoElement) {
-        // Ensure the video is loaded
-        if (firstVideoElement.readyState >= 4) {
-          firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
-        } else {
-          firstVideoElement.addEventListener('loadeddata', () => {
-            firstVideoElement.play().catch(err => console.error('Error playing first video:', err));
-          });
-        }
-      } else {
-        console.error("First video element not found");
-      }
-    } else {
-      console.error("Video sources array is empty");
-    }
-  }
-
 
   setupHlsPlayer(videoSrc: string, index: number, blobVideoStorageId: string) {
     const videoElementId = 'video_' + index;
@@ -155,7 +132,6 @@ export class Tab2Page implements AfterViewInit {
             }
           });
           this.videosArray.forEach((video, index) => {
-            // Ensure that video.blobVideoStorageId is the correct property from your video object
             this.setupHlsPlayer(`${this.apiBaseUrl}/BlobStorage/GetBlobManifest?id=` + video.video.blobStorageId, index, video.video.blobStorageId);
           });
           this.newVideosReadyToPlay = true;
@@ -236,7 +212,6 @@ export class Tab2Page implements AfterViewInit {
     if (data.fatal) {
       switch (data.type) {
         default:
-          // handle other error types
           hls.destroy();
           break;
       }

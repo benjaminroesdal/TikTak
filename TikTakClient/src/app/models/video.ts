@@ -1,7 +1,7 @@
 export interface VideoInfoModel {
     UserId: string;
     ProfileImage: string;
-    Email: string; // HLS manifest URL
+    Email: string;
     Video: Video
   }
 

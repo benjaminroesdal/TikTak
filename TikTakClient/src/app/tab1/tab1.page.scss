@@ -3,15 +3,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    max-width: 400px; // Max width for mobile aspect ratio
-    margin: 10% auto; // Center the box with automatic margin
+    max-width: 400px;
+    margin: 10% auto;
     padding: 20px;
-    border: 1px solid #ddd; // Optional: add a border to visualize the box
-    border-radius: 10px; // Optional: round the corners of the box
-    background: #fff; // Optional: set a background color for the box
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
   
     .login-option {
-      width: 100%; // Full width of the container
+      width: 100%;
       margin: 8px 0;
       font-weight: normal;
       --border-radius: 4px;
@@ -21,12 +21,12 @@
   }
   
   .terms-text {
-    position: fixed; /* Fixed positioning relative to the viewport */
-    bottom: 0; /* Align to the bottom of the viewport */
-    left: 0; /* Align to the left of the viewport */
-    width: 100%; /* Ensure it spans the full width */
-    background-color: #fff; /* Optional: set a background color */
-    padding: 10px; /* Add some padding */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 10px;
     text-align: center;
     font-size: small;
     color: var(--ion-color-medium);
@@ -38,7 +38,6 @@
     --border-radius: 0;
   }
   
-  // This ensures the content is vertically centered on larger screens
   ion-content {
     display: flex;
     flex-direction: column;
@@ -49,7 +48,7 @@
   .google-login {
     position: relative;
     text-align: center;
-    --background: #ffffff; // Use Google's color scheme
+    --background: #ffffff;
     --border-radius: 4px;
     --color: #000;
     --box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2);
@@ -60,9 +59,9 @@
   
   .google-logo {
     position: absolute;
-    left: 10px; // Adjust for margin from the edge
-    height: 20px; // Adjust to your preference
-    width: 20px; // Adjust to your preference
+    left: 10px;
+    height: 20px;
+    width: 20px;
   }
   
   .button-text {
@@ -72,20 +71,20 @@
 
   .header-container {
     text-align: center;
-    margin-bottom: 20px; /* Adjust this value as needed to create space between the title and the login options */
+    margin-bottom: 20px;
   }
   
   .title {
-    font-size: 24px; /* Adjust this value as needed for the size of the title */
+    font-size: 24px;
     font-weight: bold;
-    margin: 0; /* This removes the default margin from the h1 element */
+    margin: 0;
   }
 
   .privacy-policy-link {
-    color: var(--ion-color-primary); /* Use the primary color for the link */
-    text-decoration: none; /* Optional: removes the underline from links */
+    color: var(--ion-color-primary);
+    text-decoration: none;
   }
   
   .privacy-policy-link:hover {
-    text-decoration: underline; /* Adds underline on hover for better user interaction */
+    text-decoration: underline;
   }

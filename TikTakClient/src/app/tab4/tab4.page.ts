@@ -13,13 +13,13 @@ import { LoadingController } from '@ionic/angular';
   styleUrls: ['./tab4.page.scss'],
 })
 export class Tab4Page implements OnInit {
-  currentTag: string = ''; // This will hold the value of the tag input
+  currentTag: string = '';
   videoFile: File | null = null;
   videoName: string = 'No file selected!';
   tagsArray: string[] = [];
   formData = new FormData();
   loadingElement!: HTMLIonLoadingElement;
-  maxTags: number = 5; // Set your desired maximum number of tags
+  maxTags: number = 5;
   private apiBaseUrl = environment.firebase.apiBaseUrl;
 
   constructor(private http: HttpClient, private toastService: ToastService, private loadingCtrl: LoadingController) { }
@@ -27,7 +27,6 @@ export class Tab4Page implements OnInit {
 
 
   uploadFile() {
-    // Append each tag separately
     this.showLoading();
     this.tagsArray.forEach((tag, index) => {
       this.formData.append(`Tags[${index}].Name`, tag);
@@ -74,7 +73,6 @@ export class Tab4Page implements OnInit {
     let fileList: FileList | null = element.files;
     if (fileList) {
       this.videoFile = fileList[0];
-      // You can also implement a preview of the video here
     }
   }
 
@@ -82,11 +80,9 @@ export class Tab4Page implements OnInit {
     if (this.currentTag.trim() && !this.tagsArray.includes(this.currentTag.trim())) {
       if (this.tagsArray.length < this.maxTags) {
         this.tagsArray.push(this.currentTag.trim());
-        this.currentTag = ''; // Clear the input
+        this.currentTag = '';
       } else {
-        // Optionally, provide user feedback that the max number of tags has been reached
         this.toastService.showToast("maximum number of tags reached.")
-        // You can use an Ionic toast for better user experience
       }
     }
   }
@@ -96,9 +92,6 @@ export class Tab4Page implements OnInit {
   }
 
   async readFilePath(path: any): Promise<string> {
-    // Here's an example of reading a file with a full file path. Use this to
-    // read binary data (base64 encoded) from plugins that return File URIs, such as
-    // the Camera.
     const contents = await Filesystem.readFile({
       path: path,
     });
@@ -106,8 +99,7 @@ export class Tab4Page implements OnInit {
   };
 
   convertDataToBlob(data: any) {
-    // Assume 'base64String' is the long base64-encoded data string you retrieved
-    const base64String = data; // Your actual base64 string will be much longer
+    const base64String = data;
     // Convert Base64 string to a Blob
     const byteCharacters = atob(base64String);
     const byteNumbers = new Array(byteCharacters.length);
@@ -115,9 +107,9 @@ export class Tab4Page implements OnInit {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
-    const fileBlob = new Blob([byteArray], { type: 'video/mp4' }); // Specify the correct MIME type
+    const fileBlob = new Blob([byteArray], { type: 'video/mp4' });
     // Append the Blob to FormData
-    this.formData.append('file', fileBlob, 'file'); // Replace 'filename.mp4' with the actual file name if available
+    this.formData.append('file', fileBlob, 'file');
   }
 
   ngOnInit() {

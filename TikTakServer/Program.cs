@@ -11,6 +11,7 @@ using System.Text;
 using TikTakServer.Models.Business;
 using TikTakServer.Middleware;
 using TikTakServer.Managers;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +36,7 @@ builder.Services.AddScoped<IUserFacade, UserFacade>();
 builder.Services.AddScoped<IRecommendationFacade, RecommendationFacade>();
 builder.Services.AddScoped<IRecommendationManager, RecommendationManager>();
 builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<TikTakServer.ApplicationServices.IAuthenticationService, TikTakServer.ApplicationServices.AuthenticationService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<UserRequestAndClaims>();
 
@@ -58,10 +59,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     })
-    .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>("ApiKey", options => { });
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", options => { });
 builder.Services.AddAuthorization();
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

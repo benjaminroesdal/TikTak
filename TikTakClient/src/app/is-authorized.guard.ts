@@ -24,14 +24,14 @@ export class IsAuthorizedGuard implements CanActivate {
         } else {
           return this.storageService.get('RefreshToken').then(refreshToken => {
             if (!refreshToken) {
-              this.router.navigate(['tabs/tab1']); // Redirect to login or a relevant page
+              this.router.navigate(['tabs/tab1']);
               return false;
             } else {
               // Here, we wait for the refresh token process to complete
               return this.authService.RefreshAccessToken().then(() => {
                 return true;
               }).catch(() => {
-                this.router.navigate(['tabs/tab1']); // Redirect on failure
+                this.router.navigate(['tabs/tab1']);
                 return false;
               });
             }
